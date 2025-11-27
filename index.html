@@ -1,1 +1,1051 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Giang Mỹ Vị - Bản đồ ẩm thực</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts: Be Vietnam Pro (The Ultimate Vietnamese Font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap&subset=vietnamese" rel="stylesheet">
+    
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        /* GLOBAL FONT CONFIGURATION - FIX LỖI DẤU */
+        :root {
+            --font-main: 'Be Vietnam Pro', sans-serif;
+        }
+
+        body { 
+            font-family: var(--font-main); 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-synthesis: none; /* Ngăn trình duyệt tự ý làm đậm/nghiêng gây lỗi dấu */
+        }
+        
+        /* Thay thế class font-serif cũ bằng font Be Vietnam Pro nhưng đậm hơn để giữ điểm nhấn */
+        h1, h2, h3, h4, .font-serif { 
+            font-family: var(--font-main) !important; /* Force override */
+            letter-spacing: -0.03em; /* Thu hẹp khoảng cách chữ cho hiện đại */
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5f5f4; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(1deg); }
+            50% { transform: translateY(-15px) rotate(-1deg); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 7s ease-in-out infinite 1s; }
+
+        /* Pulse Ring for Chat Button */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(180, 83, 9, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(180, 83, 9, 0); }
+        }
+        .animate-pulse-ring { animation: pulse-ring 2s infinite; }
+
+        /* Chat Typing Dot Animation */
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        /* Smooth Image Zoom */
+        .img-zoom-container { overflow: hidden; }
+        .img-zoom-container img { transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .img-zoom-container:hover img { transform: scale(1.1); }
+
+        /* Modal Animation (Springy) */
+        @keyframes modalPop {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-animate { animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-[#FDFBF7] text-stone-800 antialiased selection:bg-amber-200 selection:text-amber-900">
+
+    <!-- --- HEADER --- -->
+    <header class="sticky top-0 z-50 glass transition-all duration-300">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <button class="md:hidden text-stone-600 hover:text-amber-700 transition-colors" onclick="toggleMobileMenu()">
+                <i data-lucide="menu"></i>
+            </button>
+
+            <div class="flex items-center gap-2 cursor-pointer group" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <span class="text-2xl font-serif font-black text-amber-700 tracking-tighter group-hover:scale-105 transition-transform duration-300">
+                    AnGiang<span class="text-stone-800">MỹVị</span>
+                </span>
+            </div>
+
+            <nav class="hidden md:flex gap-8 font-semibold text-stone-600 text-sm tracking-wide">
+                <button onclick="scrollToSection('section-reviews')" class="hover:text-amber-700 transition-colors hover:-translate-y-0.5 transform duration-200">VI VU</button>
+                <button onclick="scrollToSection('section-mood')" class="hover:text-amber-700 transition-colors hover:-translate-y-0.5 transform duration-200">MÓN NGON</button>
+                <button onclick="scrollToSection('section-story')" class="hover:text-amber-700 transition-colors hover:-translate-y-0.5 transform duration-200">CHUYỆN NGHỀ</button>
+                <button onclick="openModal('foodtour')" class="hover:text-amber-700 transition-colors hover:-translate-y-0.5 transform duration-200">FOOD TOUR</button>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="p-2 hover:bg-stone-100 rounded-full transition-colors active:scale-90 duration-150">
+                    <i data-lucide="search" class="w-5 h-5 text-stone-600"></i>
+                </button>
+                <button class="hidden md:block bg-stone-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-95 duration-200">
+                    Lưu món
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-xl border-b border-stone-200 p-4 space-y-4 shadow-lg absolute w-full top-16 left-0 z-40 animate-fade-down">
+            <button onclick="scrollToSection('section-reviews'); toggleMobileMenu()" class="block font-bold w-full text-left py-3 hover:text-amber-700 hover:bg-amber-50 rounded-xl px-4 transition-colors">VI VU</button>
+            <button onclick="scrollToSection('section-mood'); toggleMobileMenu()" class="block font-bold w-full text-left py-3 hover:text-amber-700 hover:bg-amber-50 rounded-xl px-4 transition-colors">MÓN NGON</button>
+            <button onclick="scrollToSection('section-story'); toggleMobileMenu()" class="block font-bold w-full text-left py-3 hover:text-amber-700 hover:bg-amber-50 rounded-xl px-4 transition-colors">CHUYỆN NGHỀ</button>
+            <button onclick="openModal('foodtour'); toggleMobileMenu()" class="block font-bold w-full text-left py-3 hover:text-amber-700 hover:bg-amber-50 rounded-xl px-4 transition-colors">FOOD TOUR</button>
+        </div>
+    </header>
+
+    <!-- --- HERO SECTION --- -->
+    <section class="relative pt-12 pb-24 overflow-hidden">
+        <!-- Background Blurs -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-amber-200 rounded-full blur-[100px] opacity-40 -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-green-100 rounded-full blur-[120px] opacity-50 translate-y-1/2 -translate-x-1/4 animate-pulse" style="animation-duration: 4s;"></div>
+
+        <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000">
+                <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur border border-stone-200 text-stone-800 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm hover:shadow-md transition-shadow cursor-default">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                    <span class="relative">Mùa nước nổi - Mùa cá linh</span>
+                </div>
+                
+                <!-- Font tiêu đề đã được đổi sang Be Vietnam Pro siêu đậm (Black weight) để thay thế style Serif cũ -->
+                <h1 class="text-5xl md:text-7xl font-serif font-black leading-[1.1] text-stone-900 tracking-tight">
+                    Về An Giang, <br/>
+                    <span class="text-amber-600 italic">ăn một lần</span> <br/>
+                    nhớ một đời.
+                </h1>
+                
+                <p class="text-lg text-stone-600 max-w-md leading-relaxed font-medium">
+                    Khám phá bản đồ ẩm thực giao thoa giữa 4 nền văn hóa Kinh - Hoa - Chăm - Khmer độc đáo nhất miền Tây.
+                </p>
+                <div class="flex gap-4 pt-2">
+                    <button onclick="scrollToSection('section-reviews')" class="bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition-all flex items-center gap-2 group hover:shadow-xl hover:-translate-y-1 duration-300">
+                        Khám phá ngay
+                        <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                    <button onclick="openModal('foodtour')" class="px-8 py-4 rounded-full font-bold border-2 border-stone-200 hover:border-stone-900 hover:bg-white transition-all hover:shadow-lg hover:-translate-y-1 duration-300 bg-white/50 backdrop-blur">
+                        Xem bản đồ
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative cursor-pointer group animate-float" onclick="openProductDetail(1)" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                <div class="relative z-20 transform rotate-2 group-hover:rotate-0 transition-transform duration-700 ease-out">
+                    <div class="bg-white p-4 shadow-2xl rounded-2xl">
+                        <div class="overflow-hidden rounded-xl h-[450px]">
+                            <img src="https://mia.vn/media/uploads/blog-du-lich/bun-ca-chau-doc-dac-san-tru-danh-cua-dat-an-giang-01-1659942632.jpg" alt="Bún cá Châu Đốc" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s]">
+                        </div>
+                        <div class="pt-4 pb-1 text-center font-bold text-stone-800">
+                            Bữa sáng tại Châu Đốc, 2024
+                        </div>
+                        <div class="text-center text-xs text-stone-500 font-medium uppercase tracking-widest">An Giang Authentic</div>
+                    </div>
+                </div>
+                <!-- Stamps -->
+                <div class="absolute -top-6 -right-6 z-30 bg-amber-400 p-1 rounded-full shadow-xl transform rotate-12 group-hover:rotate-[20deg] transition-transform duration-500">
+                    <div class="border-2 border-dashed border-white rounded-full w-24 h-24 flex items-center justify-center text-center text-xs font-black text-white uppercase leading-tight">
+                        Must<br/>Try
+                    </div>
+                </div>
+                <div class="absolute top-1/2 -left-8 z-30 animate-float-delayed hidden md:block">
+                     <div class="bg-white/90 backdrop-blur px-5 py-3 rounded-2xl shadow-xl border border-stone-100 flex gap-3 items-center">
+                        <span class="text-3xl">🍜</span>
+                        <div>
+                            <p class="text-xs font-bold text-stone-400 uppercase">Rating</p>
+                            <div class="flex text-amber-500 text-sm">★★★★★</div>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- --- 4 PILLARS --- -->
+    <section class="py-24 bg-white border-y border-stone-100 relative">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-serif font-black text-stone-900 mb-3 tracking-tight">Giao thoa 4 nền văn hóa</h2>
+                <div class="w-16 h-1.5 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div onclick="scrollToSection('section-reviews')" class="group relative p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50 hover:bg-white hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="fade-up" data-aos-delay="0">
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 bg-blue-600 transition-transform group-hover:scale-[2.5] duration-700 ease-in-out"></div>
+                    <h3 class="text-2xl font-serif font-extrabold mb-2 relative z-10 group-hover:text-blue-700 transition-colors">Vị Kinh</h3>
+                    <div class="h-1 w-8 bg-blue-200 mb-4 rounded-full group-hover:w-16 transition-all duration-500"></div>
+                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-blue-800/80 relative z-10">Đậm đà sông nước</p>
+                    <p class="text-stone-600 text-sm leading-relaxed relative z-10 font-medium">Lẩu mắm, Bún cá, Canh chua bông điên điển.</p>
+                </div>
+                <!-- Card 2 -->
+                <div onclick="scrollToSection('section-reviews')" class="group relative p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50 hover:bg-white hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 bg-red-600 transition-transform group-hover:scale-[2.5] duration-700 ease-in-out"></div>
+                    <h3 class="text-2xl font-serif font-extrabold mb-2 relative z-10 group-hover:text-red-700 transition-colors">Vị Hoa</h3>
+                    <div class="h-1 w-8 bg-red-200 mb-4 rounded-full group-hover:w-16 transition-all duration-500"></div>
+                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-red-800/80 relative z-10">Gia truyền tinh tế</p>
+                    <p class="text-stone-600 text-sm leading-relaxed relative z-10 font-medium">Cơm tấm Long Xuyên, Hủ tiếu hồ, Mì vịt tiềm.</p>
+                </div>
+                <!-- Card 3 -->
+                <div onclick="scrollToSection('section-reviews')" class="group relative p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50 hover:bg-white hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 bg-purple-600 transition-transform group-hover:scale-[2.5] duration-700 ease-in-out"></div>
+                    <h3 class="text-2xl font-serif font-extrabold mb-2 relative z-10 group-hover:text-purple-700 transition-colors">Vị Chăm</h3>
+                    <div class="h-1 w-8 bg-purple-200 mb-4 rounded-full group-hover:w-16 transition-all duration-500"></div>
+                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-purple-800/80 relative z-10">Hương vị huyền bí</p>
+                    <p class="text-stone-600 text-sm leading-relaxed relative z-10 font-medium">Cà ri bò, Tung lò mò (Lạp xưởng bò).</p>
+                </div>
+                <!-- Card 4 -->
+                <div onclick="scrollToSection('section-reviews')" class="group relative p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50 hover:bg-white hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="fade-up" data-aos-delay="300">
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 bg-green-600 transition-transform group-hover:scale-[2.5] duration-700 ease-in-out"></div>
+                    <h3 class="text-2xl font-serif font-extrabold mb-2 relative z-10 group-hover:text-green-700 transition-colors">Vị Khmer</h3>
+                    <div class="h-1 w-8 bg-green-200 mb-4 rounded-full group-hover:w-16 transition-all duration-500"></div>
+                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-green-800/80 relative z-10">Mộc mạc núi rừng</p>
+                    <p class="text-stone-600 text-sm leading-relaxed relative z-10 font-medium">Gà đốt lá chúc, Bún nước lèo, Đu đủ đâm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- --- MOOD FILTER --- -->
+    <section id="section-mood" class="py-20 container mx-auto px-4">
+        <div class="bg-[#1c1917] rounded-[3rem] p-10 md:p-20 text-center text-white relative overflow-hidden shadow-2xl" data-aos="zoom-in" data-aos-duration="800">
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #44403c 1px, transparent 1px); background-size: 30px 30px;"></div>
+            <!-- Decorative Glow -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-amber-500 blur-[120px] opacity-20"></div>
+            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-500 blur-[120px] opacity-20"></div>
+            
+            <h2 class="text-3xl md:text-5xl font-serif mb-12 relative z-10 font-black tracking-tight">Hôm nay bụng bảo sao?</h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 relative z-10" id="filter-buttons">
+                <!-- Filter buttons injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- --- LOCAL TIPS (REVIEWS) --- -->
+    <section id="section-reviews" class="pb-24 container mx-auto px-4">
+        <div class="flex justify-between items-end mb-12" data-aos="fade-up">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-serif font-black text-stone-900 tracking-tight">Thổ địa mách nước</h2>
+                <p class="text-stone-500 mt-3 text-lg font-medium">Những quán ngon dân bản địa hay ghé.</p>
+            </div>
+            <button class="hidden md:flex items-center font-bold text-amber-700 hover:text-amber-900 transition-colors group">
+                Xem tất cả <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform"></i>
+            </button>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Products injected by JS -->
+        </div>
+    </section>
+
+    <!-- --- FEATURED STORY --- -->
+    <section id="section-story" class="py-24 bg-[#F5F2EA] relative">
+        <div class="absolute top-0 w-full h-24 bg-gradient-to-b from-[#FDFBF7] to-transparent"></div>
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="order-2 md:order-1 relative group cursor-pointer" onclick="openModal('story')" data-aos="fade-right" data-aos-duration="1000">
+                    <div class="absolute -top-4 -left-4 w-full h-full border-2 border-stone-800 rounded-[2rem] transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                    <div class="relative z-10 rounded-[2rem] shadow-2xl overflow-hidden aspect-[4/5]">
+                        <img src="https://product.hstatic.net/1000384853/product/420_2e96288a92d94a31a4d3fd7be5d8eae2.jpg" alt="Chuyện bên bếp lửa" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[1.5s] group-hover:scale-105">
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 space-y-10" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="inline-flex items-center gap-3 text-amber-700 font-extrabold text-sm tracking-[0.2em] uppercase border-b-2 border-amber-200 pb-2">
+                        <i data-lucide="flame" class="w-5 h-5 animate-pulse text-red-500"></i>
+                        Chuyện bên bếp lửa
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-serif font-black text-stone-900 leading-[1.1] tracking-tight">
+                        Gánh bánh bò <br/>
+                        <span class="text-stone-400">30 năm đỏ lửa</span> <br/>
+                        dưới chân núi Sam.
+                    </h2>
+                    <blockquote class="border-l-4 border-amber-500 pl-8 py-2 text-2xl font-medium italic text-stone-600">
+                        "Làm bánh này không được vội, bột phải ủ đủ nắng với cái men cơm rượu cũ mới chịu dậy mùi."
+                    </blockquote>
+                    <p class="text-stone-600 leading-relaxed text-lg font-medium">
+                        Nằm khuất trong con hẻm nhỏ, lò bánh của dì Út vẫn ngày ngày cho ra những mẻ bánh bò vàng ươm, xốp nhẹ như mây...
+                    </p>
+                    <button onclick="openModal('story')" class="text-stone-900 font-bold border-b-2 border-stone-900 pb-1 hover:text-amber-700 hover:border-amber-700 transition-all text-lg group">
+                        Đọc trọn vẹn câu chuyện <i data-lucide="arrow-right" class="inline-block w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- --- FOOTER --- -->
+    <footer class="bg-[#1c1917] text-stone-400 py-24 relative overflow-hidden">
+        <div class="container mx-auto px-4 grid md:grid-cols-3 gap-16 relative z-10">
+            <div data-aos="fade-up" data-aos-delay="0">
+                <span class="text-3xl font-serif font-black text-white tracking-tighter block mb-8">AnGiang<span class="text-amber-500">MỹVị</span></span>
+                <p class="text-base leading-relaxed mb-8 opacity-80 font-medium">Hành trình khám phá và lưu giữ những hương vị mộc mạc, chân phương nhất của vùng đất Bảy Núi.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all hover:-translate-y-1"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all hover:-translate-y-1"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="100">
+                <h4 class="text-white font-bold mb-8 text-lg uppercase tracking-wider">Khám phá</h4>
+                <ul class="space-y-5 text-sm font-bold text-stone-500">
+                    <li><button onclick="openModal('foodtour')" class="hover:text-amber-500 transition-colors flex items-center gap-3 group"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Bản đồ Food Tour</button></li>
+                    <li><button onclick="filterByFooter('doi')" class="hover:text-amber-500 transition-colors flex items-center gap-3 group"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span> Món ngon ăn sáng</button></li>
+                </ul>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="200">
+                <h4 class="text-white font-bold mb-8 text-lg uppercase tracking-wider">Nhận thư từ Miền Tây</h4>
+                <div class="flex relative group">
+                    <input type="email" placeholder="Email của bạn..." class="bg-stone-800 border border-stone-700 rounded-full pl-6 pr-36 py-4 w-full text-white outline-none focus:border-amber-500 transition-colors font-medium">
+                    <button class="absolute right-1.5 top-1.5 bg-amber-600 text-white px-8 py-2.5 rounded-full font-bold hover:bg-amber-700 transition-colors shadow-lg">Gửi</button>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-20 pt-8 border-t border-stone-800 text-center text-xs opacity-40 font-medium tracking-wide">
+            &copy; 2025 An Giang Mỹ Vị. Thiết kế với tình yêu dành cho Thất Sơn.
+        </div>
+    </footer>
+
+    <!-- ============================================== -->
+    <!-- AI CHAT WIDGET (LOY - PERSONA) -->
+    <!-- ============================================== -->
+    
+    <!-- Floating Button -->
+    <button onclick="toggleChat()" class="fixed bottom-8 right-8 z-[80] group">
+        <!-- Pulse Effect -->
+        <div class="absolute inset-0 bg-amber-500 rounded-full opacity-0 group-hover:animate-pulse-ring"></div>
+        
+        <div class="relative bg-gradient-to-br from-amber-600 to-amber-800 text-white p-4 rounded-full shadow-2xl transition-transform transform group-hover:scale-110 group-active:scale-95 border-[3px] border-white/20 backdrop-blur">
+            <i data-lucide="message-circle" class="w-8 h-8"></i>
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
+            </span>
+        </div>
+        
+        <!-- Tooltip -->
+        <div class="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-stone-900 px-5 py-3 rounded-2xl shadow-xl text-sm font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 pointer-events-none">
+            Chat với Loy nè!
+            <div class="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 bg-white rotate-45"></div>
+        </div>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chat-widget" class="fixed bottom-28 right-8 w-96 max-w-[calc(100vw-3rem)] bg-white/90 backdrop-blur-2xl rounded-[2rem] shadow-2xl z-[80] border border-white/50 hidden flex flex-col h-[550px] modal-animate overflow-hidden font-medium">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-stone-800 to-stone-900 text-white p-5 flex justify-between items-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-noise opacity-10"></div>
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 bg-stone-700 rounded-full flex items-center justify-center border-2 border-amber-500 shadow-lg overflow-hidden relative">
+                    <img src="https://i.postimg.cc/jjsstjhf/IMG-1744295754904-1744295756131.jpg" alt="Loy" class="w-full h-full object-cover">
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-stone-800 rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">Loy</h3>
+                    <p class="text-xs text-stone-300 opacity-80">Học sinh cấp 3 &bull; Thổ địa An Giang</p>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="hover:bg-white/10 p-2 rounded-full transition-colors relative z-20"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-1 p-5 overflow-y-auto space-y-4 bg-stone-50/50 scroll-smooth">
+            <!-- Intro Message -->
+            <div class="flex gap-3 animate-fade-in-up">
+                <div class="w-9 h-9 bg-amber-100 rounded-full flex-shrink-0 overflow-hidden border border-amber-200">
+                    <img src="https://i.postimg.cc/jjsstjhf/IMG-1744295754904-1744295756131.jpg" class="w-full h-full object-cover">
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-stone-100 max-w-[85%] text-sm text-stone-700 leading-relaxed">
+                    <p>Chào bạn! Mình là <strong>Loy</strong>, học sinh cấp 3 tại An Giang. Mình rất thích tìm hiểu về ẩm thực và văn hóa quê hương. Bạn cần mình tư vấn món ngon hay địa điểm thú vị nào không?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-4 border-t border-stone-100 bg-white/80 backdrop-blur">
+            <form onsubmit="handleChatSubmit(event)" class="relative">
+                <input type="text" id="chat-input" placeholder="Ví dụ: Ăn gì ở Long Xuyên ngon?" class="w-full bg-stone-100 border-none rounded-full pl-5 pr-14 py-4 text-sm focus:ring-2 focus:ring-amber-500/50 outline-none transition-all shadow-inner font-medium text-stone-800 placeholder-stone-400">
+                <button type="submit" class="absolute right-2 top-2 p-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition-colors shadow-md hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- MODALS AREA -->
+    <!-- ============================================== -->
+
+    <div id="modal-overlay" class="fixed inset-0 z-[90] bg-stone-900/60 backdrop-blur-lg hidden transition-all duration-500" onclick="closeAllModals()"></div>
+
+    <!-- 1. Modal Chi Tiết Sản Phẩm -->
+    <div id="modal-product" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-2xl rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto pointer-events-auto relative modal-animate flex flex-col border border-white/50">
+            <div class="sticky top-0 bg-white/80 backdrop-blur-md px-8 py-5 border-b border-stone-100 flex justify-between items-center z-20">
+                <h3 id="mp-title" class="text-2xl font-serif font-black text-stone-800 line-clamp-1"></h3>
+                <button onclick="closeAllModals()" class="p-2 hover:bg-stone-100 rounded-full transition-colors hover:rotate-90 duration-300"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-8 space-y-8 font-medium">
+                <div class="img-zoom-container rounded-2xl shadow-xl overflow-hidden aspect-video">
+                    <img id="mp-image" src="" class="w-full h-full object-cover">
+                </div>
+                <div id="mp-tags" class="flex gap-2"></div>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-stone-50 p-5 rounded-2xl border border-stone-100 hover:bg-white hover:shadow-md transition-all">
+                        <div class="flex items-center gap-2 text-amber-700 font-bold mb-2 text-xs uppercase tracking-wider"><i data-lucide="map-pin" class="w-4 h-4"></i> Xuất Xứ</div>
+                        <p id="mp-origin" class="text-sm text-stone-700"></p>
+                    </div>
+                    <div class="bg-stone-50 p-5 rounded-2xl border border-stone-100 hover:bg-white hover:shadow-md transition-all">
+                        <div class="flex items-center gap-2 text-amber-700 font-bold mb-2 text-xs uppercase tracking-wider"><i data-lucide="utensils" class="w-4 h-4"></i> Hương Vị</div>
+                        <p id="mp-taste" class="text-sm text-stone-700"></p>
+                    </div>
+                    <div class="bg-stone-50 p-5 rounded-2xl border border-stone-100 hover:bg-white hover:shadow-md transition-all">
+                        <div class="flex items-center gap-2 text-amber-700 font-bold mb-2 text-xs uppercase tracking-wider"><i data-lucide="history" class="w-4 h-4"></i> Nguồn Gốc</div>
+                        <p id="mp-history" class="text-sm text-stone-700"></p>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50/50 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6 border border-amber-100">
+                    <div class="text-center md:text-left">
+                        <h4 class="font-bold mb-1 text-amber-900 uppercase text-xs tracking-wider">Thông tin quán:</h4>
+                        <p class="text-base font-bold text-stone-800">📍 <span id="mp-address"></span></p>
+                        <p class="text-base text-amber-600 font-bold">💰 <span id="mp-price"></span></p>
+                    </div>
+                    <button id="btn-directions" class="bg-stone-900 text-white px-8 py-3.5 rounded-full font-bold flex items-center gap-3 hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 w-full md:w-auto justify-center">
+                        <i data-lucide="navigation" class="w-5 h-5"></i> Chỉ đường ngay
+                    </button>
+                </div>
+                
+                <div class="prose prose-stone max-w-none prose-p:text-stone-600 prose-headings:font-serif">
+                    <h4 class="font-serif font-bold text-xl mb-3 border-b border-stone-100 pb-2">Câu chuyện món ăn</h4>
+                    <p id="mp-desc-long" class="italic leading-relaxed text-lg"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal Bản Đồ -->
+    <div id="modal-map" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto pointer-events-auto relative modal-animate flex flex-col">
+            <div class="sticky top-0 bg-white/80 backdrop-blur px-8 py-5 border-b border-stone-200 flex justify-between items-center z-20">
+                <h3 id="map-title" class="text-xl font-serif font-black text-stone-800 line-clamp-1"></h3>
+                <button onclick="closeAllModals()" class="p-2 hover:bg-stone-100 rounded-full transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-8 space-y-6 font-medium">
+                <div class="bg-blue-50 border border-blue-100 p-5 rounded-2xl flex items-start gap-4 animate-pulse">
+                    <div class="bg-blue-100 p-2.5 rounded-full text-blue-600 mt-1"><i data-lucide="navigation" class="w-6 h-6"></i></div>
+                    <div>
+                        <h4 class="font-bold text-blue-900 text-lg">Thông tin lộ trình</h4>
+                        <div id="map-status" class="text-sm text-blue-800 mt-1 space-y-1">Đang chờ tín hiệu vệ tinh...</div>
+                    </div>
+                </div>
+                <div class="relative w-full h-80 rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-stone-100">
+                    <iframe id="map-iframe" width="100%" height="100%" frameborder="0" scrolling="no" class="filter contrast-[0.9] saturate-[0.8]" src=""></iframe>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 pt-2">
+                    <a id="btn-google-maps" href="#" target="_blank" class="bg-green-600 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-green-700 transition-all shadow-md hover:-translate-y-1">
+                        <i data-lucide="navigation" class="w-5 h-5"></i> Mở Google Maps
+                    </a>
+                    <button onclick="closeAllModals()" class="bg-stone-200 text-stone-700 px-6 py-4 rounded-xl font-bold hover:bg-stone-300 transition-all">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal Food Tour -->
+    <div id="modal-foodtour" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden pointer-events-none">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto pointer-events-auto relative modal-animate flex flex-col">
+            <div class="sticky top-0 bg-white/95 backdrop-blur px-8 py-5 border-b border-stone-200 flex justify-between items-center z-20">
+                <h3 class="text-xl font-serif font-black text-stone-800">Bản đồ Food Tour An Giang</h3>
+                <button onclick="closeAllModals()" class="p-2 hover:bg-stone-100 rounded-full transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-8">
+                 <div class="bg-stone-100 w-full h-[500px] rounded-2xl relative overflow-hidden group border border-stone-200 shadow-inner">
+                    <iframe width="100%" height="100%" frameborder="0" scrolling="no" src="https://maps.google.com/maps?q=10.536294,105.116664&z=10&output=embed" class="opacity-80 hover:opacity-100 transition-opacity duration-500"></iframe>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal Story -->
+    <div id="modal-story" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden pointer-events-none">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto pointer-events-auto relative modal-animate flex flex-col">
+            <div class="sticky top-0 bg-white/95 backdrop-blur px-8 py-5 border-b border-stone-200 flex justify-between items-center z-20">
+                <h3 class="text-xl font-serif font-black text-stone-800">Câu chuyện Di sản</h3>
+                <button onclick="closeAllModals()" class="p-2 hover:bg-stone-100 rounded-full transition-colors"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-10 prose prose-lg prose-stone max-w-none font-serif font-medium">
+                 <div class="rounded-2xl overflow-hidden shadow-lg mb-8">
+                    <img src="https://product.hstatic.net/1000384853/product/420_2e96288a92d94a31a4d3fd7be5d8eae2.jpg" class="w-full h-72 object-cover hover:scale-105 transition-transform duration-700">
+                 </div>
+                 <h2 class="text-3xl font-black text-amber-800 mb-6">30 năm đỏ lửa dưới chân núi Sam</h2>
+                 
+                 <p class="lead italic text-stone-600 border-l-4 border-amber-500 pl-6 py-2 text-xl">"Bánh ngon không chỉ ở bột, mà ở cái tình người làm bánh gửi vào trong đó..."</p>
+                 
+                 <p>Đó là câu chuyện về <strong>Dì Út</strong>, người phụ nữ đã dành hơn nửa đời người để giữ gìn hương vị bánh bò thốt nốt truyền thống.</p>
+                 
+                 <p>Sử dụng những nguyên liệu "trời cho" của vùng Bảy Núi: bột gạo nàng Nhen, đường thốt nốt nguyên chất và nước cốt dừa béo ngậy. Điều đặc biệt nhất chính là <strong>ngọn lửa</strong> luôn đỏ rực trong bếp lò, tượng trưng cho nhiệt huyết chưa bao giờ tắt.</p>
+                 
+                 <div class="bg-amber-50 p-6 rounded-2xl text-base not-italic border border-amber-100 shadow-sm mt-8">
+                     <strong>📍 Địa điểm:</strong> Dưới chân núi Sam, Châu Đốc.<br/>
+                     <strong>🕒 Thâm niên:</strong> Hơn 30 năm.
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- JAVASCRIPT LOGIC --- -->
+    <script>
+        // --- AOS INIT (Scroll Animation) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({
+                once: true, // Animation only happens once
+                offset: 50, // Trigger offset
+                duration: 800, // Animation duration
+                easing: 'ease-out-cubic',
+            });
+            
+            renderFilterButtons();
+            renderProducts();
+            lucide.createIcons();
+        });
+
+        // --- DỮ LIỆU ---
+        const reviews = [
+            // 1. Đói cồn cào
+            {
+                id: 1,
+                name: "Bún Cá Châu Đốc",
+                category: "an-sang",
+                image: "https://mia.vn/media/uploads/blog-du-lich/bun-ca-chau-doc-dac-san-tru-danh-cua-dat-an-giang-01-1659942632.jpg",
+                address: "Chợ Châu Đốc, P. Châu Phú A",
+                price: "25.000đ",
+                rating: 5,
+                tags: ["#MustTry", "#DamDa"],
+                desc: "Nước lèo vàng nghệ, thơm mùi ngãi bún.",
+                origin: "An Giang / Khmer",
+                taste: "Nghệ, sả, ngải bún, mắm ruốc.",
+                history: "Giao thoa văn hóa Kinh - Khmer.",
+                descLong: "Bún cá Châu Đốc có nguồn gốc xuất phát từ vùng đồng bằng sông Cửu Long chịu ảnh hưởng từ văn hóa ẩm thực Khmer (Campuchia). Quá trình di cư và giao thương giữa người Khmer và cư dân miền Tây Việt Nam — đặc biệt ở vùng Châu Đốc (tỉnh An Giang) — đã giúp món bún cá “định cư” tại đây. Tại Châu Đốc, người dân địa phương đã biến tấu món ăn để phù hợp khẩu vị và nguyên liệu sẵn có: sử dụng cá lóc (cá quả), kết hợp nước lèo được ninh kỹ từ xương lợn và đầu cá, gia vị như nghệ, sả, cùng đặc trưng không thể thiếu là ngải bún và mắm ruốc — giúp tạo nên hương thơm riêng và khử mùi tanh cá. Nhờ quá trình giao thoa văn hóa và điều kiện sông nước miền Tây, bún cá Khmer đã “hóa thân” thành Bún cá Châu Đốc — một món đặc sản dân dã, thể hiện bản sắc vùng sông nước An Giang, và hiện nay được xem là biểu tượng ẩm thực của Châu Đốc.",
+                coords: { lat: 10.708688, lng: 105.114755 }
+            },
+            {
+                id: 4,
+                name: "Cơm Tấm Long Xuyên",
+                category: "no-bung",
+                image: "https://mia.vn/media/uploads/blog-du-lich/com-tam-long-xuyen-mon-an-don-gian-nhung-day-cuon-hut-01-1660584910.jpg",
+                address: "Cây Điệp, Long Xuyên",
+                price: "35.000đ",
+                rating: 4,
+                tags: ["#AnTrua", "#GiaTruyen"],
+                desc: "Hạt tấm nhuyễn, thịt khìa cắt nhỏ.",
+                origin: "Long Xuyên, An Giang",
+                taste: "Thơm, bùi, nước mắm chua ngọt.",
+                history: "Tận dụng hạt gạo vỡ sau xay xát.",
+                descLong: "Cơm tấm Long Xuyên nổi tiếng với hạt tấm nhuyễn, khác biệt so với Sài Gòn. Món ăn bắt nguồn từ việc tận dụng những hạt gạo vỡ sau khi xay xát, vốn là thức ăn bình dân chốn đồng quê. Người dân Long Xuyên đặc biệt yêu thích cơm tấm nhuyễn vì hương vị thơm, bùi, dễ ăn. Các thành phần đi kèm như thịt khìa, trứng kho vịt, và bì đều được cắt nhỏ tinh tế, hòa quyện với nước mắm chua ngọt, tạo nên một hương vị đặc trưng, khó quên, trở thành nét văn hóa ẩm thực riêng của An Giang.",
+                coords: { lat: 10.371836, lng: 105.438290 }
+            },
+            {
+                id: 5,
+                name: "Bánh Canh Vĩnh Trung",
+                category: "an-sang",
+                image: "https://static.vinwonders.com/production/2025/11/banh-canh-vinh-trung-ut-viet.jpg", 
+                address: "Xã Vĩnh Trung, Tịnh Biên",
+                price: "30.000đ",
+                rating: 4.5,
+                tags: ["#DaiNgon", "#LaMieng"],
+                desc: "Sợi bánh canh dẹt, dai lạ miệng.",
+                origin: "Làng nghề Vĩnh Trung, Tịnh Biên.",
+                taste: "Sợi bánh dai sần sật, nước lèo ngọt.",
+                history: "Đặc sản vùng Bảy Núi.",
+                descLong: "Bánh canh Vĩnh Trung nổi tiếng nhờ sợi bánh làm từ gạo Neang Nhen thơm dẻo, có độ dai đặc trưng không lẫn vào đâu được. Nước dùng được ninh từ gà thả vườn và các loại rau củ, tạo nên vị ngọt thanh tự nhiên.",
+                coords: { lat: 10.5186, lng: 105.0039 }
+            },
+
+            // 2. Lai rai
+            {
+                id: 2,
+                name: "Gà Đốt Ô Thum",
+                category: "lai-rai",
+                image: "https://mia.vn/media/uploads/blog-du-lich/ga-dot-o-thum-dac-san-nuc-tieng-tai-vung-dat-tri-ton-tinh-an-giang-05-1660497843.jpeg",
+                address: "Hồ Ô Thum, Tri Tôn",
+                price: "250k/con",
+                rating: 5,
+                tags: ["#DacSan", "#ViewHo"],
+                desc: "Gà thả vườn đốt lá chúc thơm lừng.",
+                origin: "Khmer vùng Bảy Núi",
+                taste: "Da giòn, thịt ngọt, thơm lá chúc.",
+                history: "Món ăn của cộng đồng Khmer.",
+                descLong: "Gà đốt ô thum có nguồn gốc của đặc sản gà đốt Ô Thum xuất phát từ cộng đồng người Khmer sinh sống tại vùng Bảy Núi, An Giang. Món ăn này đã được người dân An Giang sáng tạo và phát triển để trở thành đặc sản của địa phương, mang đậm dấu ấn văn hóa ẩm thực của người Khmer và người miền Tây Nam Bộ. Địa danh Ô Thum là một hồ nước lớn nằm ở huyện Tri Tôn, xung quanh là cảnh quan thiên nhiên hữu tình với núi non, hồ nước trong xanh và hàng cây thốt nốt cao vút – một biểu tượng quen thuộc của vùng đất Thất Sơn.",
+                coords: { lat: 10.395782, lng: 105.003185 }
+            },
+            {
+                id: 6,
+                name: "Lẩu Mắm Châu Đốc",
+                category: "lai-rai",
+                image: "https://static.vinwonders.com/production/2025/10/lau-mam-chau-doc-topbanner.jpg", 
+                address: "Quán Đồng Quê, Châu Đốc",
+                price: "200.000đ",
+                rating: 5,
+                tags: ["#DamDa", "#RauSong"],
+                desc: "Hương vị mắm cá linh đậm đà.",
+                origin: "Campuchia / Miền Tây",
+                taste: "Mắm truyền thống, rau, hải sản.",
+                history: "Giao thoa ẩm thực.",
+                descLong: "Lẩu mắm Châu Đốc có nguồn gốc từ Campuchia, sau đó du nhập vào miền Tây Nam Bộ Việt Nam và được người dân địa phương sáng tạo, biến tấu thành món ăn mang đậm bản sắc riêng. Món ăn này ra đời từ sự kết hợp giữa mắm truyền thống của vùng Châu Đốc và các loại rau, hải sản tươi ngon.",
+                coords: { lat: 10.7025, lng: 105.1118 }
+            },
+
+            // 3. Hảo ngọt
+            {
+                id: 3,
+                name: "Bánh Bò Thốt Nốt",
+                category: "ngot-ngao",
+                image: "https://tiembanhkimnhu.com/wp-content/uploads/2022/01/banh-bo-thot-not.jpg",
+                address: "Chân núi Sam, Châu Đốc",
+                price: "5.000đ",
+                rating: 4.5,
+                tags: ["#AnVat", "#QuaQue"],
+                desc: "Vị ngọt thanh của đường thốt nốt xịn.",
+                origin: "Bảy Núi - An Giang",
+                taste: "Ngọt thanh, thơm thốt nốt.",
+                history: "Ẩm thực Khmer Nam Bộ.",
+                descLong: "Bánh bò thốt nốt có nguồn gốc từ vùng Bảy Núi – An Giang, bắt nguồn từ ẩm thực của người Khmer Nam Bộ, nơi thốt nốt được dùng làm nguyên liệu truyền thống.",
+                coords: { lat: 10.695328, lng: 105.076239 }
+            },
+            {
+                id: 7,
+                name: "Chè Bưởi An Giang",
+                category: "ngot-ngao",
+                image: "https://cdn.tgdd.vn/2020/08/CookProduct/Untitled-2-1200x676-11.jpg",
+                address: "Chợ Long Xuyên",
+                price: "15.000đ",
+                rating: 4,
+                tags: ["#MatLanh", "#BeoNgay"],
+                desc: "Cùi bưởi giòn sần sật, đậu xanh bùi.",
+                origin: "Miền Tây / An Giang",
+                taste: "Thanh mát, béo ngậy.",
+                history: "Tận dụng vỏ bưởi địa phương.",
+                descLong: "Chè bưởi An Giang có nguồn gốc từ vùng miền Tây, đặc biệt phổ biến ở An Giang, nơi tận dụng vỏ bưởi địa phương để tạo món chè thanh mát đặc trưng của ẩm thực Nam Bộ.",
+                coords: { lat: 10.3759, lng: 105.4328 }
+            },
+
+            // 4. Mua làm quà
+            {
+                id: 8,
+                name: "Mắm Thái Châu Đốc",
+                category: "qua-que",
+                image: "https://img.lazcdn.com/g/p/3af398857c380f013dfe3638842cd50b.jpg_720x720q80.jpg",
+                address: "Chợ Mắm Châu Đốc",
+                price: "150k/kg",
+                rating: 5,
+                tags: ["#DacSan", "#BaoQuanLau"],
+                desc: "Thương hiệu mắm Bà Giáo Khỏe lừng danh.",
+                origin: "Làng nghề mắm Châu Đốc",
+                taste: "Mặn mòi, thơm nồng.",
+                history: "Lâu đời, ảnh hưởng Khmer.",
+                descLong: "Mắm thái Châu Đốc có nguồn gốc từ An Giang, xuất phát từ làng nghề làm mắm Châu Đốc lâu đời, chịu ảnh hưởng ẩm thực Khmer – Nam Bộ.",
+                coords: { lat: 10.7092, lng: 105.1158 }
+            },
+            {
+                id: 9,
+                name: "Tung Lò Mò (Lạp xưởng bò)",
+                category: "qua-que",
+                image: "https://cdn3.ivivu.com/2022/12/tung-lo-mo-ivivu.jpg",
+                address: "Làng Chăm Châu Phong",
+                price: "280k/kg",
+                rating: 4.5,
+                tags: ["#DocLa", "#Halal"],
+                desc: "Đặc sản bò nướng của người Chăm.",
+                origin: "Đồng bào Chăm An Giang",
+                taste: "Thịt bò và gia vị đặc trưng.",
+                history: "Món truyền thống Chăm Hồi giáo.",
+                descLong: "Tung lò mò (lạp xưởng bò) có nguồn gốc từ đồng bào Chăm ở An Giang, là món truyền thống dùng thịt bò và gia vị đặc trưng của người Chăm Hồi giáo.",
+                coords: { lat: 10.6833, lng: 105.0833 }
+            }
+        ];
+
+        let activeMood = 'all';
+
+        // --- UI RENDER (Updated with Animations) ---
+        function renderFilterButtons() {
+            const moods = [
+                { id: 'doi', icon: 'utensils', text: 'Đói cồn cào' },
+                { id: 'lairai', icon: 'coffee', text: 'Lai rai tâm tình' },
+                { id: 'ngot', icon: 'star', text: 'Hảo ngọt' },
+                { id: 'qua', icon: 'shopping-bag', text: 'Mua làm quà' }
+            ];
+
+            const container = document.getElementById('filter-buttons');
+            container.innerHTML = moods.map(m => `
+                <button onclick="setMood('${m.id}')" 
+                    class="flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 border ${activeMood === m.id ? 'bg-amber-500 text-stone-900 font-bold border-amber-500 shadow-lg scale-105' : 'bg-stone-800 hover:bg-stone-700 border-stone-700'}">
+                    <i data-lucide="${m.icon}" class="w-4 h-4"></i> ${m.text}
+                </button>
+            `).join('');
+        }
+
+        function setMood(mood) {
+            activeMood = activeMood === mood ? 'all' : mood;
+            renderFilterButtons();
+            renderProducts(); // Will re-trigger animation because DOM changes
+            lucide.createIcons();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('product-grid');
+            const filtered = activeMood === 'all' 
+                ? reviews 
+                : reviews.filter(item => {
+                    if (activeMood === 'doi') return ['an-sang', 'no-bung'].includes(item.category);
+                    if (activeMood === 'lairai') return ['lai-rai'].includes(item.category);
+                    if (activeMood === 'ngot') return ['ngot-ngao'].includes(item.category);
+                    if (activeMood === 'qua') return ['qua-que'].includes(item.category);
+                    return true;
+                });
+
+            container.innerHTML = filtered.map((item, index) => `
+                <div onclick="openProductDetail(${item.id})" 
+                     data-aos="fade-up" data-aos-delay="${index * 50}"
+                     class="bg-white rounded-[2rem] shadow-sm border border-stone-100 overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group hover:-translate-y-2">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/600x400?text=Mon+Ngon'">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm text-stone-800">
+                            ${item.price}
+                        </div>
+                        <button onclick="event.stopPropagation(); handleGetDirections(${item.id})" class="absolute bottom-3 right-3 bg-amber-500 text-white p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:bg-amber-600 transition-all transform translate-y-4 group-hover:translate-y-0 duration-300" title="Chỉ đường">
+                            <i data-lucide="navigation" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3 flex-wrap">
+                            ${item.tags.map(t => `<span class="text-[10px] font-bold uppercase tracking-wide bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg border border-stone-200">${t}</span>`).join('')}
+                        </div>
+                        <h3 class="text-xl font-serif font-bold text-stone-800 mb-2 leading-tight group-hover:text-amber-700 transition-colors">${item.name}</h3>
+                        <p class="text-xs text-stone-500 line-clamp-2 mb-4 h-8 leading-relaxed font-medium">${item.desc}</p>
+                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-stone-100">
+                            <div class="flex text-amber-500 gap-0.5 text-sm">${'✿'.repeat(Math.floor(item.rating))}</div>
+                            <div class="flex items-center text-xs text-stone-400 truncate ml-2 font-medium">
+                                <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i> <span class="truncate max-w-[100px]">${item.address}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Re-init AOS to catch new elements if using AJAX, but here simple DOM replacement works mostly fine. 
+            // Better to refresh hard for dynamic content:
+            // AOS.refresh();
+        }
+
+        // --- MODAL & GPS LOGIC (Unchanged Logic, Enhanced UI) ---
+        function openModal(type) {
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            document.getElementById(`modal-${type}`).classList.remove('hidden');
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAllModals() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+            document.querySelectorAll('[id^="modal-"]').forEach(el => {
+                if(el.id !== 'modal-overlay') el.classList.add('hidden');
+            });
+            document.body.style.overflow = 'auto';
+        }
+
+        function openProductDetail(id) {
+            const product = reviews.find(r => r.id === id);
+            if(!product) return;
+
+            document.getElementById('mp-title').innerText = product.name;
+            document.getElementById('mp-image').src = product.image;
+            document.getElementById('mp-origin').innerText = product.origin;
+            document.getElementById('mp-taste').innerText = product.taste;
+            document.getElementById('mp-history').innerText = product.history;
+            document.getElementById('mp-address').innerText = product.address;
+            document.getElementById('mp-price').innerText = product.price;
+            document.getElementById('mp-desc-long').innerText = product.descLong || product.desc;
+            
+            document.getElementById('mp-tags').innerHTML = product.tags.map(t => 
+                `<span class="text-xs font-bold uppercase tracking-wide bg-amber-100 text-amber-800 px-3 py-1 rounded-full">${t}</span>`
+            ).join('');
+
+            const btn = document.getElementById('btn-directions');
+            btn.onclick = () => { closeAllModals(); handleGetDirections(id); };
+
+            openModal('product');
+        }
+
+        function handleGetDirections(id) {
+            const product = reviews.find(r => r.id === id);
+            if(!product) return;
+
+            openModal('map');
+            document.getElementById('map-title').innerText = `Đường đến: ${product.name}`;
+            document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${product.coords.lat},${product.coords.lng}&z=15&output=embed`;
+            
+            const statusDiv = document.getElementById('map-status');
+            statusDiv.innerHTML = '<span class="text-amber-600 animate-pulse font-medium">Đang định vị vệ tinh...</span>';
+
+            if (!navigator.geolocation) {
+                statusDiv.innerHTML = '<span class="text-red-500 font-medium">Trình duyệt không hỗ trợ GPS.</span>';
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    const dist = calculateDistance(userLat, userLng, product.coords.lat, product.coords.lng);
+                    
+                    statusDiv.innerHTML = `
+                        <div class="text-sm text-blue-800 font-medium">
+                            <p>📍 Vị trí của bạn: <span class="font-bold text-green-600">Đã xác định</span></p>
+                            <p>🏁 Điểm đến: <span class="font-semibold">${product.address}</span></p>
+                            <p>📏 Khoảng cách: <span class="font-bold text-lg text-amber-700">${dist} km</span></p>
+                        </div>
+                    `;
+                    document.getElementById('btn-google-maps').href = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${product.coords.lat},${product.coords.lng}`;
+                },
+                (error) => {
+                    console.error(error);
+                    statusDiv.innerHTML = '<span class="text-red-500 font-medium">Không thể lấy vị trí. Vui lòng bật GPS.</span>';
+                    document.getElementById('btn-google-maps').href = `https://www.google.com/maps/dir/?api=1&destination=${product.coords.lat},${product.coords.lng}`;
+                }
+            );
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return (R * c).toFixed(1);
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if(el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function filterByFooter(mood) {
+            setMood(mood);
+            scrollToSection('section-reviews');
+        }
+
+        // ==========================================
+        // AI CHAT LOGIC (LOY PERSONA - ROBUST)
+        // ==========================================
+        
+        const GEMINI_API_KEY = "AIzaSyDzoA90ZMJ9JSeUK7NHOX6nYe6wBQUSoSI";
+
+        function toggleChat() {
+            const widget = document.getElementById('chat-widget');
+            widget.classList.toggle('hidden');
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            const loadingId = addLoading();
+
+            try {
+                const reply = await callGeminiAPI(message);
+                removeMessage(loadingId);
+                addMessage(reply, 'ai');
+            } catch (error) {
+                removeMessage(loadingId);
+                console.error("Chat Error:", error);
+                
+                let errorMsg = "Mạng đang hơi chập chờn, bạn đợi xíu rồi hỏi lại mình nha!";
+                if (error.message.includes('Overloaded')) {
+                    errorMsg = "Nhiều bạn hỏi quá nên mình trả lời không kịp nè! Bạn đợi xíu rồi thử lại nha.";
+                }
+                addMessage(errorMsg, 'ai');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            const isAI = sender === 'ai';
+            
+            div.className = `flex gap-3 ${isAI ? '' : 'flex-row-reverse'} animate-fade-in-up`;
+            const avatarUrl = isAI 
+                ? 'https://i.postimg.cc/jjsstjhf/IMG-1744295754904-1744295756131.jpg' 
+                : 'https://api.dicebear.com/7.x/avataaars/svg?seed=Khach&backgroundColor=e6e6e6';
+
+            div.innerHTML = `
+                <div class="w-10 h-10 ${isAI ? 'bg-stone-700' : 'bg-stone-300'} rounded-full flex-shrink-0 overflow-hidden border-2 border-white shadow-md">
+                    <img src="${avatarUrl}" class="w-full h-full object-cover">
+                </div>
+                <div class="${isAI ? 'bg-white text-stone-800' : 'bg-amber-600 text-white'} p-3.5 rounded-2xl ${isAI ? 'rounded-tl-none' : 'rounded-tr-none'} shadow-md max-w-[85%] text-sm leading-relaxed prose-sm font-medium">
+                    ${isAI ? marked.parse(text) : text}
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addLoading() {
+            const id = 'loading-' + Date.now();
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = "flex gap-3 animate-fade-in-up";
+            div.innerHTML = `
+                <div class="w-10 h-10 bg-stone-700 rounded-full flex-shrink-0 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://i.postimg.cc/jjsstjhf/IMG-1744295754904-1744295756131.jpg" class="w-full h-full object-cover">
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-md flex gap-1 items-center h-12">
+                    <div class="w-2 h-2 bg-stone-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-stone-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-stone-400 rounded-full typing-dot"></div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function removeMessage(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function callGeminiAPI(userMsg) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const contextData = reviews.map(r => `${r.name}: ${r.descLong} (Tại: ${r.address})`).join("\n");
+            
+            const finalPrompt = `
+Bạn là Loy, một học sinh cấp 3 am hiểu sâu sắc về văn hóa và ẩm thực An Giang.
+Nhiệm vụ: Tư vấn, trò chuyện với người dùng về du lịch và ăn uống tại An Giang dựa trên danh sách sau:
+${contextData}
+
+Yêu cầu phong cách:
+- Xưng hô: Mình - Bạn (thân thiện, hòa nhã, chuẩn mực của học sinh).
+- Thái độ: Nhiệt tình, lễ phép nhưng trẻ trung, năng động.
+- Kiến thức: Tập trung vào ẩm thực nhưng có thể mở rộng đôi chút về văn hóa nếu liên quan.
+- Trả lời ngắn gọn, súc tích, không dài dòng văn tự.
+
+Khách hỏi: "${userMsg}"
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: finalPrompt }] }]
+            };
+
+            const maxRetries = 3;
+            let attempt = 0;
+
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 503 || response.status === 429) {
+                        attempt++;
+                        console.warn(`Attempt ${attempt} failed with ${response.status}. Retrying...`);
+                        await delay(1000 * Math.pow(2, attempt - 1));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
+                        return data.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("No response content received.");
+                    }
+
+                } catch (error) {
+                    if (attempt === maxRetries - 1) throw error;
+                    attempt++;
+                    console.warn(`Attempt ${attempt} failed with error: ${error.message}. Retrying...`);
+                    await delay(1000 * Math.pow(2, attempt - 1));
+                }
+            }
+            throw new Error("Failed after maximum retries");
+        }
+    </script>
+    
+    <!-- Custom Keyframes for Tailwind (Simulated via Style since raw config isn't available) -->
+    <style>
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fade-in-up 0.3s ease-out forwards; }
+        
+        @keyframes fade-down {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-down { animation: fade-down 0.3s ease-out forwards; }
+    </style>
+</body>
+</html>
