@@ -1,241 +1,179 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Trang bảo trì — Sắp trở lại</title>
-  <meta name="description" content="Trang thông báo hệ thống đang bảo trì. Chúng tôi sẽ sớm trở lại với bạn.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Maintenance — Enhanced Animation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <style>
-    :root{
-      --bg:#081226; --card:#0f1724; --accent:#6EE7B7; --accent-2:#7C3AED; --muted:#9AA7B2; --glass: rgba(255,255,255,0.04);
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, #1e1e3f, #0a0a16 70%);
+      color: #e0e0ff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent), radial-gradient(900px 400px at 90% 90%, rgba(110,231,183,0.06), transparent), var(--bg);color:#E6EEF3}
-    .wrap{min-height:100vh;display:grid;place-items:center;padding:48px}
 
-    /* Card */
-    .card{width:min(980px,96%);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
-    .grid{display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:center}
-    @media (max-width:900px){.grid{grid-template-columns:1fr;}.right{order:2}.left{order:1}}
+    /* Floating geometric shapes */
+    .geo {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(45deg, #7c3aed, #6ee7b7);
+      opacity: 0.18;
+      filter: blur(2px);
+      border-radius: 20%;
+      animation: geoFloat 12s infinite ease-in-out;
+    }
 
-    /* Header */
-    h1{font-size:clamp(22px,3vw,34px);margin:0 0 6px;line-height:1.02;font-weight:800;letter-spacing:-0.02em}
-    p.lead{margin:0;color:var(--muted)}
+    .geo:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 70%; animation-duration: 14s; }
+    .geo:nth-child(3) { width: 60px; height: 60px; top: 30%; left: 80%; animation-duration: 10s; }
+    .geo:nth-child(4) { width: 140px; height: 140px; top: 10%; left: 5%; animation-duration: 18s; }
 
-    /* Animated server / mascot */
-    .visual{height:360px;display:flex;align-items:center;justify-content:center;position:relative}
-    .scene{width:320px;height:320px;display:grid;place-items:center;position:relative}
+    @keyframes geoFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
 
-    /* Floating server box */
-    .server{width:200px;height:240px;border-radius:14px;background:linear-gradient(180deg,#0b1222 0%, #0f1a2b 100%);box-shadow:0 8px 30px rgba(2,6,23,0.6);position:relative;padding:18px;border:1px solid rgba(255,255,255,0.03);transform-origin:center;animation:float 4.5s ease-in-out infinite}
-    .server:before{content:'';position:absolute;inset:12px;border-radius:10px;background:linear-gradient(180deg, rgba(124,58,237,0.06), rgba(110,231,183,0.03));pointer-events:none}
-    @keyframes float{0%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-14px) rotate(1deg)}100%{transform:translateY(0) rotate(-1deg)}}
+    /* Main wrapper */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      z-index: 5;
+    }
 
-    .panel{height:22px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));display:flex;gap:8px;align-items:center;padding:4px 6px}
-    .led{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.06);box-shadow:0 0 12px rgba(0,0,0,0.3) inset}
-    .led.on{background:var(--accent);box-shadow:0 0 16px var(--accent)}
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      animation: fadeInDown 1.2s;
+      text-shadow: 0 0 18px rgba(110, 231, 183, 0.5);
+    }
 
-    .rack{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-    .drive{height:34px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:space-between;padding:8px 10px}
-    .drive .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.04)}
+    p {
+      max-width: 520px;
+      line-height: 1.6;
+      color: #b7b7d9;
+      animation: fadeIn 1.6s;
+    }
 
-    /* Gear SVG */
-    .gear{position:absolute;left:-40px;top:-40px;opacity:0.06;transform-origin:center;animation:spin 18s linear infinite}
-    .gear.small{left:auto;right:-52px;top:12px;opacity:0.04;transform-origin:center;animation-duration:24s}
-    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    /* Neon server animation */
+    .server-box {
+      width: 240px;
+      height: 300px;
+      background: linear-gradient(180deg, #13132b, #0d0d1b);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.4);
+      position: relative;
+      animation: hoverUp 5s infinite ease-in-out;
+    }
 
-    /* Progress ring */
-    .progress{position:absolute;bottom:-38px;right:-38px;width:180px;height:180px}
-    .ring{filter:drop-shadow(0 8px 20px rgba(12,17,28,0.6))}
+    @keyframes hoverUp {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+      100% { transform: translateY(0); }
+    }
 
-    /* Right column (info + actions) */
-    .right{padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));border-radius:12px}
-    .meta{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-    .badge{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:6px 10px;border-radius:999px;font-weight:700;color:#062020;font-size:13px}
+    .glow-line {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 6px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #6ee7b7, #7c3aed);
+      filter: drop-shadow(0 0 10px #6ee7b7);
+      animation: pulse 2.6s infinite ease-in-out;
+    }
 
-    .countdown{display:flex;gap:8px;font-weight:700}
-    .countdown > div{background:var(--glass);padding:8px 10px;border-radius:10px;min-width:54px;text-align:center}
-    .muted{color:var(--muted);font-size:13px}
+    .glow-line:nth-child(1) { top: 40px; animation-delay: 0s; }
+    .glow-line:nth-child(2) { top: 90px; animation-delay: 0.6s; }
+    .glow-line:nth-child(3) { top: 140px; animation-delay: 1.2s; }
+    .glow-line:nth-child(4) { top: 190px; animation-delay: 1.8s; }
 
-    /* Form */
-    .notify{display:flex;gap:8px;margin-top:18px}
-    .notify input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;font-size:14px;outline:none}
-    .notify button{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#062020;font-weight:700;cursor:pointer}
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.4; transform: scale(1); }
+    }
 
-    /* Footer */
-    .footer{margin-top:18px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-    .links a{color:var(--muted);text-decoration:none;font-size:13px}
+    /* Rotating 3D ring */
+    .ring {
+      margin-top: 40px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 6px solid rgba(255,255,255,0.06);
+      position: relative;
+      animation: spin 14s linear infinite;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12) inset;
+    }
 
-    /* Particles canvas full bleed */
-    canvas#particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+    .ring::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 6px solid;
+      border-image: linear-gradient(90deg, #6ee7b7, #7c3aed) 1;
+      filter: drop-shadow(0 0 16px #7c3aed);
+    }
 
-    /* Accessibility focus */
-    a:focus,button:focus,input:focus{outline:2px dashed rgba(124,58,237,0.6);outline-offset:3px}
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* CTA */
+    button {
+      margin-top: 30px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #6ee7b7, #7c3aed);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0a0a16;
+      cursor: pointer;
+      animation: fadeInUp 1s;
+      transition: 0.25s;
+      box-shadow: 0 0 20px rgba(110, 231, 183, 0.4);
+    }
+
+    button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px rgba(124, 58, 237, 0.7);
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <article class="card" role="alert" aria-labelledby="title" aria-describedby="desc">
-      <canvas id="particles" aria-hidden="true"></canvas>
+  <!-- Floating shapes -->
+  <div class="geo"></div>
+  <div class="geo"></div>
+  <div class="geo"></div>
+  <div class="geo"></div>
 
-      <div class="grid">
-        <section class="left">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px">
-            <div>
-              <h1 id="title">Hệ thống đang được bảo trì</h1>
-              <p id="desc" class="lead">Chúng tôi đang nâng cấp để mang lại trải nghiệm tốt hơn. Cảm ơn bạn đã kiên nhẫn — sẽ trở lại sớm.</p>
-            </div>
-            <div class="meta">
-              <div class="badge">Bảo trì</div>
-            </div>
-          </div>
+  <div class="center">
+    <h1>Đang bảo trì — Hệ thống siêu nâng cấp</h1>
+    <p>Chúng tôi đang triển khai các mô-đun mới, tối ưu hiệu năng, và nâng cấp bảo mật. Mọi thứ sẽ ổn định trở lại trong thời gian ngắn.</p>
 
-          <div class="visual" aria-hidden="false">
-            <div class="scene" aria-hidden="true">
-              <svg class="gear" width="220" height="220" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <g stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M50 30 L55 22 L65 24 L72 18 L80 24 L78 34 L86 40 L84 50 L90 58 L82 64 L78 74 L68 76 L62 84 L50 82 L38 84 L32 76 L22 74 L18 64 L10 58 L16 50 L14 40 L22 34 L20 24 L28 18 L35 24 L45 22 Z"/>
-                </g>
-              </svg>
+    <div class="server-box animate__animated animate__fadeInUp">
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+    </div>
 
-              <div class="server" role="img" aria-label="Biểu tượng máy chủ đang làm việc">
-                <div class="panel">
-                  <div style="display:flex;gap:8px;align-items:center">
-                    <div class="led on" aria-hidden></div>
-                    <div class="led" aria-hidden></div>
-                    <div class="led" aria-hidden></div>
-                  </div>
-                  <div style="font-family: 'JetBrains Mono', monospace;font-size:12px;color:var(--muted)">uptime: —</div>
-                </div>
+    <div class="ring"></div>
 
-                <div class="rack" aria-hidden>
-                  <div class="drive"><div style="display:flex;align-items:center;gap:8px"><div class="dot"></div><div style="font-size:13px;color:var(--muted)">API</div></div><div style="font-size:12px;color:var(--muted)">0.3s</div></div>
-                  <div class="drive"><div style="display:flex;align-items:center;gap:8px"><div class="dot"></div><div style="font-size:13px;color:var(--muted)">DB</div></div><div style="font-size:12px;color:var(--muted)">—</div></div>
-                  <div class="drive"><div style="display:flex;align-items:center;gap:8px"><div class="dot"></div><div style="font-size:13px;color:var(--muted)">Jobs</div></div><div style="font-size:12px;color:var(--muted)">queued</div></div>
-                </div>
-
-                <svg class="progress" viewBox="0 0 120 120" aria-hidden>
-                  <defs>
-                    <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
-                  </defs>
-                  <g class="ring" transform="translate(10,10)">
-                    <circle cx="50" cy="50" r="48" stroke="rgba(255,255,255,0.03)" stroke-width="6" fill="none"/>
-                    <circle id="arc" cx="50" cy="50" r="48" stroke="url(#g1)" stroke-width="6" fill="none" stroke-dasharray="301" stroke-dashoffset="301" stroke-linecap="round"/>
-                    <text x="50" y="55" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#E6EEF3">{ % }</text>
-                  </g>
-                </svg>
-
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:18px;color:var(--muted);font-size:14px">Bạn có thể truy cập tài liệu hoặc theo dõi tiến trình cập nhật. Nếu cần trợ giúp khẩn cấp, hãy liên hệ với <a href="mailto:support@example.com">support@example.com</a>.</div>
-        </section>
-
-        <aside class="right" aria-label="Thông tin bảo trì">
-          <div style="display:flex;flex-direction:column">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div class="muted">Dự kiến hoàn thành</div>
-                <div style="font-weight:800;font-size:18px;margin-top:6px">Sắp xong — đang tối ưu hoá</div>
-              </div>
-            </div>
-
-            <div style="margin-top:14px">
-              <div class="muted">Thời gian còn lại</div>
-              <div class="countdown" role="timer" aria-live="polite" id="countdown">
-                <div><div style="font-size:12px;color:var(--muted)">Giờ</div><div id="h">00</div></div>
-                <div><div style="font-size:12px;color:var(--muted)">Phút</div><div id="m">00</div></div>
-                <div><div style="font-size:12px;color:var(--muted)">Giây</div><div id="s">00</div></div>
-              </div>
-            </div>
-
-            <form class="notify" onsubmit="event.preventDefault();subscribe();" aria-label="Đăng ký nhận thông báo">
-              <input id="email" type="email" placeholder="Nhập email để nhận thông báo" aria-label="Email" required>
-              <button id="btn" type="submit">Thông báo</button>
-            </form>
-
-            <div class="footer">
-              <div class="links">
-                <a href="#" aria-label="Xem trạng thái tổng quan">Trang trạng thái</a>
-                <span style="margin:0 8px">•</span>
-                <a href="#" aria-label="Trợ giúp">Trợ giúp</a>
-              </div>
-              <div class="muted">ID: <span style="font-family: 'JetBrains Mono', monospace">MT-2025-11</span></div>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </article>
+    <button>Thông báo khi hoàn tất</button>
   </div>
-
-  <script>
-    // Particles background (lightweight)
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize(){canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight}
-    window.addEventListener('resize', resize); resize();
-    function rand(min,max){return Math.random()*(max-min)+min}
-    for(let i=0;i<36;i++){particles.push({x:rand(0,canvas.width),y:rand(0,canvas.height),r:rand(0.8,2.8),vx:rand(-0.2,0.2),vy:rand(-0.05,0.05),alpha:rand(0.03,0.12)})}
-    function tick(){ctx.clearRect(0,0,canvas.width,canvas.height);
-      for(let p of particles){p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.fillStyle = `rgba(110,231,183,${p.alpha})`; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();}
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    // Animated progress arc
-    const arc = document.getElementById('arc');
-    let progress = 0; // 0..100
-    function animateProgress(target, duration=1800){
-      const start = progress; const diff = target - start; const t0 = performance.now();
-      function anim(t){const p = Math.min(1,(t - t0)/duration); progress = start + diff * ease(p); const dash = 301 - (301 * progress/100); arc.style.strokeDashoffset = dash; if(p<1) requestAnimationFrame(anim);}
-      requestAnimationFrame(anim);
-    }
-    function ease(t){return t<.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1} // smooth
-    animateProgress(46);
-
-    // Countdown (example: 6 minutes from now) — you can change target date
-    const targetDate = new Date(Date.now() + (6*60+12)*1000); // 6m12s demo
-    function updateCountdown(){
-      const now = new Date(); let diff = Math.max(0, Math.floor((targetDate - now)/1000)); const h = Math.floor(diff/3600); diff%=3600; const m = Math.floor(diff/60); const s = diff%60;
-      document.getElementById('h').textContent = String(h).padStart(2,'0');
-      document.getElementById('m').textContent = String(m).padStart(2,'0');
-      document.getElementById('s').textContent = String(s).padStart(2,'0');
-      // update arc
-      const total = 6*60+12; // seconds used when animating
-      const elapsed = Math.max(0,total - Math.floor((targetDate - now)/1000));
-      const pct = Math.min(100, Math.floor(100 * elapsed / total));
-      animateProgress(pct);
-      if(targetDate - now <= 0){clearInterval(timerInterval);document.getElementById('btn').textContent='Hoàn tất';}
-    }
-    const timerInterval = setInterval(updateCountdown, 500); updateCountdown();
-
-    // Simple subscribe demo — stores in localStorage & shows a small success micro-interaction
-    function subscribe(){
-      const emailEl = document.getElementById('email'); const btn = document.getElementById('btn');
-      const email = emailEl.value.trim(); if(!email) return;
-      // simple validation
-      const ok = /^\S+@\S+\.\S+$/.test(email);
-      if(!ok){emailEl.focus(); alert('Vui lòng nhập email hợp lệ'); return}
-      // simulate storing
-      const list = JSON.parse(localStorage.getItem('mt_emails')||'[]'); list.push({email,ts:Date.now()}); localStorage.setItem('mt_emails', JSON.stringify(list));
-      btn.innerText = 'Đã đăng ký'; btn.disabled=true; btn.style.opacity=0.9;
-      // small confetti micro-animation
-      microConfetti();
-    }
-
-    function microConfetti(){
-      const c = document.createElement('canvas'); c.width=120; c.height=80; c.style.position='absolute'; c.style.right='38px'; c.style.bottom='40px'; c.style.zIndex=30; document.body.appendChild(c);
-      const g = c.getContext('2d'); const pieces=[]; for(let i=0;i<20;i++){pieces.push({x:60,y:40,vx:(Math.random()-0.5)*6,vy:-Math.random()*8-2,ang:Math.random()*Math.PI*2,va:(Math.random()-0.5)*0.2,c:['#6EE7B7','#7C3AED','#FFD166','#FF7A7A'][i%4]});}
-      let t = 0; const int = setInterval(()=>{g.clearRect(0,0,c.width,c.height); t+=1; for(let p of pieces){p.x+=p.vx; p.y+=p.vy; p.vy+=0.35; p.ang+=p.va; g.save(); g.translate(p.x,p.y); g.rotate(p.ang); g.fillStyle=p.c; g.fillRect(-4,-2,8,4); g.restore()} if(t>60){clearInterval(int); c.remove();}},16);
-    }
-
-    // small accessibility: focus email on load
-    window.addEventListener('load', ()=>{setTimeout(()=>{const e=document.getElementById('email'); if(e) e.focus()},600)});
-  </script>
 </body>
 </html>
