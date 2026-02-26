@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (Gemini 2.5)</title>
+    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (Bản Hoàn Thiện V2.5)</title>
     <script type="importmap">
       {
         "imports": {
@@ -12,7 +12,7 @@
       }
     </script>
     <style>
-        /* GIAO DIỆN SANG TRỌNG - GIỮ NGUYÊN */
+        /* GIAO DIỆN SANG TRỌNG - GIỮ NGUYÊN HOÀN TOÀN */
         :root {
             --bg-body: #121212; --bg-card: rgba(30, 30, 30, 0.85);
             --border-gold: #D4AF37; --text-main: #E0E0E0;
@@ -119,7 +119,7 @@
     import { GoogleGenerativeAI } from "@google/generative-ai";
 
     // ==========================================
-    // 1. KHO API KEY BẤT TỬ (ĐÃ CHIA NHỎ ĐỂ CHỐNG QUÉT)
+    // 1. KHO API KEY BẤT TỬ 
     // ==========================================
     const apiBunker = [
         "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o",
@@ -132,28 +132,29 @@
     const USE_AI = true; 
 
     // ==========================================
-    // 2. STATE KHỞI ĐẦU & BỘ LƯU TRỮ AI KỊCH BẢN
+    // 2. STATE & BỘ NHỚ LỊCH SỬ CHỐNG LẶP
     // ==========================================
     let state = { money: 6000000, time: 25, morale: 100, quality: 0 };
     let dynamicStory = {}; 
+    let usedThemes = []; // Lưu lại nội dung đã chơi để AI không bị trùng lặp
 
     // ==========================================
-    // 3. CỐT TRUYỆN GỐC TĨNH (GIỮ NGUYÊN NHƯ CŨ)
+    // 3. CỐT TRUYỆN GỐC TĨNH (SƯỜN CHÍNH & DỰ PHÒNG)
     // ==========================================
     const story = {
         start: {
-            theme: "Lập kế hoạch và mua sắm cơ sở vật chất ban đầu",
+            theme: "Lập kế hoạch và chuẩn bị cơ sở vật chất (kệ sách, sơn tường, dọn dẹp phòng trống).",
             text: "<b>GIAI ĐOẠN 1: KẾ HOẠCH CƠ SỞ VẬT CHẤT</b><br>Dự án Thư viện Ước mơ khởi động! Căn phòng đang trống rỗng. Quyết định của Trưởng dự án về hạng mục Kệ sách?",
             image: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54?auto=format&fit=crop&q=80&w=800",
             choices: [
-                { text: "A. Mua kệ nhôm kính lắp ráp (Bền, đẹp, nhanh nhưng tốn kém).", impact: "💰 -3.000k | ⏱️ -2 ngày", next: "stage_2", effect: { money: -3000000, time: -2, quality: 25 } },
-                { text: "B. Tự mua gỗ pallet về cưa xẻ đóng tay (Siêu tiết kiệm, cực kỳ tốn sức).", impact: "💰 -500k | ⏱️ -5 ngày", next: "stage_2", effect: { money: -500000, time: -5, morale: -15, quality: 10 } },
+                { text: "A. Mua kệ nhôm kính lắp ráp (Nhanh nhưng tốn).", impact: "💰 -3.000k | ⏱️ -2 ngày", next: "stage_2", effect: { money: -3000000, time: -2, quality: 25 } },
+                { text: "B. Tự mua gỗ pallet về cưa xẻ đóng tay (Cực kỳ tốn sức).", impact: "💰 -500k | ⏱️ -5 ngày", next: "stage_2", effect: { money: -500000, time: -5, morale: -15, quality: 10 } },
                 { text: "C. Xin lại kệ cũ của các lớp 12 ra trường.", impact: "💰 -200k | ⏱️ -4 ngày", next: "stage_2", effect: { money: -200000, time: -4, morale: -5, quality: 15 } }
             ]
         },
         stage_2: {
-            theme: "Tìm kiếm và gom nguồn tài liệu, sách báo cho dự án",
-            text: "<b>GIAI ĐOẠN 2: TÌM KIẾM NGUỒN SÁCH</b><br>Đã giải quyết xong phần kệ. Giờ cần sách để lấp đầy. Bạn sẽ xây dựng kho tri thức này như thế nào?",
+            theme: "Tìm kiếm nguồn sách, phân loại tài liệu cho thư viện.",
+            text: "<b>GIAI ĐOẠN 2: TÌM KIẾM NGUỒN SÁCH</b><br>Đã có kệ. Giờ cần sách để lấp đầy. Bạn sẽ xây dựng kho tri thức này như thế nào?",
             image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Trích quỹ ra tiệm sách cũ mua sỉ theo lô.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_3", effect: { money: -1500000, time: -1, quality: 15 } },
@@ -162,18 +163,18 @@
             ]
         },
         stage_3: {
-            theme: "Logistics, vận chuyển đồ đạc vật liệu về điểm tập kết",
-            text: "<b>GIAI ĐOẠN 3: LOGISTICS (VẬN CHUYỂN)</b><br>Đã có vật liệu và sách, nhưng chúng đang ở khắp nơi. Bạn cần gom tất cả về điểm trường.",
+            theme: "Logistics, vận chuyển đồ đạc vật liệu nặng nề về điểm tập kết.",
+            text: "<b>GIAI ĐOẠN 3: VẬN CHUYỂN</b><br>Vật liệu đang ở khắp nơi. Bạn cần gom tất cả về điểm trường dưới trời nắng gắt.",
             image: "https://images.unsplash.com/photo-1601598851547-4302969d0614?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Thuê luôn xe ba gác máy chở 1 chuyến là xong.", impact: "💰 -600k | ⏱️ -1 ngày", next: "stage_4", effect: { money: -600000, time: -1 } },
-                { text: "B. Chia cả nhóm thành xe máy, chở thành 5-6 chuyến chạy tới lui.", impact: "💰 -100k | ⏱️ -2 ngày", next: "stage_4", effect: { money: -100000, time: -2, morale: -15 } },
+                { text: "B. Chia cả nhóm thành xe máy, chở thành 5-6 chuyến.", impact: "💰 -100k | ⏱️ -2 ngày", next: "stage_4", effect: { money: -100000, time: -2, morale: -15 } },
                 { text: "C. Mượn xe đạp lôi của bác bảo vệ, tự đạp tự chở.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_4", effect: { time: -3, morale: -20 } }
             ]
         },
         stage_4: {
-            theme: "Khủng hoảng nhân sự, thành viên ốm đau hoặc nghỉ việc",
-            text: "<b>GIAI ĐOẠN 4: KHỦNG HOẢNG NHÂN SỰ</b><br>Vận chuyển và thi công quá mệt. 2 bạn nam gánh vác việc nặng nhất xin phép nghỉ ốm 3 ngày.",
+            theme: "Khủng hoảng nhân sự, thành viên ốm đau, thiếu hụt người làm việc nặng.",
+            text: "<b>GIAI ĐOẠN 4: KHỦNG HOẢNG NHÂN SỰ</b><br>Làm việc quá mệt. 2 bạn nam gánh vác việc nặng nhất xin phép nghỉ ốm 3 ngày.",
             image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Trích quỹ thuê thợ ngoài làm tiếp phần việc nặng.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_5", effect: { money: -1500000, time: -1, morale: 10, quality: 10 } },
@@ -182,38 +183,38 @@
             ]
         },
         stage_5: {
-            theme: "Điều phối nội bộ, giải quyết mâu thuẫn thành viên lười biếng",
-            text: "<b>GIAI ĐOẠN 5: ĐIỀU PHỐI THÀNH VIÊN</b><br>Trong lúc mọi người bận rộn, bạn phát hiện bạn Tùng đang chui vào góc bấm điện thoại chơi game.",
+            theme: "Giải quyết mâu thuẫn nội bộ, đối phó với thành viên lười biếng hoặc vô kỷ luật.",
+            text: "<b>GIAI ĐOẠN 5: ĐIỀU PHỐI THÀNH VIÊN</b><br>Bạn phát hiện bạn Tùng đang chui vào góc bấm điện thoại chơi game khi mọi người đang đổ mồ hôi.",
             image: "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Quát thẳng mặt Tùng trước cả nhóm để lập lại kỷ luật.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_6", effect: { morale: -20, quality: -5 } },
                 { text: "B. Kéo Tùng ra riêng hỏi thăm, đổi cho Tùng làm việc nhẹ.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: 15, quality: 10 } },
-                { text: "C. Sợ làm lớn chuyện mất vui, Trưởng nhóm lẳng lặng làm bù.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: -15, quality: 5 } }
+                { text: "C. Lẳng lặng làm bù phần việc của Tùng để tránh cãi vã.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: -15, quality: 5 } }
             ]
         },
         stage_6: {
-            theme: "Kiểm tra chất lượng đầu vào, lọc đồ cũ/hỏng",
-            text: "<b>GIAI ĐOẠN 6: KIỂM SOÁT CHẤT LƯỢNG (QA/QC)</b><br>Mở thùng sách quyên góp ra kiểm tra, nhóm tá hỏa phát hiện có lẫn lộn truyện bạo lực, ngôn tình 18+.",
+            theme: "Kiểm tra chất lượng đầu vào, lọc đồ cũ/hỏng có nguy cơ gây hại.",
+            text: "<b>GIAI ĐOẠN 6: KIỂM SOÁT CHẤT LƯỢNG</b><br>Tá hỏa phát hiện sách quyên góp có lẫn lộn truyện bạo lực, ngôn tình 18+ không hợp với trẻ em.",
             image: "https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?auto=format&fit=crop&q=80&w=800",
             choices: [
-                { text: "A. Đình chỉ việc trang trí, huy động toàn bộ lực lượng thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 } },
+                { text: "A. Đình chỉ việc trang trí, huy động toàn bộ thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 } },
                 { text: "B. Mua bánh kẹo dụ dỗ học sinh lớp bên cạnh sang ngồi lọc phụ.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_7", effect: { money: -300000, time: -1, morale: 5, quality: 15 } },
                 { text: "C. Nhắm mắt làm ngơ. Sắp xếp hết lên kệ cao.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_7", effect: { quality: -35 } }
             ]
         },
         stage_7: {
-            theme: "Xử lý sự cố thực địa bất khả kháng (Mưa, bão, cúp điện)",
-            text: "<b>GIAI ĐOẠN 7: XỬ LÝ RỦI RO THỰC ĐỊA</b><br>Công trình sắp hoàn thành thì... Bão về! Mái tôn cũ bị dột một lỗ lớn, nước chảy lênh láng.",
+            theme: "Xử lý sự cố bất khả kháng từ môi trường (Mưa, bão, cúp điện, dột nước).",
+            text: "<b>GIAI ĐOẠN 7: SỰ CỐ THỰC ĐỊA</b><br>Bão về! Mái tôn cũ bị dột một lỗ lớn, nước chảy lênh láng ngay giữa phòng thư viện.",
             image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Gọi ngay thợ chống thấm đến trám mái nhà triệt để.", impact: "💰 -1.200k | ⏱️ -1 ngày", next: "stage_8", effect: { money: -1200000, time: -1 } },
                 { text: "B. Tự mua keo silicon và bạt ni-lông leo thang dán tạm.", impact: "💰 -200k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -200000, time: -2, quality: -15 } },
-                { text: "C. Dời kệ đi chỗ khác, đặt ngay chỗ dột một chậu cây để 'Hứng nước tự nhiên'.", impact: "💰 -400k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -400000, time: -2, morale: -10, quality: 20 } }
+                { text: "C. Dời kệ đi chỗ khác, đặt chậu cây để 'Hứng nước tự nhiên'.", impact: "💰 -400k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -400000, time: -2, morale: -10, quality: 20 } }
             ]
         },
         stage_8: {
-            theme: "Kiểm soát rác thải, dọn dẹp mặt bằng phát sinh chi phí",
-            text: "<b>GIAI ĐOẠN 8: KIỂM SOÁT CHI PHÍ PHÁT SINH</b><br>Đống rác thải công trình chất cao như núi. Bác lao công trường từ chối dọn.",
+            theme: "Kiểm soát rác thải, dọn dẹp mặt bằng phát sinh chi phí dọn dẹp.",
+            text: "<b>GIAI ĐOẠN 8: KIỂM SOÁT MÔI TRƯỜNG</b><br>Đống rác thải công trình chất cao như núi. Bác lao công trường từ chối dọn.",
             image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Trả tiền cho đội xe rác chuyên nghiệp dọn sạch sẽ.", impact: "💰 -600k | ⏱️ 0 ngày", next: "stage_9", effect: { money: -600000, quality: 10 } },
@@ -222,23 +223,23 @@
             ]
         },
         stage_9: {
-            theme: "Đối phó với thanh tra, báo cáo tiến độ cho Ban giám hiệu",
-            text: "<b>GIAI ĐOẠN 9: QUẢN TRỊ GIAO TIẾP</b><br>BGH nhà trường bất ngờ cử Đoàn Thanh Tra xuống xem tiến độ. Phòng ốc vẫn còn lộn xộn.",
+            theme: "Đối phó với sự kiểm tra bất ngờ của Ban giám hiệu/Thanh tra.",
+            text: "<b>GIAI ĐOẠN 9: ĐỐI NGOẠI</b><br>BGH nhà trường bất ngờ cử Đoàn Thanh Tra xuống xem tiến độ. Phòng ốc vẫn còn lộn xộn.",
             image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Mua trái cây, nước ngọt mời Đoàn ra phòng khách, hứa hẹn mai xong.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_10", effect: { money: -300000, time: -1, morale: 5, quality: 10 } },
-                { text: "B. Mặc kệ Đoàn thanh tra, cả nhóm vẫn cắm đầu làm. Ai hỏi gì đáp nấy.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_10", effect: { morale: -10, quality: -15 } },
+                { text: "B. Mặc kệ Đoàn thanh tra, cả nhóm vẫn cắm đầu làm.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_10", effect: { morale: -10, quality: -15 } },
                 { text: "C. Mặc áo Đoàn, dõng dạc thuyết trình về 'Không gian sáng tạo' để đánh lạc hướng.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_10", effect: { time: -1, quality: 15 } }
             ]
         },
         stage_10: {
-            theme: "Chạy nước rút, liên hoan và chuẩn bị lễ bàn giao",
-            text: "<b>GIAI ĐOẠN 10: CHẠY NƯỚC RÚT VÀ BÀN GIAO</b><br>Ngày mai là Lễ Khai Giảng! Bạn chỉ còn đúng một ngày và những nguồn lực cuối cùng.",
+            theme: "Chạy nước rút, liên hoan và chuẩn bị lễ khánh thành bàn giao.",
+            text: "<b>GIAI ĐOẠN 10: BÀN GIAO</b><br>Ngày mai là Lễ Khai Giảng! Bạn chỉ còn đúng một ngày và những nguồn lực cuối cùng.",
             image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
             choices: [
                 { text: "A. Khao cả nhóm một bữa lẩu hoành tráng vì những cực khổ đã qua.", impact: "💰 -800k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -800000, morale: 60 } },
                 { text: "B. Ép mọi người ở lại đến 11h đêm lau chùi từng hạt bụi.", impact: "💰 0đ | ⏱️ -1 ngày", next: "calc_ending", effect: { time: -1, morale: -20, quality: 30 } },
-                { text: "C. Mua những phần quà nhỏ (kẹo, ruy băng) để ngày mai phát cho học sinh.", impact: "💰 -300k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -300000, morale: 10, quality: 20 } }
+                { text: "C. Mua những phần quà nhỏ (kẹo, ruy băng) để phát cho học sinh.", impact: "💰 -300k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -300000, morale: 10, quality: 20 } }
             ]
         },
 
@@ -257,20 +258,18 @@
     ];
 
     // ==========================================
-    // 4. HÀM CỐT LÕI: GỌI GEMINI API (CẬP NHẬT LÊN GEMINI 2.5 FLASH)
+    // 4. HÀM CỐT LÕI: GỌI GEMINI 2.5 FLASH
     // ==========================================
     async function callGemini(promptText, retryCount = 0) {
         if (!USE_AI || apiBunker.length === 0) return null;
         if (retryCount >= apiBunker.length) {
-            console.error("❌ Toàn bộ API Key đều lỗi. Chuyển sang Fallback Tĩnh.");
+            console.error("❌ Toàn bộ API Key đều lỗi (Rate Limit/Quota).");
             return null;
         }
 
         const activeKey = apiBunker[currentKeyIndex];
         try {
             const genAI = new GoogleGenerativeAI(activeKey);
-            
-            // ĐÃ NÂNG CẤP LÊN GEMINI 2.5 FLASH
             const model = genAI.getGenerativeModel({ 
                 model: "gemini-2.5-flash",
                 generationConfig: { responseMimeType: "application/json" } 
@@ -278,80 +277,83 @@
             
             const result = await model.generateContent(promptText);
             const text = result.response.text();
-            
-            console.log("✅ AI Trả Về Thành Công (Gemini 2.5):", text); 
             return JSON.parse(text); 
-
         } catch (error) {
-            console.warn(`⚠️ Key số ${currentKeyIndex + 1} gặp sự cố:`, error.message);
+            console.warn(`⚠️ Key ${currentKeyIndex + 1} lỗi:`, error.message);
             currentKeyIndex = (currentKeyIndex + 1) % apiBunker.length;
             return callGemini(promptText, retryCount + 1); 
         }
     }
 
     // ==========================================
-    // 5. AI ĐẠO DIỄN: TẠO SỰ KIỆN ĐÁNH CƯỢC NGẪU NHIÊN
+    // 5. AI ĐẠO DIỄN: SỰ KIỆN ĐÁNH CƯỢC
     // ==========================================
     async function fetchAIEvent() {
-        const currentStats = `Quỹ: ${state.money} VNĐ, Thời gian: ${state.time} ngày, Tinh thần: ${state.morale}%`;
         const prompt = `
-        Bạn là Đạo diễn Game. Chỉ số: ${currentStats}.
         Tạo 1 sự kiện ĐÁNH CƯỢC sinh tử của học sinh cấp 3.
-        TRẢ VỀ JSON THEO CẤU TRÚC SAU:
+        Quỹ đang có: ${state.money} VNĐ.
+        TRẢ VỀ JSON:
         {
             "event_title": "TÊN SỰ KIỆN", 
             "event_description": "Mô tả hấp dẫn",
             "gamble_choice": { 
-                "text": "Tên hành động liều mạng", 
-                "win_rate": 40, 
+                "text": "Liều mạng", "win_rate": 40, 
                 "win_effect": {"money": 1000000, "time": 0, "morale": 20}, 
                 "lose_effect": {"money": -500000, "time": -1, "morale": -20} 
             },
-            "safe_choice": { 
-                "text": "Bỏ qua", 
-                "effect": {"morale": -5} 
-            }
+            "safe_choice": { "text": "Bỏ qua", "effect": {"morale": -5} }
         }`;
         return await callGemini(prompt);
     }
 
     // ==========================================
-    // 6. AI BIÊN KỊCH: TẠO BIẾN THỂ KỊCH BẢN CHO VÒNG CHƠI
+    // 6. AI BIÊN KỊCH: CÂN BẰNG ĐỘNG (FIX LỖI)
     // ==========================================
     async function fetchDynamicStage(stageId) {
         const base = story[stageId];
         if (!base || !base.theme) return null; 
 
-        let nextId = "calc_ending";
-        if (base.choices && base.choices.length > 0) {
-            nextId = base.choices[0].next;
-        }
+        // Tách lấy chính xác Tên Vòng Chơi (Vd: GIAI ĐOẠN 2: TÌM KIẾM NGUỒN SÁCH)
+        const stageTitleMatch = base.text.match(/<b>(.*?)<\/b>/);
+        const stageTitle = stageTitleMatch ? stageTitleMatch[1] : "TÌNH HUỐNG MỚI";
+        
+        const nextId = base.choices[0].next;
+        const currentMoney = state.money;
+        
+        // Nhắc nhở AI không được lặp lại lịch sử
+        const historyText = usedThemes.length > 0 ? usedThemes.join(", ") : "Chưa có";
 
         const prompt = `
-        Viết một tình huống game quản lý dự án học sinh mới dựa trên chủ đề: "${base.theme}".
-        Yêu cầu:
-        1. Tạo 3 lựa chọn (A: Tốn tiền nhàn hạ, B: Tiết kiệm nhưng cực, C: Sáng tạo rủi ro).
-        2. Phần 'impact' CHỈ được hiện số Tiền và Thời gian bị trừ (Không tiết lộ chất lượng/tinh thần).
+        Bạn là Biên kịch Game. Viết kịch bản cho: "${stageTitle}".
+        Chủ đề vòng này: ${base.theme}.
         
-        TRẢ VỀ JSON THEO CẤU TRÚC SAU:
+        LUẬT BẮT BUỘC:
+        1. Tình huống KHÔNG ĐƯỢC lặp lại các nội dung sau: ${historyText}.
+        2. Nhóm hiện có ${currentMoney} VNĐ. Lựa chọn A tốn tiền nhưng TỐI ĐA là ${Math.floor(currentMoney * 0.7)} VNĐ.
+        3. Lựa chọn B và C phải cực rẻ (từ 0đ đến tối đa 300.000đ).
+        4. KHÔNG tiết lộ Quality/Morale trong phần 'impact'.
+
+        TRẢ VỀ JSON:
         {
-            "text": "<b>[GIAI ĐOẠN TỰ ĐẶT]</b><br>[Mô tả rắc rối...]",
+            "text": "<b>${stageTitle}</b><br>[Mô tả rắc rối mới...]",
             "choices": [
                 { "text": "A. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} },
-                { "text": "B. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -200000, "time": -4, "morale": -20, "quality": 5} },
-                { "text": "C. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -500000, "time": -2, "morale": -5, "quality": 20} }
+                { "text": "B. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": 0, "time": -4, "morale": -20, "quality": 5} },
+                { "text": "C. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} }
             ]
         }`;
         
         const aiResponse = await callGemini(prompt);
         if (aiResponse) {
             aiResponse.image = base.image; 
+            // Lưu lại để chống lặp cho vòng sau
+            usedThemes.push(aiResponse.text.substring(0, 50).replace(/<[^>]*>?/gm, ''));
         }
         return aiResponse;
     }
 
     // ==========================================
-    // 7. ENGINE ĐIỀU PHỐI (CORE)
+    // 7. ENGINE ĐIỀU PHỐI TỐC ĐỘ CAO (PARALLEL PROMISES)
     // ==========================================
     function updateUI() {
         document.getElementById("money").innerText = state.money.toLocaleString('vi-VN');
@@ -370,37 +372,63 @@
         return null;
     }
 
-    function handleEventResult(effect, nextStageId) {
-        state.money += effect.money || 0;
-        state.time += effect.time || 0;
-        state.morale += effect.morale || 0;
-        state.quality += effect.quality || 0;
+    // Hàm Xử lý chuyển cảnh Tốc độ cao
+    async function handleTransition(choice, nextStageId) {
+        // 1. Áp dụng ngay lập tức chỉ số của nút vừa bấm
+        state.money += choice.effect.money || 0;
+        state.time += choice.effect.time || 0;
+        state.morale += choice.effect.morale || 0;
+        state.quality += choice.effect.quality || 0;
         updateUI();
-        
-        document.getElementById("event-overlay").style.display = "none";
-        
-        const fail = checkGameOver();
-        if(fail) renderScene(fail);
-        else prepareAndRenderNextStage(nextStageId);
-    }
 
-    async function triggerRandomEvent(nextStageId) {
-        if (Math.random() > 0.35) {
-            prepareAndRenderNextStage(nextStageId);
+        // 2. Kiểm tra Game Over ngay
+        const failScene = checkGameOver();
+        if (failScene) {
+            renderScene(failScene);
             return;
         }
 
-        const overlay = document.getElementById("event-overlay");
+        // 3. Nếu là Màn kết thúc thì render luôn không cần gọi AI
+        if (nextStageId === "calc_ending" || nextStageId.includes("gameover") || nextStageId.includes("end_")) {
+            renderScene(nextStageId);
+            return;
+        }
+
+        // 4. Bật Màn hình Loading
         const loading = document.getElementById("loading-overlay");
+        document.getElementById("loading-text").innerText = "AI ĐANG TẠO VŨ TRỤ MỚI...";
+        loading.style.display = "flex";
+
+        // 5. FETCH SONG SONG (PARALLEL) TĂNG GẤP ĐÔI TỐC ĐỘ
+        const rollEvent = Math.random() > 0.65; // 35% ra sự kiện cược
+        const eventPromise = rollEvent ? fetchAIEvent() : Promise.resolve(null);
+        const stagePromise = fetchDynamicStage(nextStageId);
+
+        // Chờ cả 2 AI làm việc cùng một lúc
+        const [aiEventData, dynamicStageData] = await Promise.all([eventPromise, stagePromise]);
+
+        // Lưu kịch bản vòng sau
+        if (dynamicStageData) {
+            dynamicStory[nextStageId] = dynamicStageData; 
+        }
+
+        loading.style.display = "none";
+
+        // 6. Hiển thị Popup Sự kiện hoặc Đi tiếp
+        if (rollEvent) {
+            showEventPopup(aiEventData, nextStageId);
+        } else {
+            renderScene(nextStageId);
+        }
+    }
+
+    // Tách hàm hiển thị Popup Sự Kiện
+    function showEventPopup(aiData, nextStageId) {
+        const overlay = document.getElementById("event-overlay");
         const titleTag = document.getElementById("event-title");
         const descTag = document.getElementById("event-desc");
         const btnBox = document.getElementById("event-buttons");
         
-        document.getElementById("loading-text").innerText = "AI ĐANG TẠO SỰ KIỆN...";
-        loading.style.display = "flex"; 
-
-        const aiData = await fetchAIEvent();
-        loading.style.display = "none"; 
         btnBox.innerHTML = ""; 
 
         if (aiData) {
@@ -415,25 +443,23 @@
                 const roll = Math.floor(Math.random() * 100) + 1;
                 if (roll <= aiData.gamble_choice.win_rate) {
                     alert("🎉 ĐẠI THẮNG! BẠN VỪA TRÚNG QUẢ ĐẬM!");
-                    handleEventResult(aiData.gamble_choice.win_effect, nextStageId);
+                    applyEffectAndNext(aiData.gamble_choice.win_effect, nextStageId);
                 } else {
                     alert("💀 OAN NGHIỆT! BẠN ĐÃ THUA SẠCH!");
-                    handleEventResult(aiData.gamble_choice.lose_effect, nextStageId);
+                    applyEffectAndNext(aiData.gamble_choice.lose_effect, nextStageId);
                 }
             };
             const btnAnToan = document.createElement("button");
             btnAnToan.innerHTML = `🛡️ ${aiData.safe_choice.text}`;
-            btnAnToan.onclick = () => handleEventResult(aiData.safe_choice.effect, nextStageId);
+            btnAnToan.onclick = () => applyEffectAndNext(aiData.safe_choice.effect, nextStageId);
 
             btnBox.appendChild(btnLiều);
             btnBox.appendChild(btnAnToan);
         } else {
-            // FALLBACK
             const staticEv = staticEvents[Math.floor(Math.random() * staticEvents.length)];
             titleTag.innerText = staticEv.title;
             titleTag.style.color = staticEv.type === "bad" ? "var(--danger)" : "var(--success)";
             descTag.innerText = staticEv.desc;
-
             if(staticEv.type === "bad") {
                 document.getElementById("game-container").classList.add("shake");
                 setTimeout(() => document.getElementById("game-container").classList.remove("shake"), 600);
@@ -441,31 +467,26 @@
             const btnOk = document.createElement("button");
             btnOk.innerHTML = "Chấp nhận thực tế";
             btnOk.style.width = "100%";
-            btnOk.onclick = () => handleEventResult(staticEv.effect, nextStageId);
+            btnOk.onclick = () => applyEffectAndNext(staticEv.effect, nextStageId);
             btnBox.appendChild(btnOk);
         }
         overlay.style.display = "flex"; 
     }
 
-    async function prepareAndRenderNextStage(stageId) {
-        if (stageId === "calc_ending" || stageId.includes("gameover") || stageId.includes("end_")) {
-            renderScene(stageId);
-            return;
-        }
-
-        const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "AI ĐANG VIẾT KỊCH BẢN...";
-        loading.style.display = "flex";
-
-        const dynamicData = await fetchDynamicStage(stageId);
-        if (dynamicData) {
-            dynamicStory[stageId] = dynamicData; 
-        }
+    function applyEffectAndNext(effect, nextStageId) {
+        state.money += effect.money || 0;
+        state.time += effect.time || 0;
+        state.morale += effect.morale || 0;
+        state.quality += effect.quality || 0;
+        updateUI();
+        document.getElementById("event-overlay").style.display = "none";
         
-        loading.style.display = "none";
-        renderScene(stageId);
+        const fail = checkGameOver();
+        if(fail) renderScene(fail);
+        else renderScene(nextStageId);
     }
 
+    // Hàm In Cảnh Ra Màn Hình
     function renderScene(sceneId) {
         if (sceneId === "calc_ending") {
             const fail = checkGameOver();
@@ -478,7 +499,6 @@
         }
 
         const scene = dynamicStory[sceneId] || story[sceneId];
-        
         const textDiv = document.getElementById("story-text");
         const choicesDiv = document.getElementById("choices");
         const imgContainer = document.getElementById("image-container");
@@ -496,42 +516,40 @@
         textDiv.classList.add("fade-in");
         choicesDiv.innerHTML = "";
 
-        if (scene.isEnd || story[sceneId].isEnd) { 
+        if (scene.isEnd || (story[sceneId] && story[sceneId].isEnd)) { 
             const endText = scene.text || story[sceneId].text;
             const endColor = scene.color || story[sceneId].color;
             document.getElementById("game-container").style.borderColor = endColor;
             textDiv.innerHTML = `<h2 style="color: ${endColor}; text-align:center">${endText}</h2>`;
             const btn = document.createElement("button");
-            btn.innerHTML = "<center>🔄 <b>CHƠI LẠI VỚI VŨ TRỤ KHÁC</b></center>";
+            btn.innerHTML = "<center>🔄 <b>CHƠI LẠI TỪ ĐẦU</b></center>";
             btn.onclick = () => location.reload();
             choicesDiv.appendChild(btn);
         } else {
             scene.choices.forEach(choice => {
                 const btn = document.createElement("button");
                 btn.innerHTML = `${choice.text} <span class="impact">${choice.impact}</span>`;
-                btn.onclick = () => {
-                    state.money += choice.effect.money || 0;
-                    state.time += choice.effect.time || 0;
-                    state.morale += choice.effect.morale || 0;
-                    state.quality += choice.effect.quality || 0;
-                    updateUI();
-
-                    const failScene = checkGameOver();
-                    if (failScene) {
-                        renderScene(failScene);
-                        return;
-                    }
-
-                    triggerRandomEvent(choice.next);
-                };
+                btn.onclick = () => handleTransition(choice, choice.next);
                 choicesDiv.appendChild(btn);
             });
         }
     }
 
-    // Bắt đầu game
-    updateUI();
-    prepareAndRenderNextStage("start");
+    // Khởi tạo Game ban đầu
+    async function initGame() {
+        updateUI();
+        const loading = document.getElementById("loading-overlay");
+        document.getElementById("loading-text").innerText = "KHỞI TẠO VŨ TRỤ...";
+        loading.style.display = "flex";
+        
+        const dynamicData = await fetchDynamicStage("start");
+        if (dynamicData) dynamicStory["start"] = dynamicData;
+        
+        loading.style.display = "none";
+        renderScene("start");
+    }
+
+    initGame();
 
 </script>
 </body>
