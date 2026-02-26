@@ -1,80 +1,179 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LOY Ultimate Animation</title>
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  background: radial-gradient(circle at 20% 20%, #1e1e3f, #0a0a16 70%);
-  font-family: 'Inter', sans-serif;
-}
-/* Floating shapes */
-.geo { position: absolute; width: 80px; height: 80px; background: linear-gradient(45deg, #7c3aed, #6ee7b7); opacity: 0.18; filter: blur(2px); border-radius: 20%; animation: geoFloat 12s infinite ease-in-out; }
-.geo:nth-child(2){width:120px;height:120px;top:60%;left:70%;animation-duration:14s;}
-.geo:nth-child(3){width:60px;height:60px;top:30%;left:80%;animation-duration:10s;}
-.geo:nth-child(4){width:140px;height:140px;top:10%;left:5%;animation-duration:18s;}
-@keyframes geoFloat {0%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-40px) rotate(180deg);}100%{transform:translateY(0) rotate(360deg);}}
-/* Center content */
-.center {position: relative; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; z-index:5;}
-h1{font-size:3rem;font-weight:800;text-shadow:0 0 18px rgba(110,231,183,0.5);}
-p{max-width:520px;line-height:1.6;color:#b7b7d9;}
-/* LOY Ultimate Animation */
-.loy-orbit {position:absolute;bottom:160px;left:50%;transform:translateX(-50%);width:260px;height:260px;animation:orbitSpin 12s linear infinite;}
-@keyframes orbitSpin {from{transform:translateX(-50%) rotate(0deg);} to{transform:translateX(-50%) rotate(360deg);}}
-.loy-core {width:160px;height:160px;border-radius:50%;background: radial-gradient(circle, #ffffff 20%, #a855f7 70%, #22e3c6 100%);margin:auto;display:flex;align-items:center;justify-content:center;color:#0d0d1b;font-size:3rem;font-weight:900;text-shadow:0 0 25px #fff;animation:liquid 6s infinite ease-in-out;}
-@keyframes liquid {0%,100%{border-radius:50% 46% 54% 50% /50% 44% 56% 50%;}50%{border-radius:60% 40% 65% 35% /45% 70% 30% 55%;}}
-.loy-core::after {content:"LOY";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#7c3aed;opacity:0.4;filter:blur(3px);animation:holo 3s infinite alternate;}
-@keyframes holo {0%{opacity:.2;transform:scale(1);}100%{opacity:.6;transform:scale(1.12);}}
-#loyParticles{position:fixed;inset:0;width:100%;height:100%;z-index:-1;}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Maintenance — Enhanced Animation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, #1e1e3f, #0a0a16 70%);
+      color: #e0e0ff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Floating geometric shapes */
+    .geo {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(45deg, #7c3aed, #6ee7b7);
+      opacity: 0.18;
+      filter: blur(2px);
+      border-radius: 20%;
+      animation: geoFloat 12s infinite ease-in-out;
+    }
+
+    .geo:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 70%; animation-duration: 14s; }
+    .geo:nth-child(3) { width: 60px; height: 60px; top: 30%; left: 80%; animation-duration: 10s; }
+    .geo:nth-child(4) { width: 140px; height: 140px; top: 10%; left: 5%; animation-duration: 18s; }
+
+    @keyframes geoFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    /* Main wrapper */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      animation: fadeInDown 1.2s;
+      text-shadow: 0 0 18px rgba(110, 231, 183, 0.5);
+    }
+
+    p {
+      max-width: 520px;
+      line-height: 1.6;
+      color: #b7b7d9;
+      animation: fadeIn 1.6s;
+    }
+
+    /* Neon server animation */
+    .server-box {
+      width: 240px;
+      height: 300px;
+      background: linear-gradient(180deg, #13132b, #0d0d1b);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.4);
+      position: relative;
+      animation: hoverUp 5s infinite ease-in-out;
+    }
+
+    @keyframes hoverUp {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+      100% { transform: translateY(0); }
+    }
+
+    .glow-line {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 6px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #6ee7b7, #7c3aed);
+      filter: drop-shadow(0 0 10px #6ee7b7);
+      animation: pulse 2.6s infinite ease-in-out;
+    }
+
+    .glow-line:nth-child(1) { top: 40px; animation-delay: 0s; }
+    .glow-line:nth-child(2) { top: 90px; animation-delay: 0.6s; }
+    .glow-line:nth-child(3) { top: 140px; animation-delay: 1.2s; }
+    .glow-line:nth-child(4) { top: 190px; animation-delay: 1.8s; }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.4; transform: scale(1); }
+    }
+
+    /* Rotating 3D ring */
+    .ring {
+      margin-top: 40px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 6px solid rgba(255,255,255,0.06);
+      position: relative;
+      animation: spin 14s linear infinite;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12) inset;
+    }
+
+    .ring::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 6px solid;
+      border-image: linear-gradient(90deg, #6ee7b7, #7c3aed) 1;
+      filter: drop-shadow(0 0 16px #7c3aed);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* CTA */
+    button {
+      margin-top: 30px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #6ee7b7, #7c3aed);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0a0a16;
+      cursor: pointer;
+      animation: fadeInUp 1s;
+      transition: 0.25s;
+      box-shadow: 0 0 20px rgba(110, 231, 183, 0.4);
+    }
+
+    button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px rgba(124, 58, 237, 0.7);
+    }
+  </style>
 </head>
 <body>
-<div class="geo"></div>
-<div class="geo"></div>
-<div class="geo"></div>
-<div class="geo"></div>
-<div class="center">
-<h1>LOY Ultimate Animation</h1>
-<p>All effects active: liquid morph, hologram, orbit, particles, neon glow, 3D tilt!</p>
-<div class="loy-orbit">
-<div class="loy-core">LOY</div>
-</div>
-<canvas id="loyParticles"></canvas>
-</div>
-<script>
-// Particle Engine
-const canvas=document.getElementById("loyParticles");
-const ctx=canvas.getContext("2d");
-let w=canvas.width=innerWidth;let h=canvas.height=innerHeight;
-const particles=[];
-const colors=["#7c3aed","#6ee7b7","#ffffff","#a855f7"];
-function spawnParticle(){
- const angle=Math.random()*Math.PI*2;
- const speed=Math.random()*4+1;
- particles.push({x:w/2,y:h/2,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,size:Math.random()*4+2,life:120});
-}
-function animate(){
- ctx.clearRect(0,0,w,h);
- for(let i=0;i<6;i++) spawnParticle();
- particles.forEach((p,i)=>{
-   p.x+=p.vx;p.y+=p.vy;p.life--;
-   ctx.fillStyle=colors[i%colors.length];ctx.globalAlpha=p.life/120;
-   ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
-   if(p.life<=0) particles.splice(i,1);
- });
- requestAnimationFrame(animate);
-}
-animate();
-// 3D Tilt
-const core=document.querySelector('.loy-core');
-document.addEventListener('mousemove',e=>{
- const x=(e.clientX/window.innerWidth-0.5)*20;
- const y=(e.clientY/window.innerHeight-0.5)*-20;
- core.style.transform=`rotateX(${y}deg) rotateY(${x}deg)`;
-});
-</script>
+  <!-- Floating shapes -->
+  <div class="geo"></div>
+  <div class="geo"></div>
+  <div class="geo"></div>
+  <div class="geo"></div>
+
+  <div class="center">
+    <h1>Đang bảo trì — Hệ thống siêu nâng cấp</h1>
+    <p>Chúng tôi đang triển khai các mô-đun mới, tối ưu hiệu năng, và nâng cấp bảo mật. Mọi thứ sẽ ổn định trở lại trong thời gian ngắn.</p>
+
+    <div class="server-box animate__animated animate__fadeInUp">
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+      <div class="glow-line"></div>
+    </div>
+
+    <div class="ring"></div>
+
+    <button>Thông báo khi hoàn tất</button>
+  </div>
 </body>
 </html>
