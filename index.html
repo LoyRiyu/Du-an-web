@@ -1,567 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (Đa Nền Tảng)</title>
-    
-    <style>
-        /* GIAO DIỆN SANG TRỌNG VÀ RESPONSIVE (TƯƠNG THÍCH MỌI MÀN HÌNH) */
-        :root {
-            --bg-body: #121212; --bg-card: rgba(30, 30, 30, 0.85);
-            --border-gold: #D4AF37; --text-main: #E0E0E0;
-            --text-muted: #A0A0A0; --btn-bg: #2A2A2A;
-            --btn-hover: #3A3A3A; --danger: #FF5252;
-            --success: #4CAF50; --warning: #FFC107;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        
-        body { 
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
-            color: var(--text-main); display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 15px; background-attachment: fixed;
-        }
-        
-        #game-container {
-            background-color: var(--bg-card); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            width: 100%; max-width: 850px; border-radius: 16px; border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            padding: 30px; position: relative; overflow-y: auto; max-height: 95vh;
-        }
-        
-        h1 { 
-            text-align: center; color: var(--border-gold); font-size: 2rem; margin-bottom: 20px; 
-            text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        .status-bar { 
-            display: flex; justify-content: space-between; background: rgba(0,0,0,0.4); padding: 15px; 
-            border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--border-gold);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .stat { font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center; transition: 0.3s; }
-        .stat span { color: var(--text-main); font-size: 1.3rem; font-weight: bold; display: block; margin-top: 5px;}
-        .stat.danger span { color: var(--danger); animation: pulse 1s infinite; text-shadow: 0 0 10px rgba(255,82,82,0.5); }
-        
-        #image-container { 
-            width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 20px; display: none; 
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        #image-container img { width: 100%; max-height: 350px; object-fit: cover; display: block; }
-        
-        #story-text { 
-            font-size: 1.2rem; line-height: 1.6; margin-bottom: 25px; padding: 20px; 
-            background: rgba(0,0,0,0.2); border-radius: 12px; border-left: 4px solid #555; color: #F5F5F5;
-        }
-        
-        .btn-container { display: flex; flex-direction: column; gap: 12px; }
-        button { 
-            background-color: var(--btn-bg); color: var(--border-gold); border: 1px solid rgba(212, 175, 55, 0.4); 
-            padding: 15px 20px; font-size: 1.1rem; border-radius: 10px; cursor: pointer; text-align: left; 
-            transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; flex-direction: column;
-            /* Chống highlight xanh trên iOS khi bấm */
-            -webkit-tap-highlight-color: transparent; 
-        }
-        button:hover { 
-            background-color: var(--btn-hover); transform: translateY(-2px); border-color: var(--border-gold); 
-        }
-        button:active { transform: translateY(1px); }
-        
-        .impact { font-size: 0.9rem; color: var(--text-muted); margin-top: 8px; font-style: italic; }
-        
-        #event-overlay, #loading-overlay { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.95); 
-            border-radius: 16px; display: none; flex-direction: column; justify-content: center; align-items: center; 
-            z-index: 20; padding: 20px; text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        }
-        #loading-overlay { z-index: 30; }
-        
-        .spinner {
-            width: 45px; height: 45px; border: 4px solid rgba(212, 175, 55, 0.3);
-            border-top-color: var(--border-gold); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        #event-overlay h2 { font-size: 2rem; margin-bottom: 15px; text-transform: uppercase; color: var(--warning); }
-        #event-overlay p { font-size: 1.2rem; margin-bottom: 25px; line-height: 1.5; color: #EEE; }
-        
-        .gamble-btns { display: flex; gap: 15px; width: 100%; justify-content: center; flex-wrap: wrap;}
-        .gamble-btns button { text-align: center; align-items: center; flex: 1; min-width: 140px; }
-        
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border: 2px solid var(--danger) !important; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
-
-        /* TỐI ƯU HÓA RIÊNG CHO ĐIỆN THOẠI (IPHONE/ANDROID) */
-        @media screen and (max-width: 600px) {
-            body { padding: 10px; }
-            #game-container { padding: 20px 15px; border-radius: 12px; }
-            h1 { font-size: 1.6rem; margin-bottom: 15px; }
-            .status-bar { padding: 10px; margin-bottom: 15px; }
-            .stat { font-size: 0.85rem; }
-            .stat span { font-size: 1.1rem; }
-            #story-text { font-size: 1.1rem; padding: 15px; }
-            button { font-size: 1rem; padding: 12px 15px; }
-            #event-overlay h2 { font-size: 1.6rem; }
-            #event-overlay p { font-size: 1.1rem; }
-            .gamble-btns { flex-direction: column; }
-            .gamble-btns button { width: 100%; }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LOY Ultimate Animation</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, #1e1e3f, #0a0a16 70%);
+  font-family: 'Inter', sans-serif;
+}
+/* Floating shapes */
+.geo { position: absolute; width: 80px; height: 80px; background: linear-gradient(45deg, #7c3aed, #6ee7b7); opacity: 0.18; filter: blur(2px); border-radius: 20%; animation: geoFloat 12s infinite ease-in-out; }
+.geo:nth-child(2){width:120px;height:120px;top:60%;left:70%;animation-duration:14s;}
+.geo:nth-child(3){width:60px;height:60px;top:30%;left:80%;animation-duration:10s;}
+.geo:nth-child(4){width:140px;height:140px;top:10%;left:5%;animation-duration:18s;}
+@keyframes geoFloat {0%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-40px) rotate(180deg);}100%{transform:translateY(0) rotate(360deg);}}
+/* Center content */
+.center {position: relative; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; z-index:5;}
+h1{font-size:3rem;font-weight:800;text-shadow:0 0 18px rgba(110,231,183,0.5);}
+p{max-width:520px;line-height:1.6;color:#b7b7d9;}
+/* LOY Ultimate Animation */
+.loy-orbit {position:absolute;bottom:160px;left:50%;transform:translateX(-50%);width:260px;height:260px;animation:orbitSpin 12s linear infinite;}
+@keyframes orbitSpin {from{transform:translateX(-50%) rotate(0deg);} to{transform:translateX(-50%) rotate(360deg);}}
+.loy-core {width:160px;height:160px;border-radius:50%;background: radial-gradient(circle, #ffffff 20%, #a855f7 70%, #22e3c6 100%);margin:auto;display:flex;align-items:center;justify-content:center;color:#0d0d1b;font-size:3rem;font-weight:900;text-shadow:0 0 25px #fff;animation:liquid 6s infinite ease-in-out;}
+@keyframes liquid {0%,100%{border-radius:50% 46% 54% 50% /50% 44% 56% 50%;}50%{border-radius:60% 40% 65% 35% /45% 70% 30% 55%;}}
+.loy-core::after {content:"LOY";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#7c3aed;opacity:0.4;filter:blur(3px);animation:holo 3s infinite alternate;}
+@keyframes holo {0%{opacity:.2;transform:scale(1);}100%{opacity:.6;transform:scale(1.12);}}
+#loyParticles{position:fixed;inset:0;width:100%;height:100%;z-index:-1;}
+</style>
 </head>
 <body>
-
-<div id="game-container">
-    <h1><span style="color:white;">DỰ ÁN:</span> MÙA HÈ XANH</h1>
-    
-    <div class="status-bar">
-        <div class="stat" id="money-container">TÀI CHÍNH<br><span id="money">6.000.000</span>đ</div>
-        <div class="stat" id="time-container">THỜI GIAN<br><span id="time">25</span> Ngày</div>
-        <div class="stat" id="morale-container">TINH THẦN<br><span id="morale">100</span>%</div>
-    </div>
-
-    <div id="image-container"><img id="scene-image" src="" alt="Scene"></div>
-    <div id="story-text"></div>
-    <div class="btn-container" id="choices"></div>
-
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <h2 id="loading-text" style="color: var(--border-gold); text-align: center; font-size: 1.5rem;">HỆ THỐNG ĐANG PHÂN TÍCH...</h2>
-        <p style="color: #A0A0A0; font-style: italic; font-size: 1rem;">"Sóng gió có thể ập đến ở bất cứ giai đoạn nào."</p>
-    </div>
-
-    <div id="event-overlay">
-        <h2 id="event-title">🚨 BIẾN CỐ!</h2>
-        <p id="event-desc">Nội dung</p>
-        <div class="gamble-btns" id="event-buttons"></div>
-    </div>
+<div class="geo"></div>
+<div class="geo"></div>
+<div class="geo"></div>
+<div class="geo"></div>
+<div class="center">
+<h1>LOY Ultimate Animation</h1>
+<p>All effects active: liquid morph, hologram, orbit, particles, neon glow, 3D tilt!</p>
+<div class="loy-orbit">
+<div class="loy-core">LOY</div>
 </div>
-
-<script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-    // ==========================================
-    // 1. KHO API KEY BẤT TỬ 
-    // ==========================================
-    const apiBunker = [
-        "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o",
-        "AIzaSy" + "BG-VpzIEZ" + "dY_9L-aTAi2S6jLLRhoRfzbk",
-        "AIzaSy" + "ClbEJ9z45" + "jBw4RwA0k8Z-uDtSWpNBByxc",
-        "AIzaSy" + "CufjIA8oY" + "vSR5ugxt9iHMSl_nwIZIYqzs",
-        "AIzaSy" + "AB4PPgPx54wuK" + "-jEV_NdPf88zuKqrRdp0",
-        "AIzaSy" + "CLyfXSxrNXe" + "V7P2K_jRE" + "sEWLI5SXxnpE8",
-        "AIzaSy" + "CeUtH22q4" + "N-ntma7m-kAW1Ctie5ViOzgw"
-    ];
-    let currentKeyIndex = 0;
-    const USE_AI = true; 
-
-    // ==========================================
-    // 2. STATE & BỘ NHỚ LỊCH SỬ CHỐNG LẶP
-    // ==========================================
-    let state = { money: 6000000, time: 25, morale: 100, quality: 0 };
-    let dynamicStory = {}; 
-    let usedThemes = []; 
-
-    // ==========================================
-    // 3. CỐT TRUYỆN GỐC TĨNH
-    // ==========================================
-    const story = {
-        start: {
-            theme: "Lập kế hoạch và chuẩn bị cơ sở vật chất (kệ sách, sơn tường, dọn dẹp phòng trống).",
-            text: "<b>GIAI ĐOẠN 1: KẾ HOẠCH CƠ SỞ VẬT CHẤT</b><br>Dự án Thư viện Ước mơ khởi động! Căn phòng đang trống rỗng. Quyết định của Trưởng dự án về hạng mục Kệ sách?",
-            image: "https://images.unsplash.com/photo-1580537659466-0a9bfa916a54?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Mua kệ nhôm kính lắp ráp (Nhanh nhưng tốn).", impact: "💰 -3.000k | ⏱️ -2 ngày", next: "stage_2", effect: { money: -3000000, time: -2, quality: 25 } },
-                { text: "B. Tự mua gỗ pallet về cưa xẻ đóng tay (Cực kỳ tốn sức).", impact: "💰 -500k | ⏱️ -5 ngày", next: "stage_2", effect: { money: -500000, time: -5, morale: -15, quality: 10 } },
-                { text: "C. Xin lại kệ cũ của các lớp 12 ra trường.", impact: "💰 -200k | ⏱️ -4 ngày", next: "stage_2", effect: { money: -200000, time: -4, morale: -5, quality: 15 } }
-            ]
-        },
-        stage_2: {
-            theme: "Tìm kiếm nguồn sách, phân loại tài liệu cho thư viện.",
-            text: "<b>GIAI ĐOẠN 2: TÌM KIẾM NGUỒN SÁCH</b><br>Đã có kệ. Giờ cần sách để lấp đầy. Bạn sẽ xây dựng kho tri thức này như thế nào?",
-            image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Trích quỹ ra tiệm sách cũ mua sỉ theo lô.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_3", effect: { money: -1500000, time: -1, quality: 15 } },
-                { text: "B. Phát động quyên góp từng lớp học.", impact: "💰 0đ | ⏱️ -4 ngày", next: "stage_3", effect: { time: -4, morale: -10, quality: 10 } },
-                { text: "C. Kêu gọi tài trợ từ các nhà xuất bản trên Facebook.", impact: "💰 -100k | ⏱️ -3 ngày", next: "stage_3", effect: { money: -100000, time: -3, morale: -5, quality: 20 } }
-            ]
-        },
-        stage_3: {
-            theme: "Logistics, vận chuyển đồ đạc vật liệu nặng nề về điểm tập kết.",
-            text: "<b>GIAI ĐOẠN 3: VẬN CHUYỂN</b><br>Vật liệu đang ở khắp nơi. Bạn cần gom tất cả về điểm trường dưới trời nắng gắt.",
-            image: "https://images.unsplash.com/photo-1601598851547-4302969d0614?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Thuê luôn xe ba gác máy chở 1 chuyến là xong.", impact: "💰 -600k | ⏱️ -1 ngày", next: "stage_4", effect: { money: -600000, time: -1 } },
-                { text: "B. Chia cả nhóm thành xe máy, chở thành 5-6 chuyến.", impact: "💰 -100k | ⏱️ -2 ngày", next: "stage_4", effect: { money: -100000, time: -2, morale: -15 } },
-                { text: "C. Mượn xe đạp lôi của bác bảo vệ, tự đạp tự chở.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_4", effect: { time: -3, morale: -20 } }
-            ]
-        },
-        stage_4: {
-            theme: "Khủng hoảng nhân sự, thành viên ốm đau, thiếu hụt người làm việc nặng.",
-            text: "<b>GIAI ĐOẠN 4: KHỦNG HOẢNG NHÂN SỰ</b><br>Làm việc quá mệt. 2 bạn nam gánh vác việc nặng nhất xin phép nghỉ ốm 3 ngày.",
-            image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Trích quỹ thuê thợ ngoài làm tiếp phần việc nặng.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_5", effect: { money: -1500000, time: -1, morale: 10, quality: 10 } },
-                { text: "B. Bắt ép các bạn nữ OT (Làm thêm giờ) để gánh team.", impact: "💰 0đ | ⏱️ -2 ngày", next: "stage_5", effect: { time: -2, morale: -30 } },
-                { text: "C. Bỏ bớt các hạng mục treo tường phức tạp để dễ làm hơn.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_5", effect: { time: -1, morale: 5, quality: -15 } }
-            ]
-        },
-        stage_5: {
-            theme: "Giải quyết mâu thuẫn nội bộ, đối phó với thành viên lười biếng hoặc vô kỷ luật.",
-            text: "<b>GIAI ĐOẠN 5: ĐIỀU PHỐI THÀNH VIÊN</b><br>Bạn phát hiện bạn Tùng đang chui vào góc bấm điện thoại chơi game khi mọi người đang đổ mồ hôi.",
-            image: "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Quát thẳng mặt Tùng trước cả nhóm để lập lại kỷ luật.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_6", effect: { morale: -20, quality: -5 } },
-                { text: "B. Kéo Tùng ra riêng hỏi thăm, đổi cho Tùng làm việc nhẹ.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: 15, quality: 10 } },
-                { text: "C. Lẳng lặng làm bù phần việc của Tùng để tránh cãi vã.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: -15, quality: 5 } }
-            ]
-        },
-        stage_6: {
-            theme: "Kiểm tra chất lượng đầu vào, lọc đồ cũ/hỏng có nguy cơ gây hại.",
-            text: "<b>GIAI ĐOẠN 6: KIỂM SOÁT CHẤT LƯỢNG</b><br>Tá hỏa phát hiện sách quyên góp có lẫn lộn truyện bạo lực, ngôn tình 18+ không hợp với trẻ em.",
-            image: "https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Đình chỉ việc trang trí, huy động toàn bộ thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 } },
-                { text: "B. Mua bánh kẹo dụ dỗ học sinh lớp bên cạnh sang ngồi lọc phụ.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_7", effect: { money: -300000, time: -1, morale: 5, quality: 15 } },
-                { text: "C. Nhắm mắt làm ngơ. Sắp xếp hết lên kệ cao.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_7", effect: { quality: -35 } }
-            ]
-        },
-        stage_7: {
-            theme: "Xử lý sự cố bất khả kháng từ môi trường (Mưa, bão, cúp điện, dột nước).",
-            text: "<b>GIAI ĐOẠN 7: SỰ CỐ THỰC ĐỊA</b><br>Bão về! Mái tôn cũ bị dột một lỗ lớn, nước chảy lênh láng ngay giữa phòng thư viện.",
-            image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Gọi ngay thợ chống thấm đến trám mái nhà triệt để.", impact: "💰 -1.200k | ⏱️ -1 ngày", next: "stage_8", effect: { money: -1200000, time: -1 } },
-                { text: "B. Tự mua keo silicon và bạt ni-lông leo thang dán tạm.", impact: "💰 -200k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -200000, time: -2, quality: -15 } },
-                { text: "C. Dời kệ đi chỗ khác, đặt chậu cây để 'Hứng nước tự nhiên'.", impact: "💰 -400k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -400000, time: -2, morale: -10, quality: 20 } }
-            ]
-        },
-        stage_8: {
-            theme: "Kiểm soát rác thải, dọn dẹp mặt bằng phát sinh chi phí dọn dẹp.",
-            text: "<b>GIAI ĐOẠN 8: KIỂM SOÁT MÔI TRƯỜNG</b><br>Đống rác thải công trình chất cao như núi. Bác lao công trường từ chối dọn.",
-            image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Trả tiền cho đội xe rác chuyên nghiệp dọn sạch sẽ.", impact: "💰 -600k | ⏱️ 0 ngày", next: "stage_9", effect: { money: -600000, quality: 10 } },
-                { text: "B. Mượn xe còng, tự è cổ đẩy rác ra bãi tập kết xa 2km.", impact: "💰 0đ | ⏱️ -2 ngày", next: "stage_9", effect: { time: -2, morale: -20 } },
-                { text: "C. Lén lút dồn rác vào góc kho trống và lấy bạt phủ lên.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_9", effect: { morale: -5, quality: -25 } }
-            ]
-        },
-        stage_9: {
-            theme: "Đối phó với sự kiểm tra bất ngờ của Ban giám hiệu/Thanh tra.",
-            text: "<b>GIAI ĐOẠN 9: ĐỐI NGOẠI</b><br>BGH nhà trường bất ngờ cử Đoàn Thanh Tra xuống xem tiến độ. Phòng ốc vẫn còn lộn xộn.",
-            image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Mua trái cây, nước ngọt mời Đoàn ra phòng khách, hứa hẹn mai xong.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_10", effect: { money: -300000, time: -1, morale: 5, quality: 10 } },
-                { text: "B. Mặc kệ Đoàn thanh tra, cả nhóm vẫn cắm đầu làm.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_10", effect: { morale: -10, quality: -15 } },
-                { text: "C. Mặc áo Đoàn, dõng dạc thuyết trình về 'Không gian sáng tạo' để đánh lạc hướng.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_10", effect: { time: -1, quality: 15 } }
-            ]
-        },
-        stage_10: {
-            theme: "Chạy nước rút, liên hoan và chuẩn bị lễ khánh thành bàn giao.",
-            text: "<b>GIAI ĐOẠN 10: BÀN GIAO</b><br>Ngày mai là Lễ Khai Giảng! Bạn chỉ còn đúng một ngày và những nguồn lực cuối cùng.",
-            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
-            choices: [
-                { text: "A. Khao cả nhóm một bữa lẩu hoành tráng vì những cực khổ đã qua.", impact: "💰 -800k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -800000, morale: 60 } },
-                { text: "B. Ép mọi người ở lại đến 11h đêm lau chùi từng hạt bụi.", impact: "💰 0đ | ⏱️ -1 ngày", next: "calc_ending", effect: { time: -1, morale: -20, quality: 30 } },
-                { text: "C. Mua những phần quà nhỏ (kẹo, ruy băng) để phát cho học sinh.", impact: "💰 -300k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -300000, morale: 10, quality: 20 } }
-            ]
-        },
-
-        gameover_money: { text: "GAME OVER: VỠ NỢ TÀI CHÍNH 💸", isEnd: true, color: "var(--danger)" },
-        gameover_time: { text: "GAME OVER: TRỄ DEADLINE ⏱️", isEnd: true, color: "var(--danger)" },
-        gameover_morale: { text: "GAME OVER: NHÓM TAN RÃ 😡", isEnd: true, color: "var(--danger)" },
-        end_bad: { text: "KẾT THÚC: DỰ ÁN TỒI TỆ 🏚️<br>Đúng hạn, đúng tiền nhưng thư viện rách nát. Lựa chọn lấp liếm đã phải trả giá.", isEnd: true, color: "var(--danger)" },
-        end_normal: { text: "KẾT THÚC: ĐẠT YÊU CẦU 👍<br>Hoàn thành an toàn. Đủ để ghi nhận nỗ lực của tập thể.", isEnd: true, color: "var(--warning)" },
-        end_perfect: { text: "KẾT THÚC: HUYỀN THOẠI MÙA HÈ XANH 🏆<br>Tài chính minh bạch, đúng tiến độ, thư viện tuyệt đẹp!", isEnd: true, color: "var(--border-gold)" }
-    };
-
-    const staticEvents = [
-        { title: "⛈️ MƯA BÃO!", desc: "Mưa lớn làm gián đoạn vật liệu. Nhóm nghỉ 1 ngày.", type: "bad", effect: { time: -1, morale: -5 } },
-        { title: "💸 MẤT VÍ TIỀN!", desc: "Một thành viên đánh rơi ví. Trích quỹ đền bù.", type: "bad", effect: { money: -300000, morale: -10 } },
-        { title: "🧋 TÀI TRỢ!", desc: "Phụ huynh mang trà sữa đến bồi dưỡng. Anh em sung sức!", type: "good", effect: { morale: +25, quality: +5 } }
-    ];
-
-    // ==========================================
-    // 4. HÀM CỐT LÕI: GỌI GEMINI 2.5 FLASH
-    // ==========================================
-    async function callGemini(promptText, retryCount = 0) {
-        if (!USE_AI || apiBunker.length === 0) return null;
-        if (retryCount >= apiBunker.length) {
-            console.error("❌ Toàn bộ API Key đều lỗi (Rate Limit/Quota).");
-            return null;
-        }
-
-        const activeKey = apiBunker[currentKeyIndex];
-        try {
-            const genAI = new GoogleGenerativeAI(activeKey);
-            const model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-flash",
-                generationConfig: { responseMimeType: "application/json" } 
-            });
-            
-            const result = await model.generateContent(promptText);
-            const text = result.response.text();
-            return JSON.parse(text); 
-        } catch (error) {
-            console.warn(`⚠️ Key ${currentKeyIndex + 1} lỗi:`, error.message);
-            currentKeyIndex = (currentKeyIndex + 1) % apiBunker.length;
-            return callGemini(promptText, retryCount + 1); 
-        }
-    }
-
-    // ==========================================
-    // 5. AI ĐẠO DIỄN: SỰ KIỆN ĐÁNH CƯỢC
-    // ==========================================
-    async function fetchAIEvent() {
-        const prompt = `
-        Tạo 1 sự kiện ĐÁNH CƯỢC sinh tử của học sinh cấp 3.
-        Quỹ đang có: ${state.money} VNĐ.
-        TRẢ VỀ JSON:
-        {
-            "event_title": "TÊN SỰ KIỆN", 
-            "event_description": "Mô tả hấp dẫn",
-            "gamble_choice": { 
-                "text": "Liều mạng", "win_rate": 40, 
-                "win_effect": {"money": 1000000, "time": 0, "morale": 20}, 
-                "lose_effect": {"money": -500000, "time": -1, "morale": -20} 
-            },
-            "safe_choice": { "text": "Bỏ qua", "effect": {"morale": -5} }
-        }`;
-        return await callGemini(prompt);
-    }
-
-    // ==========================================
-    // 6. AI BIÊN KỊCH: CÂN BẰNG ĐỘNG (FIX LỖI)
-    // ==========================================
-    async function fetchDynamicStage(stageId) {
-        const base = story[stageId];
-        if (!base || !base.theme) return null; 
-
-        const stageTitleMatch = base.text.match(/<b>(.*?)<\/b>/);
-        const stageTitle = stageTitleMatch ? stageTitleMatch[1] : "TÌNH HUỐNG MỚI";
-        const nextId = base.choices[0].next;
-        const currentMoney = state.money;
-        
-        const historyText = usedThemes.length > 0 ? usedThemes.join(", ") : "Chưa có";
-
-        const prompt = `
-        Bạn là Biên kịch Game. Viết kịch bản cho: "${stageTitle}".
-        Chủ đề vòng này: ${base.theme}.
-        
-        LUẬT BẮT BUỘC:
-        1. Tình huống KHÔNG ĐƯỢC lặp lại các nội dung sau: ${historyText}.
-        2. Nhóm hiện có ${currentMoney} VNĐ. Lựa chọn A tốn tiền nhưng TỐI ĐA là ${Math.floor(currentMoney * 0.7)} VNĐ.
-        3. Lựa chọn B và C phải cực rẻ (từ 0đ đến tối đa 300.000đ).
-        4. KHÔNG tiết lộ Quality/Morale trong phần 'impact'.
-
-        TRẢ VỀ JSON:
-        {
-            "text": "<b>${stageTitle}</b><br>[Mô tả rắc rối mới...]",
-            "choices": [
-                { "text": "A. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} },
-                { "text": "B. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": 0, "time": -4, "morale": -20, "quality": 5} },
-                { "text": "C. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} }
-            ]
-        }`;
-        
-        const aiResponse = await callGemini(prompt);
-        if (aiResponse) {
-            aiResponse.image = base.image; 
-            usedThemes.push(aiResponse.text.substring(0, 50).replace(/<[^>]*>?/gm, ''));
-        }
-        return aiResponse;
-    }
-
-    // ==========================================
-    // 7. ENGINE ĐIỀU PHỐI TỐC ĐỘ CAO (PARALLEL PROMISES)
-    // ==========================================
-    function updateUI() {
-        document.getElementById("money").innerText = state.money.toLocaleString('vi-VN');
-        document.getElementById("time").innerText = state.time;
-        document.getElementById("morale").innerText = state.morale;
-        
-        document.getElementById("money-container").className = state.money < 1000000 ? "stat danger" : "stat";
-        document.getElementById("time-container").className = state.time <= 3 ? "stat danger" : "stat";
-        document.getElementById("morale-container").className = state.morale <= 30 ? "stat danger" : "stat";
-    }
-
-    function checkGameOver() {
-        if (state.money < 0) return "gameover_money";
-        if (state.time < 0) return "gameover_time";
-        if (state.morale < 20) return "gameover_morale";
-        return null;
-    }
-
-    async function handleTransition(choice, nextStageId) {
-        state.money += choice.effect.money || 0;
-        state.time += choice.effect.time || 0;
-        state.morale += choice.effect.morale || 0;
-        state.quality += choice.effect.quality || 0;
-        updateUI();
-
-        const failScene = checkGameOver();
-        if (failScene) {
-            renderScene(failScene);
-            return;
-        }
-
-        if (nextStageId === "calc_ending" || nextStageId.includes("gameover") || nextStageId.includes("end_")) {
-            renderScene(nextStageId);
-            return;
-        }
-
-        const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "HỆ THỐNG ĐANG PHÂN TÍCH...";
-        loading.style.display = "flex";
-
-        const rollEvent = Math.random() > 0.65; 
-        const eventPromise = rollEvent ? fetchAIEvent() : Promise.resolve(null);
-        const stagePromise = fetchDynamicStage(nextStageId);
-
-        const [aiEventData, dynamicStageData] = await Promise.all([eventPromise, stagePromise]);
-
-        if (dynamicStageData) {
-            dynamicStory[nextStageId] = dynamicStageData; 
-        }
-
-        loading.style.display = "none";
-
-        if (rollEvent) {
-            showEventPopup(aiEventData, nextStageId);
-        } else {
-            renderScene(nextStageId);
-        }
-    }
-
-    function showEventPopup(aiData, nextStageId) {
-        const overlay = document.getElementById("event-overlay");
-        const titleTag = document.getElementById("event-title");
-        const descTag = document.getElementById("event-desc");
-        const btnBox = document.getElementById("event-buttons");
-        
-        btnBox.innerHTML = ""; 
-
-        if (aiData) {
-            titleTag.innerText = "🎲 " + aiData.event_title;
-            titleTag.style.color = "var(--warning)";
-            descTag.innerHTML = `<i>${aiData.event_description}</i><br><br><b>Tỉ lệ thắng: ${aiData.gamble_choice.win_rate}%</b>`;
-
-            const btnLiều = document.createElement("button");
-            btnLiều.style.borderColor = "var(--warning)";
-            btnLiều.innerHTML = `🔥 ${aiData.gamble_choice.text}`;
-            btnLiều.onclick = () => {
-                const roll = Math.floor(Math.random() * 100) + 1;
-                if (roll <= aiData.gamble_choice.win_rate) {
-                    alert("🎉 ĐẠI THẮNG! BẠN VỪA TRÚNG QUẢ ĐẬM!");
-                    applyEffectAndNext(aiData.gamble_choice.win_effect, nextStageId);
-                } else {
-                    alert("💀 OAN NGHIỆT! BẠN ĐÃ THUA SẠCH!");
-                    applyEffectAndNext(aiData.gamble_choice.lose_effect, nextStageId);
-                }
-            };
-            const btnAnToan = document.createElement("button");
-            btnAnToan.innerHTML = `🛡️ ${aiData.safe_choice.text}`;
-            btnAnToan.onclick = () => applyEffectAndNext(aiData.safe_choice.effect, nextStageId);
-
-            btnBox.appendChild(btnLiều);
-            btnBox.appendChild(btnAnToan);
-        } else {
-            const staticEv = staticEvents[Math.floor(Math.random() * staticEvents.length)];
-            titleTag.innerText = staticEv.title;
-            titleTag.style.color = staticEv.type === "bad" ? "var(--danger)" : "var(--success)";
-            descTag.innerText = staticEv.desc;
-            if(staticEv.type === "bad") {
-                document.getElementById("game-container").classList.add("shake");
-                setTimeout(() => document.getElementById("game-container").classList.remove("shake"), 600);
-            }
-            const btnOk = document.createElement("button");
-            btnOk.innerHTML = "Chấp nhận thực tế";
-            btnOk.style.width = "100%";
-            btnOk.onclick = () => applyEffectAndNext(staticEv.effect, nextStageId);
-            btnBox.appendChild(btnOk);
-        }
-        overlay.style.display = "flex"; 
-    }
-
-    function applyEffectAndNext(effect, nextStageId) {
-        state.money += effect.money || 0;
-        state.time += effect.time || 0;
-        state.morale += effect.morale || 0;
-        state.quality += effect.quality || 0;
-        updateUI();
-        document.getElementById("event-overlay").style.display = "none";
-        
-        const fail = checkGameOver();
-        if(fail) renderScene(fail);
-        else renderScene(nextStageId);
-    }
-
-    function renderScene(sceneId) {
-        if (sceneId === "calc_ending") {
-            const fail = checkGameOver();
-            if(fail) sceneId = fail;
-            else {
-                if (state.quality < 60) sceneId = "end_bad";
-                else if (state.quality < 110) sceneId = "end_normal";
-                else sceneId = "end_perfect";
-            }
-        }
-
-        const scene = dynamicStory[sceneId] || story[sceneId];
-        const textDiv = document.getElementById("story-text");
-        const choicesDiv = document.getElementById("choices");
-        const imgContainer = document.getElementById("image-container");
-        
-        if (scene.image) {
-            document.getElementById("scene-image").src = scene.image;
-            imgContainer.style.display = "block";
-        } else {
-            imgContainer.style.display = "none";
-        }
-
-        textDiv.innerHTML = scene.text;
-        textDiv.classList.remove("fade-in");
-        void textDiv.offsetWidth;
-        textDiv.classList.add("fade-in");
-        choicesDiv.innerHTML = "";
-
-        if (scene.isEnd || (story[sceneId] && story[sceneId].isEnd)) { 
-            const endText = scene.text || story[sceneId].text;
-            const endColor = scene.color || story[sceneId].color;
-            document.getElementById("game-container").style.borderColor = endColor;
-            textDiv.innerHTML = `<h2 style="color: ${endColor}; text-align:center">${endText}</h2>`;
-            const btn = document.createElement("button");
-            btn.innerHTML = "<center>🔄 <b>CHƠI LẠI TỪ ĐẦU</b></center>";
-            btn.onclick = () => location.reload();
-            choicesDiv.appendChild(btn);
-        } else {
-            scene.choices.forEach(choice => {
-                const btn = document.createElement("button");
-                btn.innerHTML = `${choice.text} <span class="impact">${choice.impact}</span>`;
-                btn.onclick = () => handleTransition(choice, choice.next);
-                choicesDiv.appendChild(btn);
-            });
-        }
-    }
-
-    async function initGame() {
-        updateUI();
-        const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "KHỞI TẠO VŨ TRỤ...";
-        loading.style.display = "flex";
-        
-        const dynamicData = await fetchDynamicStage("start");
-        if (dynamicData) dynamicStory["start"] = dynamicData;
-        
-        loading.style.display = "none";
-        renderScene("start");
-    }
-
-    initGame();
-
+<canvas id="loyParticles"></canvas>
+</div>
+<script>
+// Particle Engine
+const canvas=document.getElementById("loyParticles");
+const ctx=canvas.getContext("2d");
+let w=canvas.width=innerWidth;let h=canvas.height=innerHeight;
+const particles=[];
+const colors=["#7c3aed","#6ee7b7","#ffffff","#a855f7"];
+function spawnParticle(){
+ const angle=Math.random()*Math.PI*2;
+ const speed=Math.random()*4+1;
+ particles.push({x:w/2,y:h/2,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,size:Math.random()*4+2,life:120});
+}
+function animate(){
+ ctx.clearRect(0,0,w,h);
+ for(let i=0;i<6;i++) spawnParticle();
+ particles.forEach((p,i)=>{
+   p.x+=p.vx;p.y+=p.vy;p.life--;
+   ctx.fillStyle=colors[i%colors.length];ctx.globalAlpha=p.life/120;
+   ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+   if(p.life<=0) particles.splice(i,1);
+ });
+ requestAnimationFrame(animate);
+}
+animate();
+// 3D Tilt
+const core=document.querySelector('.loy-core');
+document.addEventListener('mousemove',e=>{
+ const x=(e.clientX/window.innerWidth-0.5)*20;
+ const y=(e.clientY/window.innerHeight-0.5)*-20;
+ core.style.transform=`rotateX(${y}deg) rotateY(${x}deg)`;
+});
 </script>
 </body>
 </html>
