@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (Bản Admin God Mode)</title>
+    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (V3.0 Stable)</title>
     <style>
-        /* GIAO DIỆN SANG TRỌNG VÀ RESPONSIVE */
+        /* GIAO DIỆN SANG TRỌNG VÀ RESPONSIVE (GIỮ NGUYÊN) */
         :root {
             --bg-body: #121212; --bg-card: rgba(30, 30, 30, 0.85);
             --border-gold: #D4AF37; --text-main: #E0E0E0;
@@ -88,7 +88,7 @@
         .gamble-btns { display: flex; gap: 15px; width: 100%; justify-content: center; flex-wrap: wrap;}
         .gamble-btns button { text-align: center; align-items: center; flex: 1; min-width: 140px; }
         
-        /* GIAO DIỆN ADMIN */
+        /* CSS ADMIN */
         .admin-box { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid var(--border-gold); width: 100%; max-width: 400px; text-align: left;}
         .admin-box h3 { color: var(--border-gold); text-align: center; margin-bottom: 15px; text-transform: uppercase; }
         .admin-group { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
@@ -122,7 +122,7 @@
 <body>
 
 <div id="game-container">
-    <h1><span id="admin-trigger" style="color:white;">DỰ ÁN:</span> MÙA HÈ XANH</h1>
+    <h1 id="admin-trigger" style="cursor: pointer;"><span style="color:white;">DỰ ÁN:</span> MÙA HÈ XANH</h1>
     
     <div class="status-bar">
         <div class="stat" id="money-container">TÀI CHÍNH<br><span id="money">6.000.000</span>đ</div>
@@ -173,32 +173,32 @@
                 <input type="number" id="admin-morale">
             </div>
             <div class="admin-group">
-                <label>⭐ Chất lượng (Ẩn):</label>
+                <label>⭐ Chất lượng:</label>
                 <input type="number" id="admin-quality">
             </div>
             <div class="admin-group">
-                <label>🤖 Bật/Tắt AI Game:</label>
+                <label>🤖 Bật/Tắt AI:</label>
                 <input type="checkbox" id="admin-ai-toggle" style="width: 20px; height: 20px;">
             </div>
-            <button class="admin-btn action" onclick="forceEventNow()">⚡ Kích hoạt Bàn Tay Định Mệnh (100% ra sự kiện cược)</button>
+            <button class="admin-btn action" onclick="forceEventNow()">⚡ Ép Sự Kiện Cược (100%)</button>
             
             <div class="admin-group" style="margin-top: 15px; flex-direction: column; align-items: flex-start;">
-                <label style="margin-bottom: 5px;">🚀 Nhảy Cóc Giai Đoạn:</label>
+                <label style="margin-bottom: 5px;">🚀 Nhảy Cóc:</label>
                 <div style="display: flex; width: 100%; gap: 10px;">
                     <select id="admin-stage-select" style="flex: 1; text-align: left;">
-                        <option value="stage_2">GĐ 2: Tìm sách</option>
-                        <option value="stage_4">GĐ 4: Khủng hoảng NV</option>
-                        <option value="stage_7">GĐ 7: Bão dột</option>
-                        <option value="stage_10">GĐ 10: Bàn giao</option>
-                        <option value="calc_ending">CẮT CẦU: Tổng kết</option>
+                        <option value="stage_2">GĐ 2</option>
+                        <option value="stage_4">GĐ 4</option>
+                        <option value="stage_7">GĐ 7</option>
+                        <option value="stage_10">GĐ 10</option>
+                        <option value="calc_ending">Tổng kết</option>
                     </select>
-                    <button class="admin-btn danger" style="padding: 5px 15px; margin: 0; width: auto;" onclick="jumpStage()">NHẢY</button>
+                    <button class="admin-btn danger" style="padding: 5px 15px; margin: 0; width: auto;" onclick="jumpStage()">GO</button>
                 </div>
             </div>
 
             <div class="admin-btn-row" style="margin-top: 15px;">
                 <button class="admin-btn danger" onclick="document.getElementById('admin-panel-overlay').style.display='none'">Đóng</button>
-                <button class="admin-btn" onclick="saveAdminPanel()">Lưu Chỉ Số</button>
+                <button class="admin-btn" onclick="saveAdminPanel()">Lưu</button>
             </div>
         </div>
     </div>
@@ -207,9 +207,7 @@
 <script type="module">
     import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-    // ==========================================
-    // 1. KHO API KEY BẤT TỬ 
-    // ==========================================
+    // 1. KHO API KEY BẤT TỬ
     const apiBunker = [
         "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o",
         "AIzaSy" + "BG-VpzIEZ" + "dY_9L-aTAi2S6jLLRhoRfzbk",
@@ -219,25 +217,21 @@
     ];
     let currentKeyIndex = 0;
     
-    // Đã đổi thành let để Admin có thể tắt bật
     let USE_AI = true; 
-    // Biến kích hoạt Bàn tay định mệnh
     let forceNextEvent = false;
 
-    // ==========================================
-    // 1.5 LOGIC ADMIN PANEL (EASTER EGG TRIGGER)
-    // ==========================================
+    // 2. ADMIN LOGIC
     let adminClickCount = 0;
     let adminClickTimer = null;
 
     document.getElementById('admin-trigger').addEventListener('click', () => {
         adminClickCount++;
         clearTimeout(adminClickTimer);
-        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 1000); // Reset nếu bấm quá chậm
+        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 1000); 
         
         if (adminClickCount >= 3) {
             document.getElementById('admin-login-overlay').style.display = 'flex';
-            adminClickCount = 0; // Reset
+            adminClickCount = 0; 
         }
     });
 
@@ -247,10 +241,10 @@
             document.getElementById('admin-login-overlay').style.display = 'none';
             openAdminPanel();
         } else {
-            alert("Mã truy cập không hợp lệ!");
+            alert("Sai mã!");
             document.getElementById('admin-login-overlay').style.display = 'none';
         }
-        document.getElementById('admin-key-input').value = ""; // Xóa trắng
+        document.getElementById('admin-key-input').value = "";
     };
 
     window.openAdminPanel = function() {
@@ -269,33 +263,26 @@
         state.quality = parseInt(document.getElementById('admin-quality').value) || 0;
         USE_AI = document.getElementById('admin-ai-toggle').checked;
         
-        updateUI(); // Cập nhật UI ngay lập tức
+        updateUI(); 
         document.getElementById('admin-panel-overlay').style.display = 'none';
     };
 
     window.forceEventNow = function() {
         forceNextEvent = true;
-        alert("Thành công! Vòng chơi ngay tiếp theo sẽ 100% xuất hiện Sự kiện ngẫu nhiên.");
+        alert("Đã kích hoạt sự kiện cho vòng kế!");
     };
 
     window.jumpStage = function() {
         const targetStage = document.getElementById('admin-stage-select').value;
         document.getElementById('admin-panel-overlay').style.display = 'none';
-        
-        // Gọi thẳng hàm chuẩn bị và chuyển màn của game
         prepareAndRenderNextStage(targetStage);
     };
 
-    // ==========================================
-    // 2. STATE & BỘ NHỚ LỊCH SỬ
-    // ==========================================
+    // 3. STATE & DATA
     let state = { money: 6000000, time: 25, morale: 100, quality: 0 };
     let dynamicStory = {}; 
     let usedThemes = []; 
 
-    // ==========================================
-    // 3. CỐT TRUYỆN GỐC TĨNH (GIỮ NGUYÊN HOÀN TOÀN)
-    // ==========================================
     const story = {
         start: {
             theme: "Lập kế hoạch và chuẩn bị cơ sở vật chất (kệ sách, sơn tường, dọn dẹp phòng trống).",
@@ -409,16 +396,15 @@
     const staticEvents = [
         { title: "⛈️ MƯA BÃO!", desc: "Mưa lớn làm gián đoạn vật liệu. Nhóm nghỉ 1 ngày.", type: "bad", effect: { time: -1, morale: -5 } },
         { title: "💸 MẤT VÍ TIỀN!", desc: "Một thành viên đánh rơi ví. Trích quỹ đền bù.", type: "bad", effect: { money: -300000, morale: -10 } },
-        { title: "🧋 TÀI TRỢ!", desc: "Phụ huynh mang trà sữa đến bồi dưỡng. Anh em sung sức!", type: "good", effect: { morale: +25, quality: +5 } }
+        { title: "🧋 TÀI TRỢ!", desc: "Phụ huynh mang trà sữa đến bồi dưỡng. Anh em sung sức!", type: "good", effect: { morale: +25, quality: +5 } },
+        { title: "🍀 NHẶT ĐƯỢC ĐỒ", desc: "Tình cờ tìm thấy một kho sách cũ còn rất mới ở kho nhà trường cho không nhóm.", type: "good", effect: { quality: +20, money: +200000 } }
     ];
 
-    // ==========================================
-    // 4. HÀM CỐT LÕI: GỌI GEMINI 2.5 FLASH
-    // ==========================================
+    // 4. API ENGINE
     async function callGemini(promptText, retryCount = 0) {
         if (!USE_AI || apiBunker.length === 0) return null;
         if (retryCount >= apiBunker.length) {
-            console.error("❌ Toàn bộ API Key đều lỗi.");
+            console.error("❌ API Error.");
             return null;
         }
 
@@ -429,63 +415,28 @@
                 model: "gemini-2.5-flash",
                 generationConfig: { responseMimeType: "application/json" } 
             });
-            
             const result = await model.generateContent(promptText);
-            const text = result.response.text();
-            return JSON.parse(text); 
+            return JSON.parse(result.response.text()); 
         } catch (error) {
             currentKeyIndex = (currentKeyIndex + 1) % apiBunker.length;
             return callGemini(promptText, retryCount + 1); 
         }
     }
 
-    // ==========================================
-    // 5. AI ĐẠO DIỄN: SỰ KIỆN ĐÁNH CƯỢC
-    // ==========================================
+    // 5. AI GENERATORS
     async function fetchAIEvent() {
-        const prompt = `
-        Tạo 1 sự kiện ĐÁNH CƯỢC sinh tử của học sinh cấp 3. Quỹ đang có: ${state.money} VNĐ.
-        TRẢ VỀ JSON:
-        {
-            "event_title": "TÊN SỰ KIỆN", 
-            "event_description": "Mô tả hấp dẫn",
-            "gamble_choice": { "text": "Liều mạng", "win_rate": 40, "win_effect": {"money": 1000000, "time": 0, "morale": 20}, "lose_effect": {"money": -500000, "time": -1, "morale": -20} },
-            "safe_choice": { "text": "Bỏ qua", "effect": {"morale": -5} }
-        }`;
+        const prompt = `Tạo 1 sự kiện ĐÁNH CƯỢC sinh tử cho học sinh. Quỹ: ${state.money}. TRẢ VỀ JSON: { "event_title": "...", "event_description": "...", "gamble_choice": { "text": "...", "win_rate": 40, "win_effect": {"money": 1000000, "time": 0, "morale": 20}, "lose_effect": {"money": -500000, "time": -1, "morale": -20} }, "safe_choice": { "text": "...", "effect": {"morale": -5} } }`;
         return await callGemini(prompt);
     }
 
-    // ==========================================
-    // 6. AI BIÊN KỊCH: CÂN BẰNG ĐỘNG
-    // ==========================================
     async function fetchDynamicStage(stageId) {
         const base = story[stageId];
         if (!base || !base.theme) return null; 
 
-        const stageTitleMatch = base.text.match(/<b>(.*?)<\/b>/);
-        const stageTitle = stageTitleMatch ? stageTitleMatch[1] : "TÌNH HUỐNG MỚI";
-        const nextId = base.choices[0].next;
-        const currentMoney = state.money;
+        const stageTitle = (base.text.match(/<b>(.*?)<\/b>/) || [])[1] || "TÌNH HUỐNG MỚI";
         const historyText = usedThemes.length > 0 ? usedThemes.join(", ") : "Chưa có";
 
-        const prompt = `
-        Bạn là Biên kịch. Viết kịch bản cho: "${stageTitle}". Chủ đề vòng này: ${base.theme}.
-        
-        LUẬT:
-        1. KHÔNG lặp lại các nội dung: ${historyText}.
-        2. Nhóm hiện có ${currentMoney} VNĐ. Lựa chọn A tốn tiền nhưng TỐI ĐA là ${Math.floor(currentMoney * 0.7)} VNĐ.
-        3. Lựa chọn B và C phải cực rẻ (từ 0đ đến tối đa 300.000đ).
-        4. KHÔNG tiết lộ Quality/Morale trong phần 'impact'.
-
-        TRẢ VỀ JSON:
-        {
-            "text": "<b>${stageTitle}</b><br>[Mô tả rắc rối mới...]",
-            "choices": [
-                { "text": "A. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} },
-                { "text": "B. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": 0, "time": -4, "morale": -20, "quality": 5} },
-                { "text": "C. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} }
-            ]
-        }`;
+        const prompt = `Viết kịch bản game: "${stageTitle}". Chủ đề: ${base.theme}. LUẬT: KHÔNG lặp lại: ${historyText}. A tốn tiền (max ${Math.floor(state.money * 0.7)}). B/C rẻ. KHÔNG hiện Quality/Morale ở impact. TRẢ VỀ JSON: { "text": "<b>${stageTitle}</b><br>[Mô tả...]", "choices": [ { "text": "A...", "impact": "💰...|⏱️...", "next": "${base.choices[0].next}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} }, { "text": "B...", "impact": "...", "next": "${base.choices[0].next}", "effect": {"money": 0, "time": -4, "morale": -20, "quality": 5} }, { "text": "C...", "impact": "...", "next": "${base.choices[0].next}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} } ] }`;
         
         const aiResponse = await callGemini(prompt);
         if (aiResponse) {
@@ -495,9 +446,7 @@
         return aiResponse;
     }
 
-    // ==========================================
-    // 7. ENGINE ĐIỀU PHỐI (CORE)
-    // ==========================================
+    // 6. CORE LOGIC
     function updateUI() {
         document.getElementById("money").innerText = state.money.toLocaleString('vi-VN');
         document.getElementById("time").innerText = state.time;
@@ -523,46 +472,43 @@
         updateUI();
 
         const failScene = checkGameOver();
-        if (failScene) {
-            renderScene(failScene);
-            return;
+        if (failScene) { renderScene(failScene); return; }
+        if (nextStageId === "calc_ending" || nextStageId.includes("gameover") || nextStageId.includes("end_")) { renderScene(nextStageId); return; }
+
+        document.getElementById("loading-overlay").style.display = "flex";
+
+        // LOGIC SỰ KIỆN MỚI: 30% CÓ BIẾN CỐ (50% AI / 50% TĨNH)
+        const triggerEvent = Math.random() <= 0.30; 
+        let isAiEvent = false;
+
+        if (triggerEvent) {
+             isAiEvent = Math.random() > 0.5 || forceNextEvent; 
+             if (forceNextEvent) forceNextEvent = false;
         }
 
-        if (nextStageId === "calc_ending" || nextStageId.includes("gameover") || nextStageId.includes("end_")) {
-            renderScene(nextStageId);
-            return;
-        }
-
-        const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "HỆ THỐNG ĐANG PHÂN TÍCH...";
-        loading.style.display = "flex";
-
-        // TÍCH HỢP TÍNH NĂNG "BÀN TAY ĐỊNH MỆNH" CỦA ADMIN
-        let rollEvent = Math.random() > 0.65; 
-        if (forceNextEvent) {
-            rollEvent = true;
-            forceNextEvent = false; // Reset lại sau khi dùng
-        }
-
-        const eventPromise = rollEvent ? fetchAIEvent() : Promise.resolve(null);
+        // Fetch song song
+        const eventPromise = (triggerEvent && isAiEvent) ? fetchAIEvent() : Promise.resolve(null);
         const stagePromise = fetchDynamicStage(nextStageId);
 
         const [aiEventData, dynamicStageData] = await Promise.all([eventPromise, stagePromise]);
 
-        if (dynamicStageData) {
-            dynamicStory[nextStageId] = dynamicStageData; 
-        }
+        if (dynamicStageData) dynamicStory[nextStageId] = dynamicStageData; 
+        document.getElementById("loading-overlay").style.display = "none";
 
-        loading.style.display = "none";
-
-        if (rollEvent) {
-            showEventPopup(aiEventData, nextStageId);
+        if (triggerEvent) {
+            if (isAiEvent && aiEventData) {
+                showEventPopup(aiEventData, nextStageId, true);
+            } else {
+                // FALLBACK SỰ KIỆN TĨNH
+                const staticEv = staticEvents[Math.floor(Math.random() * staticEvents.length)];
+                showEventPopup(staticEv, nextStageId, false);
+            }
         } else {
             renderScene(nextStageId);
         }
     }
 
-    function showEventPopup(aiData, nextStageId) {
+    function showEventPopup(data, nextStageId, isAi) {
         const overlay = document.getElementById("event-overlay");
         const titleTag = document.getElementById("event-title");
         const descTag = document.getElementById("event-desc");
@@ -570,43 +516,43 @@
         
         btnBox.innerHTML = ""; 
 
-        if (aiData) {
-            titleTag.innerText = "🎲 " + aiData.event_title;
+        if (isAi) {
+            titleTag.innerText = "🎲 " + data.event_title;
             titleTag.style.color = "var(--warning)";
-            descTag.innerHTML = `<i>${aiData.event_description}</i><br><br><b>Tỉ lệ thắng: ${aiData.gamble_choice.win_rate}%</b>`;
+            descTag.innerHTML = `<i>${data.event_description}</i><br><br><b>Tỉ lệ thắng: ${data.gamble_choice.win_rate}%</b>`;
 
             const btnLiều = document.createElement("button");
             btnLiều.style.borderColor = "var(--warning)";
-            btnLiều.innerHTML = `🔥 ${aiData.gamble_choice.text}`;
+            btnLiều.innerHTML = `🔥 ${data.gamble_choice.text}`;
             btnLiều.onclick = () => {
                 const roll = Math.floor(Math.random() * 100) + 1;
-                if (roll <= aiData.gamble_choice.win_rate) {
-                    alert("🎉 ĐẠI THẮNG! BẠN VỪA TRÚNG QUẢ ĐẬM!");
-                    applyEffectAndNext(aiData.gamble_choice.win_effect, nextStageId);
+                if (roll <= data.gamble_choice.win_rate) {
+                    alert("🎉 ĐẠI THẮNG!");
+                    applyEffectAndNext(data.gamble_choice.win_effect, nextStageId);
                 } else {
-                    alert("💀 OAN NGHIỆT! BẠN ĐÃ THUA SẠCH!");
-                    applyEffectAndNext(aiData.gamble_choice.lose_effect, nextStageId);
+                    alert("💀 THUA SẠCH!");
+                    applyEffectAndNext(data.gamble_choice.lose_effect, nextStageId);
                 }
             };
             const btnAnToan = document.createElement("button");
-            btnAnToan.innerHTML = `🛡️ ${aiData.safe_choice.text}`;
-            btnAnToan.onclick = () => applyEffectAndNext(aiData.safe_choice.effect, nextStageId);
+            btnAnToan.innerHTML = `🛡️ ${data.safe_choice.text}`;
+            btnAnToan.onclick = () => applyEffectAndNext(data.safe_choice.effect, nextStageId);
 
             btnBox.appendChild(btnLiều);
             btnBox.appendChild(btnAnToan);
         } else {
-            const staticEv = staticEvents[Math.floor(Math.random() * staticEvents.length)];
-            titleTag.innerText = staticEv.title;
-            titleTag.style.color = staticEv.type === "bad" ? "var(--danger)" : "var(--success)";
-            descTag.innerText = staticEv.desc;
-            if(staticEv.type === "bad") {
+            // HIỂN THỊ SỰ KIỆN TĨNH
+            titleTag.innerText = data.title;
+            titleTag.style.color = data.type === "bad" ? "var(--danger)" : "var(--success)";
+            descTag.innerText = data.desc;
+            if(data.type === "bad") {
                 document.getElementById("game-container").classList.add("shake");
                 setTimeout(() => document.getElementById("game-container").classList.remove("shake"), 600);
             }
             const btnOk = document.createElement("button");
-            btnOk.innerHTML = "Chấp nhận thực tế";
+            btnOk.innerHTML = "Chấp nhận";
             btnOk.style.width = "100%";
-            btnOk.onclick = () => applyEffectAndNext(staticEv.effect, nextStageId);
+            btnOk.onclick = () => applyEffectAndNext(data.effect, nextStageId);
             btnBox.appendChild(btnOk);
         }
         overlay.style.display = "flex"; 
@@ -637,10 +583,15 @@
         }
 
         const scene = dynamicStory[sceneId] || story[sceneId];
-        const textDiv = document.getElementById("story-text");
+        document.getElementById("story-text").innerHTML = scene.text;
+        document.getElementById("story-text").classList.remove("fade-in");
+        void document.getElementById("story-text").offsetWidth;
+        document.getElementById("story-text").classList.add("fade-in");
+
         const choicesDiv = document.getElementById("choices");
-        const imgContainer = document.getElementById("image-container");
+        choicesDiv.innerHTML = "";
         
+        const imgContainer = document.getElementById("image-container");
         if (scene.image) {
             document.getElementById("scene-image").src = scene.image;
             imgContainer.style.display = "block";
@@ -648,19 +599,13 @@
             imgContainer.style.display = "none";
         }
 
-        textDiv.innerHTML = scene.text;
-        textDiv.classList.remove("fade-in");
-        void textDiv.offsetWidth;
-        textDiv.classList.add("fade-in");
-        choicesDiv.innerHTML = "";
-
         if (scene.isEnd || (story[sceneId] && story[sceneId].isEnd)) { 
             const endText = scene.text || story[sceneId].text;
             const endColor = scene.color || story[sceneId].color;
             document.getElementById("game-container").style.borderColor = endColor;
-            textDiv.innerHTML = `<h2 style="color: ${endColor}; text-align:center">${endText}</h2>`;
+            document.getElementById("story-text").innerHTML = `<h2 style="color: ${endColor}; text-align:center">${endText}</h2>`;
             const btn = document.createElement("button");
-            btn.innerHTML = "<center>🔄 <b>CHƠI LẠI TỪ ĐẦU</b></center>";
+            btn.innerHTML = "<center>🔄 <b>CHƠI LẠI</b></center>";
             btn.onclick = () => location.reload();
             choicesDiv.appendChild(btn);
         } else {
@@ -673,20 +618,19 @@
         }
     }
 
-    async function initGame() {
-        updateUI();
-        const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "KHỞI TẠO VŨ TRỤ...";
-        loading.style.display = "flex";
-        
-        const dynamicData = await fetchDynamicStage("start");
-        if (dynamicData) dynamicStory["start"] = dynamicData;
-        
-        loading.style.display = "none";
-        renderScene("start");
+    async function prepareAndRenderNextStage(stageId) {
+        if (stageId === "calc_ending" || stageId.includes("gameover") || stageId.includes("end_")) {
+            renderScene(stageId);
+            return;
+        }
+        document.getElementById("loading-overlay").style.display = "flex";
+        const dynamicData = await fetchDynamicStage(stageId);
+        if (dynamicData) dynamicStory[stageId] = dynamicData;
+        document.getElementById("loading-overlay").style.display = "none";
+        renderScene(stageId);
     }
 
-    initGame();
+    prepareAndRenderNextStage("start");
 
 </script>
 </body>
