@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (AI Đa Biến Thể)</title>
+    <title>Dự Án Mùa Hè Xanh: Vũ Trụ Mô Phỏng (Gemini 2.5)</title>
     <script type="importmap">
       {
         "imports": {
@@ -122,11 +122,11 @@
     // 1. KHO API KEY BẤT TỬ (ĐÃ CHIA NHỎ ĐỂ CHỐNG QUÉT)
     // ==========================================
     const apiBunker = [
-        "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o", // Key 1
-        "AIzaSy" + "BG-VpzIEZ" + "dY_9L-aTAi2S6jLLRhoRfzbk", // Key 2
-        "AIzaSy" + "ClbEJ9z45" + "jBw4RwA0k8Z-uDtSWpNBByxc", // Key 3
-        "AIzaSy" + "CufjIA8oY" + "vSR5ugxt9iHMSl_nwIZIYqzs", // Key 4
-        "AIzaSy" + "CeUtH22q4" + "N-ntma7m-kAW1Ctie5ViOzgw"  // Key 5
+        "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o",
+        "AIzaSy" + "BG-VpzIEZ" + "dY_9L-aTAi2S6jLLRhoRfzbk",
+        "AIzaSy" + "ClbEJ9z45" + "jBw4RwA0k8Z-uDtSWpNBByxc",
+        "AIzaSy" + "CufjIA8oY" + "vSR5ugxt9iHMSl_nwIZIYqzs",
+        "AIzaSy" + "CeUtH22q4" + "N-ntma7m-kAW1Ctie5ViOzgw"
     ];
     let currentKeyIndex = 0;
     const USE_AI = true; 
@@ -135,10 +135,10 @@
     // 2. STATE KHỞI ĐẦU & BỘ LƯU TRỮ AI KỊCH BẢN
     // ==========================================
     let state = { money: 6000000, time: 25, morale: 100, quality: 0 };
-    let dynamicStory = {}; // Nơi lưu kịch bản do AI tự đẻ ra
+    let dynamicStory = {}; 
 
     // ==========================================
-    // 3. CỐT TRUYỆN GỐC TĨNH (SỬ DỤNG LÀM FALLBACK & KHUNG SƯỜN CHO AI)
+    // 3. CỐT TRUYỆN GỐC TĨNH (GIỮ NGUYÊN NHƯ CŨ)
     // ==========================================
     const story = {
         start: {
@@ -242,7 +242,6 @@
             ]
         },
 
-        // --- ENDINGS ---
         gameover_money: { text: "GAME OVER: VỠ NỢ TÀI CHÍNH 💸", isEnd: true, color: "var(--danger)" },
         gameover_time: { text: "GAME OVER: TRỄ DEADLINE ⏱️", isEnd: true, color: "var(--danger)" },
         gameover_morale: { text: "GAME OVER: NHÓM TAN RÃ 😡", isEnd: true, color: "var(--danger)" },
@@ -258,25 +257,33 @@
     ];
 
     // ==========================================
-    // 4. HÀM CỐT LÕI: GỌI GEMINI API (CÓ TỰ ĐỘNG XOAY VÒNG KEY)
+    // 4. HÀM CỐT LÕI: GỌI GEMINI API (CẬP NHẬT LÊN GEMINI 2.5 FLASH)
     // ==========================================
     async function callGemini(promptText, retryCount = 0) {
         if (!USE_AI || apiBunker.length === 0) return null;
         if (retryCount >= apiBunker.length) {
-            console.warn("Toàn bộ API Key đều lỗi (Rate limit). Chuyển sang Fallback Tĩnh.");
+            console.error("❌ Toàn bộ API Key đều lỗi. Chuyển sang Fallback Tĩnh.");
             return null;
         }
 
         const activeKey = apiBunker[currentKeyIndex];
         try {
             const genAI = new GoogleGenerativeAI(activeKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            
+            // ĐÃ NÂNG CẤP LÊN GEMINI 2.5 FLASH
+            const model = genAI.getGenerativeModel({ 
+                model: "gemini-2.5-flash",
+                generationConfig: { responseMimeType: "application/json" } 
+            });
+            
             const result = await model.generateContent(promptText);
-            let text = result.response.text().replace(/```json|```/g, "").trim();
+            const text = result.response.text();
+            
+            console.log("✅ AI Trả Về Thành Công (Gemini 2.5):", text); 
             return JSON.parse(text); 
+
         } catch (error) {
-            console.warn(`Key số ${currentKeyIndex + 1} lỗi:`, error.message);
-            // Xoay vòng qua key tiếp theo
+            console.warn(`⚠️ Key số ${currentKeyIndex + 1} gặp sự cố:`, error.message);
             currentKeyIndex = (currentKeyIndex + 1) % apiBunker.length;
             return callGemini(promptText, retryCount + 1); 
         }
@@ -287,13 +294,23 @@
     // ==========================================
     async function fetchAIEvent() {
         const currentStats = `Quỹ: ${state.money} VNĐ, Thời gian: ${state.time} ngày, Tinh thần: ${state.morale}%`;
-        const prompt = `Bạn là Đạo diễn Game. Chỉ số: ${currentStats}.
+        const prompt = `
+        Bạn là Đạo diễn Game. Chỉ số: ${currentStats}.
         Tạo 1 sự kiện ĐÁNH CƯỢC sinh tử của học sinh cấp 3.
-        TRẢ VỀ JSON DUY NHẤT:
+        TRẢ VỀ JSON THEO CẤU TRÚC SAU:
         {
-            "event_title": "Tên sự kiện (IN HOA)", "event_description": "Mô tả hấp dẫn",
-            "gamble_choice": { "text": "Liều mạng", "win_rate": 40, "win_effect": {"money": 1000000, "time": 0, "morale": 20}, "lose_effect": {"money": -500000, "time": -1, "morale": -20} },
-            "safe_choice": { "text": "Bỏ qua an toàn", "effect": {"morale": -5} }
+            "event_title": "TÊN SỰ KIỆN", 
+            "event_description": "Mô tả hấp dẫn",
+            "gamble_choice": { 
+                "text": "Tên hành động liều mạng", 
+                "win_rate": 40, 
+                "win_effect": {"money": 1000000, "time": 0, "morale": 20}, 
+                "lose_effect": {"money": -500000, "time": -1, "morale": -20} 
+            },
+            "safe_choice": { 
+                "text": "Bỏ qua", 
+                "effect": {"morale": -5} 
+            }
         }`;
         return await callGemini(prompt);
     }
@@ -303,29 +320,34 @@
     // ==========================================
     async function fetchDynamicStage(stageId) {
         const base = story[stageId];
-        if (!base || !base.theme) return null; // Nếu là màn ending thì bỏ qua
+        if (!base || !base.theme) return null; 
 
-        // Định dạng cấu trúc cho AI tuân theo để nút chuyển Map (Next) không bị lỗi
-        const nextId = base.choices[0].next; 
+        let nextId = "calc_ending";
+        if (base.choices && base.choices.length > 0) {
+            nextId = base.choices[0].next;
+        }
+
         const prompt = `
-        Bạn là Biên kịch Game. 
-        Nhiệm vụ: Viết một tình huống MỚI TOANH dựa trên chủ đề: "${base.theme}". 
-        Không được lặp lại tình huống gốc ("${base.text}"). Hãy sáng tạo một rắc rối thực tế khác của học sinh làm dự án.
+        Viết một tình huống game quản lý dự án học sinh mới dựa trên chủ đề: "${base.theme}".
+        Yêu cầu:
+        1. Tạo 3 lựa chọn (A: Tốn tiền nhàn hạ, B: Tiết kiệm nhưng cực, C: Sáng tạo rủi ro).
+        2. Phần 'impact' CHỈ được hiện số Tiền và Thời gian bị trừ (Không tiết lộ chất lượng/tinh thần).
         
-        Tạo 3 lựa chọn (A: Tốn tiền nhàn hạ, B: Tiết kiệm nhưng cực khổ/tốn thời gian, C: Sáng tạo/Lươn lẹo).
-        Luật ẨN CHỈ SỐ: Không ghi Morale hay Quality vào phần 'impact'.
-
-        TRẢ VỀ JSON DUY NHẤT ĐÚNG FORMAT NÀY:
+        TRẢ VỀ JSON THEO CẤU TRÚC SAU:
         {
-            "text": "<b>[TÊN GIAI ĐOẠN TỰ ĐẶT]</b><br>[Mô tả rắc rối mới...]",
-            "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
+            "text": "<b>[GIAI ĐOẠN TỰ ĐẶT]</b><br>[Mô tả rắc rối...]",
             "choices": [
-                { "text": "A. [Mô tả lựa chọn A]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} },
-                { "text": "B. [Mô tả lựa chọn B]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -200000, "time": -4, "morale": -20, "quality": 5} },
-                { "text": "C. [Mô tả lựa chọn C]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -500000, "time": -2, "morale": -5, "quality": 20} }
+                { "text": "A. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} },
+                { "text": "B. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -200000, "time": -4, "morale": -20, "quality": 5} },
+                { "text": "C. [Mô tả]", "impact": "💰 -X k | ⏱️ -Y ngày", "next": "${nextId}", "effect": {"money": -500000, "time": -2, "morale": -5, "quality": 20} }
             ]
         }`;
-        return await callGemini(prompt);
+        
+        const aiResponse = await callGemini(prompt);
+        if (aiResponse) {
+            aiResponse.image = base.image; 
+        }
+        return aiResponse;
     }
 
     // ==========================================
@@ -374,7 +396,7 @@
         const descTag = document.getElementById("event-desc");
         const btnBox = document.getElementById("event-buttons");
         
-        document.getElementById("loading-text").innerText = "AI ĐANG ĐẺ RA KIẾP NẠN...";
+        document.getElementById("loading-text").innerText = "AI ĐANG TẠO SỰ KIỆN...";
         loading.style.display = "flex"; 
 
         const aiData = await fetchAIEvent();
@@ -384,7 +406,7 @@
         if (aiData) {
             titleTag.innerText = "🎲 " + aiData.event_title;
             titleTag.style.color = "var(--warning)";
-            descTag.innerHTML = `<i>${aiData.event_description}</i><br><br><b>Tỉ lệ thắng cá cược: ${aiData.gamble_choice.win_rate}%</b>`;
+            descTag.innerHTML = `<i>${aiData.event_description}</i><br><br><b>Tỉ lệ thắng: ${aiData.gamble_choice.win_rate}%</b>`;
 
             const btnLiều = document.createElement("button");
             btnLiều.style.borderColor = "var(--warning)";
@@ -406,6 +428,7 @@
             btnBox.appendChild(btnLiều);
             btnBox.appendChild(btnAnToan);
         } else {
+            // FALLBACK
             const staticEv = staticEvents[Math.floor(Math.random() * staticEvents.length)];
             titleTag.innerText = staticEv.title;
             titleTag.style.color = staticEv.type === "bad" ? "var(--danger)" : "var(--success)";
@@ -424,7 +447,6 @@
         overlay.style.display = "flex"; 
     }
 
-    // Tiền xử lý: Gọi AI tạo kịch bản mới trước khi render
     async function prepareAndRenderNextStage(stageId) {
         if (stageId === "calc_ending" || stageId.includes("gameover") || stageId.includes("end_")) {
             renderScene(stageId);
@@ -432,13 +454,12 @@
         }
 
         const loading = document.getElementById("loading-overlay");
-        document.getElementById("loading-text").innerText = "AI ĐANG TẠO KỊCH BẢN ĐỘC BẢN...";
+        document.getElementById("loading-text").innerText = "AI ĐANG VIẾT KỊCH BẢN...";
         loading.style.display = "flex";
 
-        // Thử gọi AI tạo biến thể (Variation)
         const dynamicData = await fetchDynamicStage(stageId);
         if (dynamicData) {
-            dynamicStory[stageId] = dynamicData; // Lưu vào kho động
+            dynamicStory[stageId] = dynamicData; 
         }
         
         loading.style.display = "none";
@@ -456,7 +477,6 @@
             }
         }
 
-        // Ưu tiên dùng kịch bản Động (AI tạo), nếu không có mới dùng Tĩnh
         const scene = dynamicStory[sceneId] || story[sceneId];
         
         const textDiv = document.getElementById("story-text");
@@ -476,7 +496,7 @@
         textDiv.classList.add("fade-in");
         choicesDiv.innerHTML = "";
 
-        if (scene.isEnd || story[sceneId].isEnd) { // Check cả gốc lỡ dynamicStory không có cờ isEnd
+        if (scene.isEnd || story[sceneId].isEnd) { 
             const endText = scene.text || story[sceneId].text;
             const endColor = scene.color || story[sceneId].color;
             document.getElementById("game-container").style.borderColor = endColor;
@@ -509,7 +529,7 @@
         }
     }
 
-    // Khởi chạy
+    // Bắt đầu game
     updateUI();
     prepareAndRenderNextStage("start");
 
