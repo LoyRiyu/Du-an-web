@@ -1117,29 +1117,209 @@
         #theme-toggle:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
 
         /* =============================================
-           PRESENTATION MODE — hover zoom (thuần CSS)
-           Chỉ áp dụng thiết bị có chuột thật.
-           Không JS, không ảnh hưởng onclick/logic AI.
+           HOVER EFFECTS — chỉ thiết bị có chuột thật
+           ĐÃ SỬA: Xóa scale() trên story-text vì gây
+           overflow che phủ các nút bên dưới, chuột
+           không tiếp cận được (bug "zoom không được").
         ============================================= */
         @media (hover: hover) and (pointer: fine) {
-            /* story-text: scale 5%, nổi lên z-index 10 */
             #story-text {
-                transition: transform 0.28s cubic-bezier(0.4,0,0.2,1),
-                            box-shadow 0.28s cubic-bezier(0.4,0,0.2,1);
-                will-change: transform;
+                transition: box-shadow 0.28s cubic-bezier(0.4,0,0.2,1),
+                            border-color 0.28s cubic-bezier(0.4,0,0.2,1);
             }
             #story-text:hover {
-                transform: scale(1.5);
-                transform-origin: top center;
-                z-index: 10;
-                box-shadow: 0 20px 56px rgba(0,0,0,0.5);
+                border-color: var(--gold-dim);
+                box-shadow: 0 8px 32px rgba(212,175,55,0.12);
             }
-            /* choice-btn: kết hợp translateY(-2px) sẵn có + scale(1.03) */
+            .choice-btn {
+                position: relative;
+            }
             .choice-btn:hover {
-                transform: translateY(-2px) scale(1.03);
+                transform: translateY(-3px);
                 z-index: 5;
             }
         }
+
+        /* =============================================
+           AI MODE INDICATOR BADGE
+        ============================================= */
+        #ai-mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            transition: var(--transition);
+            cursor: default;
+        }
+        #ai-mode-badge.ai-on  { color: var(--success); border: 1px solid rgba(74,222,128,0.3); background: rgba(74,222,128,0.07); }
+        #ai-mode-badge.ai-off { color: var(--text-dim); border: 1px solid var(--border); background: var(--bg-surface); }
+
+        /* =============================================
+           SOUND TOGGLE BUTTON
+        ============================================= */
+        #sound-toggle {
+            position: absolute;
+            top: 0; right: 108px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+        #sound-toggle:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
+
+        /* =============================================
+           TOOLTIP FOR PILLS (thuần CSS, data-tip)
+        ============================================= */
+        .pill[data-tip] {
+            position: relative;
+            cursor: help;
+        }
+        .pill[data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 7px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10,20,36,0.97);
+            border: 1px solid var(--gold-dim);
+            color: var(--text-main);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 50;
+        }
+        .pill[data-tip]:hover::after { opacity: 1; }
+
+        /* =============================================
+           DELAYED CONSEQUENCE NOTIFICATION
+        ============================================= */
+        .delayed-notif {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(251,191,36,0.08);
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+            color: var(--warning);
+            line-height: 1.5;
+            animation: fadeIn 0.45s ease both;
+        }
+        .delayed-notif .dn-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+        /* =============================================
+           BONUS OPPORTUNITY OVERLAY
+        ============================================= */
+        #bonus-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(8,18,36,0.97);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 18;
+            padding: clamp(20px,4vw,36px);
+            text-align: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow-y: auto;
+        }
+        .bonus-icon-big { font-size: clamp(2.5rem,8vw,4rem); margin-bottom: 10px; line-height: 1; }
+        #bonus-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem,3.5vw,1.7rem);
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        #bonus-desc {
+            font-size: clamp(0.9rem,2vw,1.05rem);
+            color: #E2E8F0;
+            margin-bottom: 8px;
+            max-width: 440px;
+            line-height: 1.75;
+        }
+        .bonus-cost-label {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 22px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 5px 14px;
+        }
+        .bonus-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: 420px; width: 100%; }
+        .bonus-btn {
+            flex: 1; min-width: 140px;
+            padding: 13px 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bonus-btn.accept { background: var(--gold-glow); border: 1px solid var(--gold-dim); color: var(--gold); }
+        .bonus-btn.accept:hover { background: var(--gold); color: #000; box-shadow: 0 0 24px rgba(212,175,55,0.3); }
+        .bonus-btn.skip { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-sub); }
+        .bonus-btn.skip:hover { border-color: rgba(255,255,255,0.2); color: var(--text-main); }
+
+        /* =============================================
+           LEADERBOARD (end screen)
+        ============================================= */
+        #leaderboard-section {
+            width: 100%; max-width: 560px;
+            margin-bottom: 24px;
+            display: none;
+            animation: fadeIn 0.5s 0.75s ease both;
+        }
+        #leaderboard-section h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 5px;
+            font-size: 0.82rem;
+        }
+        .lb-row.lb-new { border-color: var(--gold-dim); background: var(--gold-glow); }
+        .lb-rank { color: var(--gold); font-weight: 700; min-width: 22px; font-family: 'Playfair Display', serif; }
+        .lb-ending { flex: 1; color: var(--text-sub); font-size: 0.78rem; }
+        .lb-score { color: var(--text-main); font-weight: 700; }
+        .lb-diff { font-size: 0.7rem; color: var(--text-dim); }
+        .lb-date { font-size: 0.7rem; color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -1206,6 +1386,7 @@
         <div class="game-title" id="admin-trigger">
             <span class="white">DỰ ÁN:</span> MÙA HÈ XANH
         </div>
+        <button id="sound-toggle" title="Bật/tắt âm thanh">🔊 Âm thanh</button>
         <button id="theme-toggle">🎨 Tình Nguyện</button>
         <div id="stage-dots">
             <div class="s-dot" id="dot-1"></div>
@@ -1219,6 +1400,7 @@
             <div class="s-dot" id="dot-9"></div>
             <div class="s-dot" id="dot-10"></div>
         </div>
+        <span id="ai-mode-badge" class="ai-on">⚡ AI Mode</span>
     </div>
 
     <div class="status-bar">
@@ -1343,6 +1525,17 @@
         </div>
     </div>
 
+    <div id="bonus-overlay">
+        <div class="bonus-icon-big" id="bonus-icon">⭐</div>
+        <div id="bonus-title">CƠ HỘI ĐẶC BIỆT!</div>
+        <p id="bonus-desc"></p>
+        <span class="bonus-cost-label" id="bonus-cost"></span>
+        <div class="bonus-btns">
+            <button class="bonus-btn accept" id="bonus-accept-btn"></button>
+            <button class="bonus-btn skip" id="bonus-skip-btn"></button>
+        </div>
+    </div>
+
     <div id="halftime-overlay">
         <div class="halftime-label">✦ CHECKPOINT ✦</div>
         <h2>Nửa Chặng Đường</h2>
@@ -1374,6 +1567,11 @@
         <div class="end-stat-card"><div class="esk-label">🎲 Biến cố gặp</div><div class="esk-value" id="end-events"></div></div>
     </div>
     
+    <div id="leaderboard-section">
+        <h3>🏅 Bảng Thành Tích Của Bạn</h3>
+        <div id="lb-body"></div>
+    </div>
+
     <p class="secret-hint" id="secret-hint">"Đây là true ending, liệu bạn có thể thành công lấy được Secret Ending - một ảnh ending không nên tồn tại"</p>
 
     <button class="replay-btn" id="replay-btn">🔄 Chơi Lại</button>
@@ -1447,7 +1645,15 @@
             winMin: 30, winMax: 50
         }
     };
-    let currentDiff = DIFFICULTIES.normal;
+    let currentDiff    = DIFFICULTIES.normal;
+    let currentDiffKey = 'normal'; // MỚI: theo dõi key cho cache
+
+    // ===== BIẾN GAME STATE MỚI =====
+    let bgReputation         = 0;   // Uy tín với BGH: -3 → +3 (ẩn với người chơi)
+    let pendingDelayedEffects = []; // Hậu quả muộn chưa kích hoạt
+    let usedBonusIds         = []; // Bonus opportunity đã hiện
+    let soundEnabled         = true;
+    let audioCtx             = null;
 
     let stagesSinceStaticEvent = 0;
     let pendingStaticEvent = null;
@@ -1471,7 +1677,8 @@
     });
 
     function pickDifficulty(diffKey) {
-        currentDiff = DIFFICULTIES[diffKey];
+        currentDiff    = DIFFICULTIES[diffKey];
+        currentDiffKey = diffKey;
         document.getElementById('difficulty-screen').style.display = 'none';
         document.getElementById('game-container').style.display = 'block';
         initGame();
@@ -1488,6 +1695,12 @@
         isVolunteerTheme = !isVolunteerTheme;
         document.body.classList.toggle('theme-volunteer', isVolunteerTheme);
         document.getElementById('theme-toggle').textContent = isVolunteerTheme ? '🌙 Tối' : '🎨 Tình Nguyện';
+    });
+
+    document.getElementById('sound-toggle').addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('sound-toggle').textContent = soundEnabled ? '🔊 Âm thanh' : '🔇 Tắt tiếng';
+        document.getElementById('sound-toggle').style.color = soundEnabled ? '' : 'var(--text-dim)';
     });
 
     document.getElementById('admin-trigger').addEventListener('click', () => {
@@ -1538,6 +1751,7 @@
         if (!isNaN(rAI))     RATE_AI_EVENT     = Math.min(100, Math.max(0, rAI))     / 100;
         if (!isNaN(rStatic)) RATE_STATIC_EVENT = Math.min(100, Math.max(0, rStatic)) / 100;
         updateUI();
+        updateAIBadge();
         document.getElementById('admin-panel-overlay').style.display = 'none';
     });
 
@@ -1613,9 +1827,11 @@
             text: "<b>GIAI ĐOẠN 6: KIỂM SOÁT CHẤT LƯỢNG</b><br>Tá hỏa phát hiện sách quyên góp có lẫn lộn truyện bạo lực, ngôn tình 18+ không hợp với trẻ em.",
             image: "https://image2url.com/r2/default/images/1772112657879-d997f6ed-2c44-42a0-8468-2565dab08eac.jpg",
             choices: [
-                { text: "Đình chỉ việc trang trí, huy động toàn bộ thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 } },
+                { text: "Đình chỉ việc trang trí, huy động toàn bộ thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 }, bgRep: 1 },
                 { text: "Mua bánh kẹo dụ dỗ học sinh lớp bên cạnh sang ngồi lọc phụ.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_7", effect: { money: -300000, time: -1, morale: 5, quality: 15 } },
-                { text: "Nhắm mắt làm ngơ. Sắp xếp hết lên kệ cao.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_7", effect: { quality: -35 } }
+                { text: "Nhắm mắt làm ngơ. Sắp xếp hết lên kệ cao.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_7", effect: { quality: -35 }, bgRep: -2,
+                  delayed: { triggerStage: "stage_9", effect: { quality: -20, morale: -15 }, message: "🔍 Hậu quả muộn: BGH Thanh tra phát hiện sách không phù hợp trong kệ thư viện. Uy tín dự án bị ảnh hưởng nghiêm trọng!" }
+                }
             ]
         },
         stage_7: {
@@ -1633,9 +1849,11 @@
             text: "<b>GIAI ĐOẠN 8: KIỂM SOÁT MÔI TRƯỜNG</b><br>Đống rác thải công trình chất cao như núi. Bác lao công trường từ chối dọn.",
             image: "https://image2url.com/r2/default/images/1772112738404-3fe56192-30bd-4eb0-85ec-c737c8ec7c31.jpg",
             choices: [
-                { text: "Trả tiền cho đội xe rác chuyên nghiệp dọn sạch sẽ.", impact: "💰 -600k | ⏱️ 0 ngày", next: "stage_9", effect: { money: -600000, quality: 10 } },
+                { text: "Trả tiền cho đội xe rác chuyên nghiệp dọn sạch sẽ.", impact: "💰 -600k | ⏱️ 0 ngày", next: "stage_9", effect: { money: -600000, quality: 10 }, bgRep: 1 },
                 { text: "Mượn xe còng, tự è cổ đẩy rác ra bãi tập kết xa 2km.", impact: "💰 0đ | ⏱️ -2 ngày", next: "stage_9", effect: { time: -2, morale: -20 } },
-                { text: "Lén lút dồn rác vào góc kho trống và lấy bạt phủ lên.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_9", effect: { morale: -5, quality: -25 } }
+                { text: "Lén lút dồn rác vào góc kho trống và lấy bạt phủ lên.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_9", effect: { morale: -5, quality: -25 }, bgRep: -1,
+                  delayed: { triggerStage: "stage_10", effect: { morale: -10, quality: -10 }, message: "🗑️ Hậu quả muộn: Mùi hôi từ góc kho rác bốc lên đúng ngày Lễ Khai Giảng, khách mời phàn nàn!" }
+                }
             ]
         },
         stage_9: {
@@ -1668,16 +1886,227 @@
     };
 
     const staticEvents = [
-        { title: "⛈️ MƯA BÃO!", desc: "Mưa lớn làm gián đoạn vật liệu. Nhóm nghỉ 1 ngày.", type: "bad",  effect: { time: -1, morale: -5 } },
-        { title: "💸 MẤT VÍ TIỀN!", desc: "Một thành viên đánh rơi ví. Trích quỹ đền bù.", type: "bad",  effect: { money: -300000, morale: -10 } },
-        { title: "🧋 TÀI TRỢ!",    desc: "Phụ huynh mang trà sữa đến bồi dưỡng. Anh em sung sức!", type: "good", effect: { morale: 25, quality: 5 } },
-        { title: "🍀 NHẶT ĐƯỢC ĐỒ", desc: "Tình cờ tìm thấy kho sách cũ còn rất mới ở kho nhà trường cho không nhóm.", type: "good", effect: { quality: 20, money: 200000 } }
+        // EARLY phase (stage 1-4)
+        { title: "⛈️ MƯA BÃO!", desc: "Mưa lớn làm gián đoạn công việc ngoài trời. Nhóm buộc nghỉ 1 ngày.", type: "bad", phase: "early", effect: { time: -1, morale: -5 } },
+        { title: "💸 MẤT VÍ TIỀN!", desc: "Một thành viên làm rớt ví tiền quỹ. Phải trích bổ sung cho họ.", type: "bad", phase: "early", effect: { money: -300000, morale: -10 } },
+        { title: "🌡️ NẮNG KINH HOÀNG", desc: "Trời 40°C, cả nhóm bải hoải, năng suất giảm rõ rệt. Buộc nghỉ sớm.", type: "bad", phase: "early", effect: { time: -1, morale: -8 } },
+        { title: "🧋 TÀI TRỢ NƯỚC UỐNG!", desc: "Phụ huynh học sinh mang trà sữa đến tiếp sức. Cả nhóm hừng hực khí thế!", type: "good", phase: "early", effect: { morale: 25, quality: 5 } },
+        { title: "🍀 KHO ĐỒ BẤT NGỜ", desc: "Phát hiện kho sách cũ còn rất mới trong kho nhà trường — họ tặng không!", type: "good", phase: "early", effect: { quality: 20, money: 200000 } },
+        { title: "🎁 ALUMNI ĐÓNG GÓP", desc: "Cựu học sinh tình cờ đi ngang, hào phóng ủng hộ dự án một khoản tiền mặt!", type: "good", phase: "early", effect: { money: 500000, morale: 10 } },
+        // MID phase (stage 5-7)
+        { title: "⚡ CÚP ĐIỆN ĐỘT XUẤT", desc: "Điện cúp cả buổi chiều. Máy khoan, máy cưa đều ngừng hoạt động.", type: "bad", phase: "mid", effect: { time: -1, morale: -10 } },
+        { title: "🔧 DỤNG CỤ HỎNG", desc: "Máy khoan duy nhất của nhóm chập mạch. Phải thuê máy thay thế gấp.", type: "bad", phase: "mid", effect: { money: -200000, time: -1 } },
+        { title: "🤧 THÀNH VIÊN ỐM DÂY CHUYỀN", desc: "Hai bạn bị say nắng phải nghỉ bệnh, khối lượng công việc dồn vào phần còn lại.", type: "bad", phase: "mid", effect: { time: -1, morale: -12 } },
+        { title: "📢 TRUYỀN THÔNG ỦNG HỘ", desc: "Fanpage địa phương đăng bài về dự án. Nhiều người hỏi thăm và muốn tặng sách!", type: "good", phase: "mid", effect: { quality: 15, morale: 20 } },
+        { title: "🏫 PHÒNG MỞ RỘNG", desc: "BGH đồng ý cho mượn thêm phòng kề bên để trưng bày sách thiếu nhi. Không gian rộng hơn nhiều!", type: "good", phase: "mid", effect: { quality: 25, time: -1 } },
+        // LATE phase (stage 8-10)
+        { title: "🐀 SỰ CỐ KHÔNG MONG ĐỢI", desc: "Phát hiện dấu vết chuột trong góc kho. Phải dọn sạch toàn bộ và mua bẫy.", type: "bad", phase: "late", effect: { money: -150000, morale: -8, quality: -5 } },
+        { title: "🚧 KIỂM TRA AN TOÀN PCCC", desc: "Đội phòng cháy chữa cháy kiểm tra đột xuất, yêu cầu khắc phục một số lỗi nhỏ.", type: "bad", phase: "late", effect: { time: -1, money: -100000, quality: 5 } },
+        { title: "🎨 HOẠ SĨ TÌNH NGUYỆN", desc: "Một sinh viên mỹ thuật xin phép vẽ mural miễn phí lên tường thư viện. Đẹp kinh ngạc!", type: "good", phase: "late", effect: { quality: 30, morale: 15 } },
+        { title: "📱 VIRAL MẠNG XÃ HỘI", desc: "Video thi công được chia sẻ rộng rãi. Nhiều mạnh thường quân liên hệ ủng hộ vật chất.", type: "good", phase: "late", effect: { money: 400000, morale: 20 } }
     ];
+
+    // Chọn sự kiện phù hợp với giai đoạn hiện tại
+    function pickStaticEvent(nextStageId) {
+        const idx = stageOrder.indexOf(nextStageId);
+        let phase = 'early';
+        if (idx >= 4 && idx <= 6) phase = 'mid';
+        else if (idx >= 7) phase = 'late';
+        const pool = staticEvents.filter(e => e.phase === phase);
+        const src  = pool.length > 0 ? pool : staticEvents;
+        return src[Math.floor(Math.random() * src.length)];
+    }
+
+    // ===== BONUS OPPORTUNITY STAGES =====
+    const bonusOpportunities = [
+        {
+            id: 'bonus_tech',
+            triggerBeforeStage: 'stage_5',
+            icon: '💻',
+            title: 'CƠ HỘI ĐẶC BIỆT!',
+            desc: 'Một công ty công nghệ địa phương muốn tài trợ thiết bị số cho thư viện. Đổi lại, nhóm phải tổ chức 1 buổi workshop kỹ năng số cho học sinh — cần thêm 2 ngày và sức lực.',
+            costLabel: '⏱️ -2 ngày  |  ❤️ -10% tinh thần',
+            accept: { time: -2, morale: -10, quality: 30, money: 500000 },
+            labelAccept: '🤝 Nhận lời',
+            labelSkip: '⏭️ Bỏ qua lần này'
+        },
+        {
+            id: 'bonus_media',
+            triggerBeforeStage: 'stage_8',
+            icon: '📸',
+            title: 'TRUYỀN THÔNG TÌM ĐẾN!',
+            desc: 'Một tạp chí thanh niên muốn đến phỏng vấn và chụp phóng sự về dự án. Phòng cần được chỉnh chu thêm một chút trước khi quay.',
+            costLabel: '⏱️ -1 ngày  |  💰 -200k chi phí dọn dẹp',
+            accept: { time: -1, money: -200000, quality: 20, morale: 15 },
+            labelAccept: '📷 Chào đón họ',
+            labelSkip: '🚫 Từ chối'
+        }
+    ];
+
+    // =============================================
+    // SOUND SYSTEM (Web Audio API — không file ngoài)
+    // =============================================
+    function getAudioCtx() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+        }
+        return audioCtx;
+    }
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            const ctx = getAudioCtx();
+            if (!ctx) return;
+            if (ctx.state === 'suspended') ctx.resume();
+            const now = ctx.currentTime;
+            if (type === 'click') {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = 880; o.type = 'sine';
+                g.gain.setValueAtTime(0.22, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+                o.start(now); o.stop(now + 0.1);
+            } else if (type === 'good') {
+                [523, 659, 784].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.1;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.18, t + 0.04);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+                    o.start(t); o.stop(t + 0.36);
+                });
+            } else if (type === 'bad') {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.type = 'sawtooth';
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.setValueAtTime(240, now);
+                o.frequency.exponentialRampToValueAtTime(70, now + 0.45);
+                g.gain.setValueAtTime(0.26, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                o.start(now); o.stop(now + 0.52);
+            } else if (type === 'gameover') {
+                [400, 320, 240, 160].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.2;
+                    g.gain.setValueAtTime(0.28, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+                    o.start(t); o.stop(t + 0.32);
+                });
+            } else if (type === 'victory') {
+                [523, 659, 784, 1047].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.13;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.22, t + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+                    o.start(t); o.stop(t + 0.6);
+                });
+            } else if (type === 'gamble') {
+                let t = now;
+                for (let i = 0; i < 8; i++) {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'triangle';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = 180 + i * 35;
+                    g.gain.setValueAtTime(0.14, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+                    o.start(t); o.stop(t + 0.06);
+                    t += 0.065 + i * 0.006;
+                }
+            }
+        } catch(e) {}
+    }
+
+    // =============================================
+    // AI MODE BADGE
+    // =============================================
+    function updateAIBadge() {
+        const badge = document.getElementById('ai-mode-badge');
+        if (!badge) return;
+        badge.className = USE_AI ? 'ai-on' : 'ai-off';
+        badge.textContent = USE_AI ? '⚡ AI Mode' : '📋 Classic Mode';
+    }
+
+    // =============================================
+    // SESSION STORAGE CACHE (Mục 8)
+    // =============================================
+    function getCached(stageId) {
+        try {
+            const v = sessionStorage.getItem(`mhx_${currentDiffKey}_${stageId}`);
+            return v ? JSON.parse(v) : null;
+        } catch(e) { return null; }
+    }
+    function setCached(stageId, data) {
+        try { sessionStorage.setItem(`mhx_${currentDiffKey}_${stageId}`, JSON.stringify(data)); } catch(e) {}
+    }
+
+    // =============================================
+    // LEADERBOARD — localStorage (Mục 13)
+    // =============================================
+    const LB_KEY = 'mhx_lb_v2';
+    const ENDING_LABELS = {
+        gameover_money:'💸 Vỡ nợ', gameover_time:'⏱️ Trễ deadline',
+        gameover_morale:'😡 Tan rã', end_bad:'🏚️ Tồi tệ',
+        end_normal:'👍 Đạt yêu cầu', end_perfect:'🏆 Huyền thoại'
+    };
+    const DIFF_LABELS = { normal:'🌱', expert:'⚔️', asian:'🔥' };
+
+    function saveToLeaderboard(sceneId) {
+        try {
+            const entry = {
+                date: new Date().toLocaleDateString('vi-VN'),
+                ending: sceneId,
+                label: ENDING_LABELS[sceneId] || sceneId,
+                quality: state.quality,
+                diff: currentDiffKey,
+                icon: DIFF_LABELS[currentDiffKey] || ''
+            };
+            const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+            all.push(entry);
+            all.sort((a, b) => b.quality - a.quality);
+            localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 15)));
+            return entry;
+        } catch(e) { return null; }
+    }
+
+    function renderLeaderboard(newEntry) {
+        const section = document.getElementById('leaderboard-section');
+        const body    = document.getElementById('lb-body');
+        if (!section || !body) return;
+        try {
+            const all  = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+            const top  = all.slice(0, 7);
+            if (top.length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            const ranks = ['🥇','🥈','🥉'];
+            body.innerHTML = top.map((e, i) => {
+                const isNew = newEntry && e.date === newEntry.date
+                           && e.ending === newEntry.ending
+                           && e.quality === newEntry.quality
+                           && e.diff === newEntry.diff;
+                return `<div class="lb-row${isNew ? ' lb-new' : ''}">
+                    <span class="lb-rank">${ranks[i] || '#'+(i+1)}</span>
+                    <span class="lb-ending">${e.label}</span>
+                    <span class="lb-score">⭐ ${e.quality}đ</span>
+                    <span class="lb-diff">${e.icon}</span>
+                    <span class="lb-date">${e.date}</span>
+                </div>`;
+            }).join('');
+        } catch(e) { if (section) section.style.display = 'none'; }
+    }
 
     // 4. API ENGINE
     async function callGemini(promptText, retryCount = 0) {
         if (!USE_AI || apiBunker.length === 0) return null;
-        if (retryCount >= apiBunker.length) { console.error("❌ API Error."); return null; }
+        if (retryCount >= apiBunker.length) { console.error("❌ API Error."); updateAIBadge(); return null; }
         const activeKey = apiBunker[currentKeyIndex];
         try {
             const genAI = new GoogleGenerativeAI(activeKey);
@@ -1701,14 +2130,34 @@
     async function fetchDynamicStage(stageId) {
         const base = story[stageId];
         if (!base || !base.theme) return null;
+
+        // Mục 8: Kiểm tra session cache trước
+        const cached = getCached(stageId);
+        if (cached) return cached;
+
         const stageTitle = (base.text.match(/<b>(.*?)<\/b>/) || [])[1] || "TÌNH HUỐNG MỚI";
         const historyText = usedThemes.length > 0 ? usedThemes.join(", ") : "Chưa có";
-        // [THAY ĐỔI 2] Bỏ ràng buộc pattern cứng A/B/C, để AI tự do chọn hướng tiếp cận
-        const prompt = `Viết kịch bản game: "${stageTitle}". Chủ đề: ${base.theme}. LUẬT: KHÔNG lặp lại: ${historyText}. Mỗi lựa chọn có hướng tiếp cận khác nhau (ví dụ: tốn tiền, tốn sức, sáng tạo, ngoại giao...) nhưng thứ tự KHÔNG theo công thức cố định — AI tự quyết định. QUY TẮC BẮT BUỘC: (1) effect.time phải là số nguyên âm đơn vị NGÀY (ví dụ -1, -2, -3), TUYỆT ĐỐI không dùng tuần hay tháng. (2) Trong phần "text" mô tả tình huống KHÔNG được nhắc đến bất kỳ con số trạng thái nào (tiền còn, ngày còn, v.v.) - chỉ mô tả tình huống xảy ra. (3) KHÔNG đưa trường "impact" vào JSON. (4) Mỗi "text" lựa chọn bắt đầu bằng động từ hành động, KHÔNG có tiền tố A./B./C. TRẢ VỀ JSON: { "text": "<b>${stageTitle}</b><br>[Mô tả tình huống ngắn gọn, không nhắc số liệu trạng thái]", "choices": [ { "text": "[Lựa chọn 1 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} }, { "text": "[Lựa chọn 2 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": 0, "time": -3, "morale": -20, "quality": 5} }, { "text": "[Lựa chọn 3 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} } ] }`;
+
+        // Mục 3: Ràng buộc động time/morale dựa trên state hiện tại
+        const maxTimeReduce   = Math.max(-Math.floor(state.time  * 0.55), -3);
+        const maxMoraleReduce = Math.max(-Math.floor(state.morale * 0.45), -25);
+
+        const prompt = `Viết kịch bản game: "${stageTitle}". Chủ đề: ${base.theme}. LUẬT: KHÔNG lặp lại: ${historyText}. Mỗi lựa chọn có hướng tiếp cận khác nhau (ví dụ: tốn tiền, tốn sức, sáng tạo, ngoại giao...) nhưng thứ tự KHÔNG theo công thức cố định — AI tự quyết định. QUY TẮC BẮT BUỘC: (1) effect.time phải là số nguyên âm đơn vị NGÀY (ví dụ -1, -2, -3), TUYỆT ĐỐI không dùng tuần hay tháng, KHÔNG nhỏ hơn ${maxTimeReduce}. (2) effect.morale KHÔNG được nhỏ hơn ${maxMoraleReduce}. (3) Trong phần "text" mô tả tình huống KHÔNG được nhắc đến bất kỳ con số trạng thái nào (tiền còn, ngày còn, v.v.) - chỉ mô tả tình huống xảy ra. (4) KHÔNG đưa trường "impact" vào JSON. (5) Mỗi "text" lựa chọn bắt đầu bằng động từ hành động, KHÔNG có tiền tố A./B./C. TRẢ VỀ JSON: { "text": "<b>${stageTitle}</b><br>[Mô tả tình huống ngắn gọn, không nhắc số liệu trạng thái]", "choices": [ { "text": "[Lựa chọn 1 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} }, { "text": "[Lựa chọn 2 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": 0, "time": -3, "morale": -20, "quality": 5} }, { "text": "[Lựa chọn 3 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} } ] }`;
         const aiResponse = await callGemini(prompt);
         if (aiResponse) {
             aiResponse.image = base.image;
+            // Mục 3: Clamp time/morale sau khi nhận - phòng trường hợp AI không tuân lệnh
+            if (aiResponse.choices) {
+                aiResponse.choices.forEach(c => {
+                    if (!c.effect) c.effect = {};
+                    c.next = base.choices[0].next; // Luôn đúng next
+                    if ((c.effect.time   || 0) < maxTimeReduce)   c.effect.time   = maxTimeReduce;
+                    if ((c.effect.morale || 0) < maxMoraleReduce) c.effect.morale = maxMoraleReduce;
+                });
+            }
             usedThemes.push(aiResponse.text.substring(0, 50).replace(/<[^>]*>?/gm, ''));
+            // Mục 8: Lưu vào session cache
+            setCached(stageId, aiResponse);
         }
         return aiResponse;
     }
@@ -1752,10 +2201,24 @@
     }
 
     async function handleTransition(choice, nextStageId) {
+        playSound('click');
         state.money  += choice.effect.money  || 0;
         state.time   += choice.effect.time   || 0;
         state.morale += choice.effect.morale || 0;
         state.quality+= choice.effect.quality|| 0;
+
+        // Mục 5: Theo dõi uy tín BGH (ẩn với người chơi)
+        if (choice.bgRep) bgReputation = Math.max(-3, Math.min(3, bgReputation + choice.bgRep));
+
+        // Mục 6: Đăng ký hậu quả muộn nếu lựa chọn có
+        if (choice.delayed) {
+            pendingDelayedEffects.push({
+                triggerStage: choice.delayed.triggerStage,
+                effect:       choice.delayed.effect,
+                message:      choice.delayed.message
+            });
+        }
+
         updateUI();
 
         if (dynamicStory[nextStageId]) rescalePreloadedMoney(nextStageId);
@@ -1772,16 +2235,20 @@
         const triggerStaticEvent = (stagesSinceStaticEvent >= GUARANTEE_AT) || (Math.random() < RATE_STATIC_EVENT);
         if (triggerStaticEvent) {
             stagesSinceStaticEvent = 0;
-            pendingStaticEvent = staticEvents[Math.floor(Math.random() * staticEvents.length)];
+            pendingStaticEvent = pickStaticEvent(nextStageId); // Mục 15: chọn theo phase
         } else {
             stagesSinceStaticEvent++;
             pendingStaticEvent = null;
         }
 
         const eventPromise = triggerAiEvent ? fetchAIEvent() : Promise.resolve(null);
+
+        // Mục 9: Preload tất cả unique next IDs (không chỉ choices[0].next)
+        const currentScene = dynamicStory[nextStageId] ? null : story[nextStageId];
         const stagePromise = dynamicStory[nextStageId]
             ? Promise.resolve(null)
             : fetchDynamicStage(nextStageId);
+
         const [aiEventData, dynamicStageData] = await Promise.all([eventPromise, stagePromise]);
 
         if (dynamicStageData) dynamicStory[nextStageId] = dynamicStageData;
@@ -1794,7 +2261,7 @@
             pendingStaticEvent = null;
             showEventPopup(ev, nextStageId, false);
         } else {
-            maybeShowHalftime(nextStageId);
+            maybeShowBonus(nextStageId);
         }
     }
 
@@ -1804,18 +2271,24 @@
         const money = effect.money || 0;
         const time  = effect.time  || 0;
 
+        // Giá trị dự kiến sau khi chọn — hiển thị trong tooltip
+        const projMoney = state.money + money;
+        const projTime  = state.time  + time;
+
         if (money !== 0) {
             const label = money < 0
                 ? `💰 -${Math.abs(money / 1000).toLocaleString('vi-VN')}k`
                 : `💰 +${(money / 1000).toLocaleString('vi-VN')}k`;
             const cls = money < 0 ? 'pill pill-money-neg' : 'pill pill-money-pos';
-            pills.push(`<span class="${cls}">${label}</span>`);
+            const tip = `Còn lại: ${Math.max(0, projMoney).toLocaleString('vi-VN')}đ`;
+            pills.push(`<span class="${cls}" data-tip="${tip}">${label}</span>`);
         } else {
             pills.push(`<span class="pill pill-free">💰 Miễn phí</span>`);
         }
 
         if (time !== 0) {
-            pills.push(`<span class="pill pill-time">⏱️ ${time} ngày</span>`);
+            const tip = `Còn lại: ${Math.max(0, projTime)} ngày`;
+            pills.push(`<span class="pill pill-time" data-tip="${tip}">⏱️ ${time} ngày</span>`);
         } else {
             pills.push(`<span class="pill pill-free">⏱️ 0 ngày</span>`);
         }
@@ -1880,6 +2353,7 @@
             btnLieu.onclick = () => {
                 btnLieu.disabled = true;
                 btnLieu.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+                playSound('gamble');
                 const roll = Math.floor(Math.random() * 100) + 1;
                 const win  = roll <= data.gamble_choice.win_rate;
                 resultEl.style.display = "block";
@@ -1887,6 +2361,7 @@
                 document.getElementById("gr-icon").innerText = win ? "🎉" : "💀";
                 document.getElementById("gr-text").innerText  = win ? "ĐẠI THẮNG! Vận may đứng về phía bạn!" : "THUA SẠCH! Vận rủi đã ập đến...";
                 setTimeout(() => {
+                    playSound(win ? 'good' : 'bad');
                     applyEffectAndNext(win ? data.gamble_choice.win_effect : data.gamble_choice.lose_effect, nextStageId);
                 }, 1800);
             };
@@ -1894,7 +2369,7 @@
             const btnSafe = document.createElement("button");
             btnSafe.className = "event-btn gamble-safe";
             btnSafe.innerHTML = `🛡️ ${data.safe_choice.text}`;
-            btnSafe.onclick = () => applyEffectAndNext(data.safe_choice.effect, nextStageId);
+            btnSafe.onclick = () => { playSound('click'); applyEffectAndNext(data.safe_choice.effect, nextStageId); };
 
             btnBox.appendChild(btnLieu);
             btnBox.appendChild(btnSafe);
@@ -1908,8 +2383,11 @@
             descTag.innerText = data.desc;
 
             if (isBad) {
+                playSound('bad');
                 document.getElementById("game-container").classList.add("shake");
                 setTimeout(() => document.getElementById("game-container").classList.remove("shake"), 500);
+            } else {
+                playSound('good');
             }
 
             const scaledEffect = isBad ? scaleBadEffect(data.effect) : data.effect;
@@ -1919,7 +2397,7 @@
             btnOk.style.borderColor = isBad ? "rgba(248,113,113,0.4)" : "rgba(74,222,128,0.4)";
             btnOk.style.color = isBad ? "var(--danger)" : "var(--success)";
             btnOk.innerHTML = isBad ? "😤 Chấp nhận và tiếp tục" : "🙌 Tuyệt vời! Tiếp tục thôi";
-            btnOk.onclick = () => applyEffectAndNext(scaledEffect, nextStageId);
+            btnOk.onclick = () => { playSound('click'); applyEffectAndNext(scaledEffect, nextStageId); };
             btnBox.appendChild(btnOk);
         }
 
@@ -1942,8 +2420,52 @@
             pendingStaticEvent = null;
             showEventPopup(ev, nextStageId, false);
         } else {
+            maybeShowBonus(nextStageId);
+        }
+    }
+
+    // =============================================
+    // BONUS OPPORTUNITY (Mục 17)
+    // =============================================
+    function maybeShowBonus(nextStageId) {
+        const bonus = bonusOpportunities.find(
+            b => b.triggerBeforeStage === nextStageId && !usedBonusIds.includes(b.id)
+        );
+        if (bonus) {
+            usedBonusIds.push(bonus.id);
+            showBonusOverlay(bonus, nextStageId);
+        } else {
             maybeShowHalftime(nextStageId);
         }
+    }
+
+    function showBonusOverlay(bonus, nextStageId) {
+        document.getElementById('bonus-icon').textContent  = bonus.icon;
+        document.getElementById('bonus-title').textContent = bonus.title;
+        document.getElementById('bonus-desc').textContent  = bonus.desc;
+        document.getElementById('bonus-cost').textContent  = bonus.costLabel;
+        const acceptBtn = document.getElementById('bonus-accept-btn');
+        const skipBtn   = document.getElementById('bonus-skip-btn');
+        acceptBtn.textContent = bonus.labelAccept;
+        skipBtn.textContent   = bonus.labelSkip;
+        acceptBtn.onclick = () => {
+            playSound('good');
+            state.money  += bonus.accept.money  || 0;
+            state.time   += bonus.accept.time   || 0;
+            state.morale += bonus.accept.morale || 0;
+            state.quality+= bonus.accept.quality|| 0;
+            updateUI();
+            document.getElementById('bonus-overlay').style.display = 'none';
+            const fail = checkGameOver();
+            if (fail) { renderScene(fail); return; }
+            maybeShowHalftime(nextStageId);
+        };
+        skipBtn.onclick = () => {
+            playSound('click');
+            document.getElementById('bonus-overlay').style.display = 'none';
+            maybeShowHalftime(nextStageId);
+        };
+        document.getElementById('bonus-overlay').style.display = 'flex';
     }
 
     function maybeShowHalftime(nextStageId) {
@@ -1976,6 +2498,8 @@
 
     function renderScene(sceneId) {
         if (sceneId === "calc_ending") {
+            // Mục 5: BGH reputation bonus tác động nhỏ vào quality cuối
+            state.quality += bgReputation * 3;
             const fail = checkGameOver();
             if (fail) sceneId = fail;
             else {
@@ -1989,7 +2513,27 @@
 
         const scene = dynamicStory[sceneId] || story[sceneId];
         const storyEl = document.getElementById("story-text");
-        storyEl.innerHTML = scene.text;
+
+        // Mục 6: Kiểm tra và apply delayed effects cho stage này
+        const dueEffects = pendingDelayedEffects.filter(e => e.triggerStage === sceneId);
+        pendingDelayedEffects = pendingDelayedEffects.filter(e => e.triggerStage !== sceneId);
+        let delayedHtml = '';
+        if (dueEffects.length > 0) {
+            dueEffects.forEach(de => {
+                state.money  += de.effect.money  || 0;
+                state.time   += de.effect.time   || 0;
+                state.morale += de.effect.morale || 0;
+                state.quality+= de.effect.quality|| 0;
+                delayedHtml += `<div class="delayed-notif"><span class="dn-icon">⏳</span><span>${de.message}</span></div>`;
+            });
+            updateUI();
+            playSound('bad');
+            // Kiểm tra game over sau khi apply delayed
+            const failAfterDelayed = checkGameOver();
+            if (failAfterDelayed) { renderScene(failAfterDelayed); return; }
+        }
+
+        storyEl.innerHTML = delayedHtml + scene.text;
         storyEl.classList.remove("fade-in");
         void storyEl.offsetWidth;
         storyEl.classList.add("fade-in");
@@ -2009,19 +2553,13 @@
             showEndScreen(sceneId);
         } else {
             const labels = ['A', 'B', 'C', 'D'];
-            // [THAY ĐỔI 1] Xáo ngẫu nhiên thứ tự hiển thị — object choice giữ nguyên
-            // nên effect, next, text đều không bị ảnh hưởng
             const shuffledChoices = [...scene.choices].sort(() => Math.random() - 0.5);
             shuffledChoices.forEach((choice, i) => {
                 const btn = document.createElement("button");
                 btn.className = "choice-btn fade-in";
                 btn.style.animationDelay = (i * 0.07) + "s";
-
-                // Build pills từ effect thực - luôn đúng, không phụ thuộc chuỗi AI
                 const pillsHtml = buildPillsFromEffect(choice.effect);
-                // Strip chữ cái đầu (A./B./C.) để badge hiển thị vị trí mới sau shuffle
                 const displayText = choice.text.replace(/^[A-Za-z]\.\s*/, '');
-
                 btn.innerHTML = `
                     <div class="choice-badge">${labels[i] || (i+1)}</div>
                     <div class="choice-body">
@@ -2034,13 +2572,14 @@
 
             document.getElementById("game-container").scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Preload nền stage tiếp theo
-            const nextId = scene.choices[0].next;
-            if (nextId && story[nextId] && story[nextId].theme && !dynamicStory[nextId]) {
+            // Mục 9: Preload tất cả unique next IDs song song
+            const uniqueNextIds = [...new Set(scene.choices.map(c => c.next))]
+                .filter(id => id && story[id] && story[id].theme && !dynamicStory[id]);
+            uniqueNextIds.forEach(nextId => {
                 fetchDynamicStage(nextId).then(data => {
                     if (data && !dynamicStory[nextId]) dynamicStory[nextId] = data;
                 });
-            }
+            });
         }
     }
 
@@ -2055,22 +2594,21 @@
         };
         const cfg = configs[sceneId] || { badge: "🎯", title: "KẾT THÚC", subtitle: "", color: "var(--gold)", image: "" };
 
+        // Phát âm thanh kết thúc
+        if (sceneId === 'end_perfect') playSound('victory');
+        else if (sceneId.startsWith('gameover')) playSound('gameover');
+
         document.getElementById("end-badge").innerText = cfg.badge;
         const titleEl = document.getElementById("end-title");
         titleEl.innerText = cfg.title;
         titleEl.style.color = cfg.color;
         document.getElementById("end-subtitle").innerText = cfg.subtitle;
-        
+
         const endImgContainer = document.getElementById("end-image-container");
         const endImg = document.getElementById("end-image");
         const finalImage = cfg.image || (story[sceneId] && story[sceneId].image) || "";
-        
-        if (finalImage) {
-            endImg.src = finalImage;
-            endImgContainer.style.display = "block";
-        } else {
-            endImgContainer.style.display = "none";
-        }
+        if (finalImage) { endImg.src = finalImage; endImgContainer.style.display = "block"; }
+        else { endImgContainer.style.display = "none"; }
 
         document.getElementById("end-money").innerText   = Math.max(0, state.money).toLocaleString('vi-VN') + "đ";
         document.getElementById("end-time").innerText    = Math.max(0, state.time) + " ngày";
@@ -2080,13 +2618,13 @@
 
         const moraleEl = document.getElementById("end-morale");
         moraleEl.style.color = state.morale <= 30 ? "var(--danger)" : state.morale >= 80 ? "var(--success)" : "var(--warning)";
-        
+
         const secretHint = document.getElementById("secret-hint");
-        if (sceneId === "end_perfect") {
-            secretHint.style.display = "block";
-        } else {
-            secretHint.style.display = "none";
-        }
+        secretHint.style.display = (sceneId === "end_perfect") ? "block" : "none";
+
+        // Mục 13: Lưu và hiển thị leaderboard
+        const newEntry = saveToLeaderboard(sceneId);
+        renderLeaderboard(newEntry);
 
         document.getElementById("end-screen").style.display = "flex";
     }
@@ -2100,8 +2638,21 @@
         RATE_STATIC_EVENT = currentDiff.rateStatic;
         GUARANTEE_AT      = currentDiff.guaranteeAt;
 
+        // Reset biến mới
+        bgReputation          = 0;
+        pendingDelayedEffects = [];
+        usedBonusIds          = [];
+        dynamicStory          = {};
+        usedThemes            = [];
+        stagesSinceStaticEvent= 0;
+        pendingStaticEvent    = null;
+        halftimeSeen          = false;
+        eventsEncountered     = 0;
+
         updateUI();
+        updateAIBadge();
         updateStageDots('start');
+
         const loading = document.getElementById("loading-overlay");
         document.getElementById("loading-text").innerText = "KHỞI TẠO VŨ TRỤ...";
         loading.style.display = "flex";
