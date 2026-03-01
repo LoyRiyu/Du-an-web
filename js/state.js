@@ -110,6 +110,7 @@ export function resetState() {
     eventsEncountered      = 0;
     usedThemes             = [];
     bgReputation           = 0;
+    redoCardUsed           = false;
 
     decisionLog          = [];
     memoryAlbum          = [];

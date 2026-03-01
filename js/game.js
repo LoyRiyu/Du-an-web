@@ -476,6 +476,27 @@ export function showEventPopup(data, nextStageId, isAi) {
         btnOk.innerHTML = isBad ? '😤 Chấp nhận và tiếp tục' : '🙌 Tuyệt vời! Tiếp tục thôi';
         btnOk.onclick = () => applyEffectAndNext(scaledEffect, nextStageId);
         btnBox.appendChild(btnOk);
+
+        const canUseRedoCard = isBad && selectedItem === 'redo' && !redoCardUsed;
+        const redoAlreadyUsed = isBad && selectedItem === 'redo' && redoCardUsed;
+
+        if (canUseRedoCard) {
+            const btnPardon = document.createElement('button');
+            btnPardon.className = 'event-btn';
+            btnPardon.style.borderColor = 'rgba(96,165,250,0.45)';
+            btnPardon.style.color = 'var(--info, #60a5fa)';
+            btnPardon.innerHTML = '🛡️ Dùng thẻ ân xá (bỏ qua sự cố)';
+            btnPardon.onclick = () => {
+                setRedoCardUsed(true);
+                proceedAfterEvent(nextStageId);
+            };
+            btnBox.appendChild(btnPardon);
+        } else if (redoAlreadyUsed) {
+            const usedBadge = document.createElement('div');
+            usedBadge.className = 'event-redo-status';
+            usedBadge.innerText = '🪪 Thẻ ân xá đã dùng trong ván này';
+            btnBox.appendChild(usedBadge);
+        }
     }
 
     overlay.style.display = 'flex';
@@ -483,6 +504,10 @@ export function showEventPopup(data, nextStageId, isAi) {
 
 function applyEffectAndNext(effect, nextStageId) {
     applyEffect(effect);
+    proceedAfterEvent(nextStageId);
+}
+
+function proceedAfterEvent(nextStageId) {
     document.getElementById('event-overlay').style.display = 'none';
 
     const fail = checkGameOver();
