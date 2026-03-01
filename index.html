@@ -25,7 +25,25 @@
         <div class="brief-chip"><span class="chip-icon">⏱️</span> Thời hạn: 25 ngày</div>
         <div class="brief-chip"><span class="chip-icon">🎯</span> 10 Giai đoạn</div>
     </div>
-    <button class="start-btn" id="start-btn">Bắt Đầu Trải Nghiệm</button>
+    <div id="auth-gate" class="auth-gate">
+        <h3>🔐 Đăng nhập để lưu tiến trình</h3>
+        <div class="auth-row">
+            <input id="auth-username" type="text" placeholder="Username" autocomplete="username">
+            <input id="auth-password" type="password" placeholder="Password" autocomplete="current-password">
+        </div>
+        <div class="auth-actions">
+            <button id="register-btn" class="auth-btn secondary">Đăng ký</button>
+            <button id="login-btn" class="auth-btn">Đăng nhập</button>
+            <button id="guest-btn" class="auth-btn ghost">Guest Mode</button>
+        </div>
+        <p id="auth-error" class="auth-error"></p>
+    </div>
+    <div id="auth-status" class="auth-status" style="display:none">
+        <span id="auth-user-text">Chưa đăng nhập</span>
+        <button id="logout-btn" class="auth-btn secondary">Đăng xuất</button>
+    </div>
+
+        <button class="start-btn" id="start-btn">Bắt Đầu Trải Nghiệm</button>
 </div>
 
 <!-- DIFFICULTY SCREEN -->
