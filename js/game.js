@@ -492,6 +492,12 @@ function applyEffectAndNext(effect, nextStageId) {
         const ev = pendingStaticEvent;
         setPendingStaticEvent(null);
         showEventPopup(ev, nextStageId, false);
+        return;
+    }
+
+    if (nextStageId === '__branch__') {
+        maybeShowHalftime('stage_6');
+        return;
     } else {
         maybeShowHalftime(nextStageId);
     }
@@ -638,12 +644,9 @@ export async function handleTransition(choice, nextStageId, stageIdx, choiceIdx)
         if (triggerAiEvent && aiEventData) {
             // Hiện event trước, sau đó mới branch
             showEventPopup(aiEventData, '__branch__', true);
-            // Override applyEffectAndNext cho case đặc biệt này
-            document.getElementById('event-overlay').__branchPending = true;
         } else if (pendingStaticEvent) {
             const ev = pendingStaticEvent; setPendingStaticEvent(null);
             showEventPopup(ev, '__branch__', false);
-            document.getElementById('event-overlay').__branchPending = true;
         } else {
             maybeShowHalftime('stage_6');
         }
