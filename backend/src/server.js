@@ -13,6 +13,7 @@ import {
   storeRefreshToken,
   verifyPassword
 } from './authService.js';
+import { query } from './db.js';
 
 dotenv.config();
 
@@ -49,6 +50,37 @@ function authenticateAccess(req, res, next) {
   } catch {
     return res.status(401).json({ message: 'Access token không hợp lệ hoặc đã hết hạn.' });
   }
+}
+
+function parseOptionalAccess(req) {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) return null;
+  const token = auth.slice(7);
+  try {
+    return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeLimit(rawLimit, max = 50) {
+  const parsed = Number(rawLimit);
+  if (Number.isNaN(parsed) || parsed <= 0) return 10;
+  return Math.min(parsed, max);
+}
+
+function mapScoreRow(row) {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    username: row.username,
+    difficulty: row.difficulty,
+    quality: row.quality,
+    morale: row.morale,
+    ending: row.ending,
+    branch: row.branch,
+    createdAt: row.created_at
+  };
 }
 
 app.post('/auth/register', async (req, res) => {
@@ -155,6 +187,90 @@ app.get('/auth/me', async (req, res) => {
 
 app.get('/auth/protected', authenticateAccess, (req, res) => {
   res.json({ message: 'OK', user: req.user });
+});
+
+app.post('/scores', async (req, res) => {
+  try {
+    const payload = parseOptionalAccess(req);
+    if (!payload?.sub) {
+      return res.status(401).json({ message: 'Bạn cần đăng nhập để lưu điểm lên server.' });
+    }
+
+    const { difficulty, quality, morale, ending, branch } = req.body || {};
+    const allowedDifficulty = new Set(['normal', 'expert', 'asian']);
+    if (!allowedDifficulty.has(difficulty)) {
+      return res.status(400).json({ message: 'Difficulty không hợp lệ.' });
+    }
+
+    if (!Number.isFinite(Number(quality)) || !Number.isFinite(Number(morale)) || !ending) {
+      return res.status(400).json({ message: 'Thiếu dữ liệu điểm hợp lệ.' });
+    }
+
+    const result = await query(
+      `INSERT INTO scores (user_id, difficulty, quality, morale, ending, branch)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, user_id, difficulty, quality, morale, ending, branch, created_at`,
+      [payload.sub, difficulty, Number(quality), Number(morale), String(ending), branch ? String(branch) : null]
+    );
+
+    return res.status(201).json({ score: mapScoreRow(result.rows[0]) });
+  } catch (error) {
+    return res.status(500).json({ message: 'Không thể lưu điểm.', detail: error.message });
+  }
+});
+
+app.get('/leaderboard', async (req, res) => {
+  try {
+    const difficulty = String(req.query.difficulty || 'normal');
+    const limit = normalizeLimit(req.query.limit, 100);
+    const allowedDifficulty = new Set(['normal', 'expert', 'asian']);
+    if (!allowedDifficulty.has(difficulty)) {
+      return res.status(400).json({ message: 'Difficulty không hợp lệ.' });
+    }
+
+    const result = await query(
+      `SELECT s.id, s.user_id, u.username, s.difficulty, s.quality, s.morale, s.ending, s.branch, s.created_at
+       FROM scores s
+       JOIN users u ON u.id = s.user_id
+       WHERE s.difficulty = $1
+       ORDER BY s.quality DESC, s.morale DESC, s.created_at ASC
+       LIMIT $2`,
+      [difficulty, limit]
+    );
+
+    return res.json({ difficulty, limit, scores: result.rows.map(mapScoreRow) });
+  } catch (error) {
+    return res.status(500).json({ message: 'Không thể lấy leaderboard.', detail: error.message });
+  }
+});
+
+app.get('/leaderboard/all', async (req, res) => {
+  try {
+    const limit = normalizeLimit(req.query.limit, 100);
+    const difficulties = ['normal', 'expert', 'asian'];
+
+    const results = await Promise.all(
+      difficulties.map(async (difficulty) => {
+        const rows = await query(
+          `SELECT s.id, s.user_id, u.username, s.difficulty, s.quality, s.morale, s.ending, s.branch, s.created_at
+           FROM scores s
+           JOIN users u ON u.id = s.user_id
+           WHERE s.difficulty = $1
+           ORDER BY s.quality DESC, s.morale DESC, s.created_at ASC
+           LIMIT $2`,
+          [difficulty, limit]
+        );
+        return [difficulty, rows.rows.map(mapScoreRow)];
+      })
+    );
+
+    return res.json({
+      limit,
+      leaderboards: Object.fromEntries(results)
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Không thể lấy leaderboard tổng.', detail: error.message });
+  }
 });
 
 app.listen(PORT, () => {
