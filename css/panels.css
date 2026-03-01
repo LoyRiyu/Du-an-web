@@ -65,7 +65,7 @@
     width: 100%; max-width: 560px; background: var(--bg-surface);
     border: 1px solid var(--gold-dim); border-radius: var(--radius-lg);
     padding: 20px 24px; margin-bottom: 20px; text-align: left;
-    animation: fadeIn 0.5s 0.45s ease both; position: relative; overflow: hidden;
+    animation: fadeIn 0.5s 0.45s ease both; position: relative;
 }
 #leadership-profile-card::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -103,9 +103,9 @@
     font-size: 1.4rem; width: 38px; height: 38px; background: var(--bg-surface);
     border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.judge-info    { flex: 1; }
+.judge-info    { flex: 1; min-width: 0; }
 .judge-name    { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 3px; }
-.judge-verdict { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; font-style: italic; }
+.judge-verdict { font-size: 0.85rem; color: var(--text-sub); line-height: 1.6; font-style: italic; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
 .judge-loading { display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 0.82rem; font-style: italic; }
 
 /* ══ MEMORY ALBUM (end screen) ══ */
@@ -146,3 +146,12 @@
 .lb-score  { color: var(--text-main); font-weight: 700; }
 .lb-diff   { font-size: 0.7rem; color: var(--text-dim); }
 .lb-date   { font-size: 0.7rem; color: var(--text-dim); }
+
+
+@media screen and (max-width: 640px) {
+    #leadership-profile-card { padding: 16px 16px; }
+    #judge-panel h3 { font-size: 0.82rem; letter-spacing: 1.5px; }
+    .judge-card { padding: 10px 12px; gap: 10px; }
+    .judge-avatar { width: 34px; height: 34px; font-size: 1.2rem; }
+    .judge-verdict { font-size: 0.82rem; line-height: 1.6; }
+}

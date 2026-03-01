@@ -57,6 +57,14 @@ export function checkGameOver() {
     return null;
 }
 
+function resolveNextStageId(rawNextStageId, stageIdx) {
+    if (typeof rawNextStageId === 'string' && rawNextStageId.trim()) {
+        return rawNextStageId.trim();
+    }
+    if (stageIdx >= STAGE_ORDER.length - 1) return 'calc_ending';
+    return STAGE_ORDER[stageIdx + 1] || 'calc_ending';
+}
+
 function applyEffect(effect) {
     state.money   += effect.money   || 0;
     state.time    += effect.time    || 0;
@@ -582,8 +590,9 @@ export async function handleTransition(choice, nextStageId, stageIdx, choiceIdx)
     const fail = checkGameOver();
     if (fail) { playSound('gameover'); renderScene(fail); return; }
 
-    // Đặc biệt: nếu nextStage là calc_ending → render luôn
-    if (nextStageId === 'calc_ending' || nextStageId.startsWith('end_') || nextStageId.startsWith('gameover')) {
+    // Đặc biệt: nếu nextStage là calc_ending/end/gameover → render luôn
+    if (nextStageId === 'calc_ending'
+        || (typeof nextStageId === 'string' && (nextStageId.startsWith('end_') || nextStageId.startsWith('gameover')))) {
         renderScene(nextStageId);
         return;
     }
@@ -785,7 +794,8 @@ export function renderScene(sceneId) {
 
         btn.onclick = () => {
             clearSpeedTimer();
-            handleTransition(choice, choice.next, stageIdx, i);
+            const resolvedNext = resolveNextStageId(choice.next, stageIdx);
+            handleTransition(choice, resolvedNext, stageIdx, i);
         };
 
         choicesDiv.appendChild(btn);
@@ -795,14 +805,15 @@ export function renderScene(sceneId) {
         startSpeedCountdown(timeLimit, () => {
             const randomIdx    = Math.floor(Math.random() * scene.choices.length);
             const randomChoice = scene.choices[randomIdx];
-            handleTransition(randomChoice, randomChoice.next, stageIdx, randomIdx);
+            const resolvedNext = resolveNextStageId(randomChoice.next, stageIdx);
+            handleTransition(randomChoice, resolvedNext, stageIdx, randomIdx);
         });
     }
 
     document.getElementById('game-container').scrollTo({ top: 0, behavior: 'smooth' });
 
     // ── Preload next stage (background) ──
-    const nextId = scene.choices[0]?.next;
+    const nextId = resolveNextStageId(scene.choices[0]?.next, stageIdx);
     if (nextId && STORY[nextId]?.theme && !dynamicStory[nextId] && nextId !== 'stage_6') {
         fetchDynamicStage(nextId).then(data => {
             if (data && !dynamicStory[nextId]) dynamicStory[nextId] = data;
