@@ -269,7 +269,7 @@ export const END_CONFIGS = {
 };
 
 // ══ LEADERBOARD ══
-export const LB_KEY = 'mhx_lb_v2';
+export const LB_KEY = 'mhx_lb_v4';
 export const NG_KEY = 'mhx_ng_unlocked';
 export const ENDING_LABELS = {
     gameover_money:'💸 Vỡ nợ', gameover_time:'⏱️ Trễ deadline',

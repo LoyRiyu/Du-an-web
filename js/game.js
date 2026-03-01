@@ -4,7 +4,7 @@
 import {
     STORY, STAGE_ORDER, STATIC_EVENTS, BONUS_OPPORTUNITIES, CHARACTER_ROSTER,
     BRANCH_STAGES, CHOICE_META, SECRET_ENDING_CONDITIONS, END_CONFIGS_V2,
-    ENDING_LABELS_V2, resolveBranch
+    ENDING_LABELS_V2, LB_KEY, resolveBranch
 } from './config.js';
 
 import {
@@ -81,6 +81,13 @@ function applyEffect(effect) {
     state.quality += effect.quality || 0;
     if (effect.morale) updateMemberMorale(effect.morale);
     updateUI();
+}
+
+function applyCaptainMoraleFloor() {
+    if (selectedItem === 'captain') {
+        state.morale = Math.max(40, state.morale);
+        updateUI();
+    }
 }
 
 function rescalePreloadedMoney(stageId) {
@@ -328,6 +335,7 @@ async function handleBranchChoice(choice, branchId, choiceIdx) {
     applyTrustDelta(choice.trustDelta);
 
     applyEffect(choice.effect || {});
+    applyCaptainMoraleFloor();
 
     const fail = checkGameOver();
     if (fail) { renderScene(fail); return; }
@@ -513,6 +521,7 @@ export function showEventPopup(data, nextStageId, isAi) {
 
 function applyEffectAndNext(effect, nextStageId) {
     applyEffect(effect);
+    applyCaptainMoraleFloor();
     proceedAfterEvent(nextStageId);
 }
 
@@ -630,6 +639,7 @@ export async function handleTransition(choice, nextStageId, stageIdx, choiceIdx)
 
     // ── Apply effect ──
     applyEffect(choice.effect || {});
+    applyCaptainMoraleFloor();
 
     if (dynamicStory[nextStageId]) rescalePreloadedMoney(nextStageId);
 
@@ -948,8 +958,6 @@ function renderTrustSummary() {
 //  SECTION 12: LEADERBOARD V2
 // ══════════════════════════════════════════════════════
 
-const LB_KEY_V2 = 'mhx_lb_v3';
-
 function saveToLeaderboardV2(sceneId) {
     try {
         const entry = {
@@ -962,10 +970,17 @@ function saveToLeaderboardV2(sceneId) {
             branch  : currentBranch || '—',
             flags   : [...decisionFlags].join(',')
         };
-        const all = JSON.parse(localStorage.getItem(LB_KEY_V2) || '[]');
+        const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+        if (all.length === 0) {
+            const legacy = [
+                ...(JSON.parse(localStorage.getItem('mhx_lb_v3') || '[]')),
+                ...(JSON.parse(localStorage.getItem('mhx_lb_v2') || '[]'))
+            ];
+            if (legacy.length > 0) all.push(...legacy);
+        }
         all.push(entry);
         all.sort((a, b) => b.quality - a.quality);
-        localStorage.setItem(LB_KEY_V2, JSON.stringify(all.slice(0, 15)));
+        localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
         return entry;
     } catch(e) { return null; }
 }

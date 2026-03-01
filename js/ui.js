@@ -235,7 +235,7 @@ export function saveToLeaderboard(sceneId) {
         const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
         all.push(entry);
         all.sort((a, b) => b.quality - a.quality);
-        localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 15)));
+        localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
         return entry;
     } catch(e) { return null; }
 }
@@ -246,18 +246,54 @@ export function renderLeaderboard(newEntry) {
     if (!section || !body) return;
     try {
         const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+        if (all.length === 0) {
+            all.push(
+                ...(JSON.parse(localStorage.getItem('mhx_lb_v3') || '[]')),
+                ...(JSON.parse(localStorage.getItem('mhx_lb_v2') || '[]'))
+            );
+            if (all.length > 0) {
+                all.sort((a, b) => (b.quality - a.quality) || (b.morale - a.morale));
+                localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
+            }
+        }
         if (all.length === 0) { section.style.display = 'none'; return; }
-        section.style.display = 'block';
-        body.innerHTML = all.map((e, i) => {
-            const isNew = newEntry && e.date === newEntry.date && e.quality === newEntry.quality && e.ending === newEntry.ending;
-            return `<div class="lb-row${isNew ? ' lb-new' : ''}">
-                <span class="lb-rank">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`}</span>
-                <span class="lb-ending">${e.icon} ${e.label}</span>
-                <span class="lb-score">⭐ ${e.quality}</span>
-                <span class="lb-diff">${e.diff || ''}</span>
-                <span class="lb-date">${e.date}</span>
+
+        const order = ['normal', 'expert', 'asian'];
+        const names = { normal: '🌱 Normal', expert: '⚔️ Expert', asian: '🔥 Asian' };
+
+        const groupedHtml = order.map(diffKey => {
+            const rows = all
+                .filter(e => (e.diff || 'normal') === diffKey)
+                .sort((a, b) => (b.quality - a.quality) || (b.morale - a.morale))
+                .slice(0, 10);
+
+            if (rows.length === 0) return '';
+
+            const rowsHtml = rows.map((e, i) => {
+                const isNew = newEntry
+                    && e.date === newEntry.date
+                    && e.quality === newEntry.quality
+                    && e.ending === newEntry.ending
+                    && (e.diff || 'normal') === (newEntry.diff || 'normal');
+                return `<div class="lb-row${isNew ? ' lb-new' : ''}">
+                    <span class="lb-rank">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`}</span>
+                    <span class="lb-ending">${e.icon || ''} ${e.label}</span>
+                    <span class="lb-score">⭐ ${e.quality}</span>
+                    <span class="lb-diff">${e.diff || ''}</span>
+                    <span class="lb-date">${e.date}</span>
+                </div>`;
+            }).join('');
+
+            return `<div class="lb-group">
+                <div class="lb-group-title">${names[diffKey]}</div>
+                ${rowsHtml}
             </div>`;
         }).join('');
+
+        if (!groupedHtml) { section.style.display = 'none'; return; }
+
+        section.style.display = 'block';
+        body.innerHTML = groupedHtml;
     } catch(e) { section.style.display = 'none'; }
 }
 
