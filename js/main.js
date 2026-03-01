@@ -8,6 +8,7 @@ import {
 import { updateUI, updateAIBadge, renderDecisionLogPanel, updateLogBadge } from './ui.js';
 import { initGame, renderScene } from './game.js';
 import { initAdmin } from './admin.js';
+import { canStartGame, initAuth } from './auth.js';
 
 // ══ DIFFICULTY SELECTION ══
 function pickDifficulty(diffKey) {
@@ -138,6 +139,10 @@ function initReplayButton() {
 // ══ START SCREEN ══
 function initStartScreen() {
     document.getElementById('start-btn').addEventListener('click', () => {
+        if (!canStartGame()) {
+            alert('Vui lòng đăng nhập hoặc bật Guest Mode trước khi chơi.');
+            return;
+        }
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('difficulty-screen').style.display = 'flex';
     });
@@ -181,7 +186,8 @@ function initKeyboard() {
 }
 
 // ══ BOOT ══
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await initAuth();
     initStartScreen();
     initDifficultyScreen();
     initItemScreen();
