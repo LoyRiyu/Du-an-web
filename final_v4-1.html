@@ -1,0 +1,3725 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dự Án Mùa Hè Xanh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* =============================================
+           DESIGN TOKENS
+        ============================================= */
+        :root {
+            --gold:       #D4AF37;
+            --gold-light: #F0D060;
+            --gold-dim:   rgba(212,175,55,0.25);
+            --gold-glow:  rgba(212,175,55,0.15);
+            --bg-deep:    #0d1b2a;
+            --bg-card:    rgba(18, 28, 42, 0.92);
+            --bg-surface: rgba(255,255,255,0.04);
+            --bg-hover:   rgba(255,255,255,0.07);
+            --text-main:  #EDF2F7;
+            --text-sub:   #94A3B8;
+            --text-dim:   #64748B;
+            --danger:     #F87171;
+            --danger-bg:  rgba(248,113,113,0.08);
+            --success:    #4ADE80;
+            --success-bg: rgba(74,222,128,0.08);
+            --warning:    #FBBF24;
+            --warning-bg: rgba(251,191,36,0.08);
+            --border:     rgba(255,255,255,0.08);
+            --radius-sm:  8px;
+            --radius-md:  12px;
+            --radius-lg:  18px;
+            --radius-xl:  24px;
+            --shadow-card: 0 24px 60px rgba(0,0,0,0.6);
+            --transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* =============================================
+           RESET & BASE
+        ============================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.4) 0%, transparent 60%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+        }
+
+        /* =============================================
+           START SCREEN
+        ============================================= */
+        #start-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.6) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.5) 0%, transparent 60%);
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 24px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .start-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            line-height: 1.15;
+            text-shadow: 0 0 40px rgba(212,175,55,0.4);
+            margin-bottom: 6px;
+        }
+        .start-logo span { color: #fff; }
+
+        .start-tagline {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-sub);
+            font-style: italic;
+            max-width: 520px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        /* Brief stats row */
+        .start-brief {
+            display: flex; gap: 12px; flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        .brief-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex; align-items: center; gap: 8px;
+            backdrop-filter: blur(8px);
+        }
+        .brief-chip .chip-icon { font-size: 1.1rem; }
+
+        .start-btn {
+            font-family: 'Inter', sans-serif;
+            padding: 18px 56px;
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            font-weight: 700;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(212,175,55,0.2);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .start-btn:hover, .start-btn:focus-visible {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 50px rgba(212,175,55,0.5);
+            transform: scale(1.04);
+        }
+        .start-btn:active { transform: scale(0.98); }
+
+        /* =============================================
+           GAME CONTAINER
+        ============================================= */
+        #game-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 860px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gold-dim);
+            box-shadow: var(--shadow-card);
+            padding: clamp(20px, 4vw, 36px);
+            position: relative;
+            overflow-y: auto;
+            max-height: 96vh;
+            display: none;
+            margin: auto;
+        }
+
+        /* =============================================
+           HEADER
+        ============================================= */
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .game-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.3rem, 4vw, 1.9rem);
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            display: inline-block;
+            line-height: 1.2;
+        }
+        .game-title .white { color: #fff; }
+
+        /* Stage progress dots */
+        #stage-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            margin-top: 12px;
+        }
+        .s-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .s-dot.done {
+            background: var(--gold);
+            border-color: var(--gold);
+            box-shadow: 0 0 6px rgba(212,175,55,0.5);
+        }
+        .s-dot.active {
+            background: var(--gold-light);
+            border-color: var(--gold-light);
+            box-shadow: 0 0 10px rgba(240,208,96,0.7);
+            width: 22px;
+            border-radius: 4px;
+            animation: dotPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+
+        /* =============================================
+           STATUS BAR
+        ============================================= */
+        .status-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .stat-card.danger {
+            border-color: rgba(248,113,113,0.4);
+            background: var(--danger-bg);
+        }
+        .stat-card.danger .stat-value { color: var(--danger); }
+        .stat-card.danger .stat-bar-fill { background: var(--danger) !important; }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+        .stat-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .stat-icon { font-size: 1rem; line-height: 1; }
+        .stat-value {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 700;
+            color: var(--text-main);
+            transition: color 0.3s;
+            line-height: 1;
+        }
+        .stat-unit {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        /* Progress bar */
+        .stat-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+        }
+        #money-fill   { background: linear-gradient(90deg, #4ADE80, #22D3EE); }
+        #time-fill    { background: linear-gradient(90deg, #FBBF24, #F97316); }
+        #morale-fill  { background: linear-gradient(90deg, #F87171, #EC4899); }
+
+        /* Danger pulse */
+        .stat-card.danger .stat-value {
+            animation: pulseValue 1s infinite;
+        }
+        @keyframes pulseValue {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* =============================================
+           IMAGE
+        ============================================= */
+        #image-container {
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 18px;
+            display: none;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        #image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, var(--bg-card));
+            pointer-events: none;
+        }
+        #scene-image {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* =============================================
+           STORY TEXT
+        ============================================= */
+        #story-text {
+            font-size: clamp(1rem, 2.2vw, 1.2rem);
+            line-height: 1.85;
+            margin-bottom: 22px;
+            padding: clamp(16px, 3vw, 24px);
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            position: relative;
+        }
+        #story-text::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(180deg, var(--gold), transparent);
+            border-radius: 3px 0 0 3px;
+        }
+        #story-text b {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05em;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* =============================================
+           CHOICE BUTTONS
+        ============================================= */
+        .btn-container { display: flex; flex-direction: column; gap: 10px; }
+
+        .choice-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            transition: var(--transition);
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .choice-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--gold-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 1px var(--gold-dim);
+        }
+        .choice-btn:active { transform: translateY(0px); box-shadow: none; }
+
+        .choice-badge {
+            width: 42px;
+            min-width: 42px;
+            background: var(--gold-glow);
+            border-right: 1px solid var(--gold-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--gold);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .choice-btn:hover .choice-badge {
+            background: rgba(212,175,55,0.2);
+        }
+
+        .choice-body {
+            flex: 1;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .choice-text {
+            font-size: clamp(0.92rem, 2vw, 1.05rem);
+            font-weight: 500;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+        .choice-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .pill {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+        .pill-money-neg { background: rgba(248,113,113,0.15); color: #FCA5A5; border: 1px solid rgba(248,113,113,0.25); }
+        .pill-money-pos { background: rgba(74,222,128,0.15); color: #86EFAC; border: 1px solid rgba(74,222,128,0.25); }
+        .pill-time      { background: rgba(251,191,36,0.15); color: #FDE68A; border: 1px solid rgba(251,191,36,0.25); }
+        .pill-free      { background: rgba(255,255,255,0.06); color: var(--text-sub); border: 1px solid var(--border); }
+
+        /* Replay button */
+        .replay-btn-inline {
+            width: 100%;
+            padding: 16px;
+            text-align: center;
+            background: var(--gold-glow);
+            border: 2px solid var(--gold-dim);
+            border-radius: var(--radius-md);
+            color: var(--gold);
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 1px;
+        }
+        .replay-btn-inline:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 30px rgba(212,175,55,0.4);
+        }
+
+        /* =============================================
+           OVERLAYS SHARED BASE
+        ============================================= */
+        .overlay-base {
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-xl);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: clamp(20px, 4vw, 36px);
+            text-align: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow-y: auto;
+        }
+
+        /* =============================================
+           LOADING OVERLAY
+        ============================================= */
+        #loading-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(13, 27, 42, 0.96);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            padding: 24px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(212,175,55,0.15);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 18px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loading-text {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .loading-sub {
+            color: var(--text-sub);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* =============================================
+           EVENT OVERLAY
+        ============================================= */
+        #event-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(13,27,42,0.97);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: clamp(20px,4vw,36px);
+            text-align: center;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            transition: background 0.3s;
+            overflow-y: auto;
+        }
+        /* Tint classes */
+        #event-overlay.tint-bad  { background: rgba(40,8,8,0.97); }
+        #event-overlay.tint-good { background: rgba(5,28,18,0.97); }
+        #event-overlay.tint-gamble { background: rgba(20,15,5,0.97); }
+
+        .event-icon-big { font-size: clamp(2.5rem,8vw,4rem); margin-bottom: 10px; line-height: 1; }
+
+        #event-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.3rem,4vw,1.9rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        #event-desc {
+            font-size: clamp(0.95rem,2.2vw,1.15rem);
+            line-height: 1.75;
+            color: #E2E8F0;
+            margin-bottom: 8px;
+            max-width: 480px;
+        }
+        .win-rate-badge {
+            display: inline-block;
+            background: rgba(251,191,36,0.15);
+            border: 1px solid rgba(251,191,36,0.4);
+            color: var(--warning);
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin-bottom: 22px;
+        }
+
+        /* Gamble result panel */
+        #gamble-result {
+            display: none;
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 380px;
+            animation: fadeIn 0.4s ease;
+        }
+        #gamble-result.win  { background: var(--success-bg); border: 1px solid rgba(74,222,128,0.3); color: var(--success); }
+        #gamble-result.lose { background: var(--danger-bg);  border: 1px solid rgba(248,113,113,0.3); color: var(--danger); }
+        #gamble-result .gr-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+        #gamble-result .gr-text { font-size: 1.1rem; font-weight: 700; }
+
+        .gamble-btns { display: flex; gap: 12px; width: 100%; justify-content: center; flex-wrap: wrap; max-width: 480px; }
+
+        /* Event buttons re-use .choice-btn styling but centered */
+        .event-btn {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.9rem,2vw,1rem);
+            font-weight: 600;
+            color: var(--text-main);
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.5;
+        }
+        .event-btn:hover { background: var(--bg-hover); border-color: var(--gold-dim); transform: translateY(-2px); }
+        .event-btn:active { transform: translateY(0); }
+        .event-btn.gamble-fire { border-color: rgba(251,191,36,0.4); color: var(--warning); }
+        .event-btn.gamble-safe { border-color: rgba(148,163,184,0.3); color: var(--text-sub); }
+        .event-btn-full { width: 100%; max-width: 340px; }
+
+        /* =============================================
+           HALFTIME OVERLAY
+        ============================================= */
+        #halftime-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(13,27,42,0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 25;
+            padding: clamp(20px,4vw,36px);
+            text-align: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow-y: auto;
+        }
+        .halftime-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: var(--gold-glow);
+            border: 1px solid var(--gold-dim);
+            border-radius: 50px;
+            padding: 5px 16px;
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+        #halftime-overlay h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem,5vw,2.2rem);
+            color: var(--gold);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .halftime-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-style: italic;
+            margin-bottom: 28px;
+            max-width: 420px;
+            line-height: 1.6;
+        }
+        .halftime-stats {
+            display: flex; gap: 10px;
+            justify-content: center; flex-wrap: wrap;
+            margin-bottom: 24px; width: 100%;
+        }
+        .ht-stat-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            min-width: 110px; flex: 1;
+            max-width: 160px;
+        }
+        .ht-stat-box .hs-icon { font-size: 1.3rem; margin-bottom: 4px; }
+        .ht-stat-box .hs-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 4px; }
+        .ht-stat-box .hs-value { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+        .halftime-quote {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-style: italic;
+            margin-bottom: 28px;
+            max-width: 440px;
+            line-height: 1.75;
+            border-left: 3px solid var(--gold);
+            padding-left: 16px;
+            text-align: left;
+        }
+        #halftime-continue {
+            width: 100%; max-width: 320px;
+            padding: 15px;
+            text-align: center;
+            background: var(--gold-glow);
+            border: 1.5px solid var(--gold-dim);
+            border-radius: var(--radius-md);
+            color: var(--gold);
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 1px;
+        }
+        #halftime-continue:hover { background: var(--gold); color: #000; }
+
+        /* =============================================
+           ADMIN OVERLAYS
+        ============================================= */
+        #admin-login-overlay, #admin-panel-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(8,16,28,0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .admin-box {
+            background: rgba(20,32,50,0.95);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gold-dim);
+            width: 100%; max-width: 380px;
+            text-align: left;
+        }
+        .admin-box h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+        }
+        .admin-group {
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-group label { color: var(--text-sub); font-weight: 600; font-size: 0.9rem; }
+        .admin-group input, .admin-group select {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            width: 58%;
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        .admin-group input:focus, .admin-group select:focus { outline: 1px solid var(--gold-dim); }
+        .admin-btn-row { display: flex; gap: 10px; margin-top: 16px; }
+        .admin-btn {
+            flex: 1; padding: 10px 14px;
+            text-align: center;
+            background: #22c55e; color: #fff;
+            border: none; border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .admin-btn:hover { opacity: 0.85; }
+        .admin-btn.danger { background: var(--danger); color: #fff; }
+        .admin-btn.action { background: #7c3aed; width: 100%; margin-top: 10px; display: block; }
+
+        /* Admin password input */
+        #admin-key-input {
+            width: 100%; padding: 12px;
+            margin-bottom: 16px;
+            background: rgba(255,255,255,0.06);
+            color: #fff; border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        #admin-key-input:focus { outline: 1px solid var(--gold-dim); }
+
+        /* =============================================
+           END SCREEN
+        ============================================= */
+        #end-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.4) 0%, transparent 60%);
+            z-index: 9999;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 24px;
+            overflow-y: auto;
+        }
+        .end-badge-wrap { font-size: clamp(3rem,10vw,5rem); margin-bottom: 10px; animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+        @keyframes badgePop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        #end-screen h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem,5vw,2.2rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            animation: fadeIn 0.5s 0.2s ease both;
+        }
+        .end-subtitle {
+            font-size: clamp(0.9rem,2.2vw,1.05rem);
+            color: var(--text-sub);
+            font-style: italic;
+            margin-bottom: 24px;
+            max-width: 500px;
+            line-height: 1.7;
+            animation: fadeIn 0.5s 0.35s ease both;
+        }
+
+        /* --- CSS MỚI CHO ẢNH END SCREEN VÀ HINT --- */
+        #end-image-container {
+            width: 100%; max-width: 560px;
+            border-radius: var(--radius-md);
+            overflow: hidden; margin-bottom: 24px;
+            display: none; border: 1px solid var(--border);
+            animation: fadeIn 0.5s 0.4s ease both;
+        }
+        #end-image-container img {
+            width: 100%; max-height: 280px;
+            object-fit: cover; display: block;
+        }
+        .secret-hint {
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            color: var(--warning);
+            margin-bottom: 24px;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(251,191,36,0.4);
+            animation: fadeIn 0.5s 0.6s ease both;
+            max-width: 560px;
+            line-height: 1.5;
+            display: none; /* Ẩn mặc định, chỉ hiện ở true ending */
+        }
+        /* ------------------------------------------ */
+
+        .end-stats-grid {
+            display: flex; gap: 10px;
+            justify-content: center; flex-wrap: wrap;
+            margin-bottom: 32px; max-width: 560px; width: 100%;
+            animation: fadeIn 0.5s 0.5s ease both;
+        }
+        .end-stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            flex: 1; min-width: 100px;
+        }
+        .esk-label { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .esk-value { font-size: 1.3rem; font-weight: 700; }
+
+        #end-screen .replay-btn {
+            font-family: 'Inter', sans-serif;
+            padding: 17px 52px;
+            font-size: clamp(1rem,3vw,1.2rem);
+            font-weight: 700;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(212,175,55,0.2);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-tap-highlight-color: transparent;
+            animation: fadeIn 0.5s 0.65s ease both;
+        }
+        #end-screen .replay-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 50px rgba(212,175,55,0.5); }
+
+        /* =============================================
+           ANIMATIONS
+        ============================================= */
+        .fade-in { animation: fadeIn 0.45s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .shake { animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px,0,0); }
+            20%, 80% { transform: translate3d(4px,0,0); }
+            30%, 50%, 70% { transform: translate3d(-5px,0,0); }
+            40%, 60% { transform: translate3d(5px,0,0); }
+        }
+
+        /* =============================================
+           MOBILE RESPONSIVE
+        ============================================= */
+        @media screen and (max-width: 480px) {
+            body { padding: 10px; align-items: flex-start; }
+            #game-container { border-radius: var(--radius-lg); max-height: none; overflow-y: visible; }
+
+            /* 2-row status bar on tiny screens */
+            .status-bar { flex-wrap: wrap; }
+            .stat-card:nth-child(1) { min-width: calc(50% - 5px); }
+            .stat-card:nth-child(2) { min-width: calc(50% - 5px); }
+            .stat-card:nth-child(3) { min-width: 100%; }
+            .stat-value { font-size: 1.1rem; }
+
+            .gamble-btns { flex-direction: column; }
+            .event-btn { min-width: unset; width: 100%; }
+            #halftime-overlay, #event-overlay, #loading-overlay,
+            #admin-login-overlay, #admin-panel-overlay { border-radius: var(--radius-lg); }
+
+            .start-brief { gap: 8px; }
+            .brief-chip { font-size: 0.82rem; padding: 8px 14px; }
+
+            .ht-stat-box { max-width: none; }
+        }
+
+        @media screen and (min-width: 481px) and (max-width: 680px) {
+            .ht-stat-box { min-width: 100px; }
+        }
+
+        /* =============================================
+           DIFFICULTY SCREEN
+        ============================================= */
+        #difficulty-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.6) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.5) 0%, transparent 60%);
+            z-index: 9998;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            animation: fadeIn 0.35s ease;
+        }
+        .diff-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        .diff-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 32px;
+            letter-spacing: 1px;
+        }
+        .diff-cards {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 860px;
+            margin-bottom: 28px;
+        }
+        .diff-card {
+            flex: 1;
+            min-width: 220px;
+            max-width: 270px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .diff-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            transition: var(--transition);
+        }
+        .diff-card.normal::before  { background: var(--success); }
+        .diff-card.expert::before  { background: var(--warning); }
+        .diff-card.asian::before   { background: var(--danger); }
+
+        .diff-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.06);
+        }
+        .diff-card.normal:hover  { border-color: rgba(74,222,128,0.4);  box-shadow: 0 12px 32px rgba(74,222,128,0.1); }
+        .diff-card.expert:hover  { border-color: rgba(251,191,36,0.4);  box-shadow: 0 12px 32px rgba(251,191,36,0.1); }
+        .diff-card.asian:hover   { border-color: rgba(248,113,113,0.4); box-shadow: 0 12px 32px rgba(248,113,113,0.15); }
+        .diff-card:active { transform: translateY(0); }
+
+        .diff-card-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .diff-card-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .diff-card.normal  .diff-card-name { color: var(--success); }
+        .diff-card.expert  .diff-card-name { color: var(--warning); }
+        .diff-card.asian   .diff-card-name { color: var(--danger); }
+
+        .diff-card-desc {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            font-style: italic;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+        .diff-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .diff-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        .diff-stat-row .ds-label { color: var(--text-dim); }
+        .diff-stat-row .ds-val   { color: var(--text-main); font-weight: 600; }
+
+        .diff-back-btn {
+            font-family: 'Inter', sans-serif;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            border-radius: 50px;
+            padding: 10px 28px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .diff-back-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+        @media screen and (max-width: 480px) {
+            .diff-cards { gap: 12px; }
+            .diff-card { min-width: 100%; max-width: 100%; padding: 18px 16px; }
+            .diff-title { margin-bottom: 20px; }
+        }
+        /* =============================================
+           THEME: VOLUNTEER (Xanh biển & Trắng)
+        ============================================= */
+        body.theme-volunteer {
+            --gold:       #1565C0;
+            --gold-light: #42A5F5;
+            --gold-dim:   rgba(21,101,192,0.25);
+            --gold-glow:  rgba(21,101,192,0.12);
+            --bg-deep:    #EFF6FF;
+            --bg-card:    rgba(255,255,255,0.95);
+            --bg-surface: rgba(21,101,192,0.05);
+            --bg-hover:   rgba(21,101,192,0.09);
+            --text-main:  #1E3A5F;
+            --text-sub:   #4A7FA5;
+            --text-dim:   #7EB3D4;
+            --border:     rgba(21,101,192,0.15);
+            --shadow-card: 0 24px 60px rgba(21,101,192,0.12);
+        }
+        body.theme-volunteer {
+            background: #EFF6FF;
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(144,202,249,0.45) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(21,101,192,0.12) 0%, transparent 60%);
+        }
+        body.theme-volunteer #start-screen,
+        body.theme-volunteer #difficulty-screen,
+        body.theme-volunteer #end-screen {
+            background: #EFF6FF;
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(144,202,249,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(21,101,192,0.15) 0%, transparent 60%);
+        }
+        body.theme-volunteer #money-fill  { background: linear-gradient(90deg, #1565C0, #0288D1); }
+        body.theme-volunteer #time-fill   { background: linear-gradient(90deg, #0288D1, #0097A7); }
+        body.theme-volunteer #morale-fill { background: linear-gradient(90deg, #E53935, #AD1457); }
+        body.theme-volunteer .choice-badge { background: rgba(21,101,192,0.08); border-right-color: rgba(21,101,192,0.2); }
+        body.theme-volunteer #story-text::before { background: linear-gradient(180deg, #1565C0, transparent); }
+        body.theme-volunteer .spinner { border-color: rgba(21,101,192,0.15); border-top-color: #1565C0; }
+        body.theme-volunteer .pill-money-neg { background: rgba(229,57,53,0.1);  color: #C62828; border-color: rgba(229,57,53,0.25); }
+        body.theme-volunteer .pill-money-pos { background: rgba(46,125,50,0.1);  color: #2E7D32; border-color: rgba(46,125,50,0.25); }
+        body.theme-volunteer .pill-time      { background: rgba(2,136,209,0.12); color: #01579B; border-color: rgba(2,136,209,0.3); }
+        body.theme-volunteer .pill-free      { background: rgba(21,101,192,0.06); color: #4A7FA5; border-color: rgba(21,101,192,0.15); }
+        body.theme-volunteer .s-dot          { background: rgba(21,101,192,0.15); border-color: rgba(21,101,192,0.2); }
+        body.theme-volunteer .s-dot.done     { background: #1565C0; border-color: #1565C0; box-shadow: 0 0 6px rgba(21,101,192,0.4); }
+        body.theme-volunteer .s-dot.active   { background: #42A5F5; border-color: #42A5F5; box-shadow: 0 0 10px rgba(66,165,245,0.6); }
+        body.theme-volunteer .admin-box      { background: rgba(255,255,255,0.97); }
+        body.theme-volunteer .admin-group input,
+        body.theme-volunteer .admin-group select { background: rgba(21,101,192,0.06); color: #1E3A5F; border-color: rgba(21,101,192,0.2); }
+        /* Char bubble — nền tối cứng để đọc được trên background sáng */
+        body.theme-volunteer #char-bubble { background: rgba(15,30,60,0.97); border-color: rgba(21,101,192,0.4); }
+        body.theme-volunteer .cb-text { color: #EDF2F7; }
+        /* Decision log panel — giữ nền tối để contrast tốt */
+        body.theme-volunteer #decision-log-panel { background: rgba(15,30,60,0.99); border-left-color: rgba(21,101,192,0.35); }
+        body.theme-volunteer .lp-header-title { color: #42A5F5; }
+        body.theme-volunteer .log-entry { background: rgba(21,101,192,0.07); border-color: rgba(21,101,192,0.18); }
+        body.theme-volunteer .log-entry-stage { color: #42A5F5; }
+        body.theme-volunteer .log-entry-choice { color: #CBD5E1; }
+        /* Leadership profile card trên end screen sáng */
+        body.theme-volunteer #leadership-profile-card { background: rgba(21,101,192,0.07); border-color: rgba(21,101,192,0.25); }
+        body.theme-volunteer #leadership-profile-card::before { background: linear-gradient(90deg, #1565C0, #42A5F5, transparent); }
+        body.theme-volunteer #lp-style { color: #1565C0; }
+        body.theme-volunteer #lp-desc  { color: #4A7FA5; }
+        body.theme-volunteer .lp-spinner { border-color: rgba(21,101,192,0.15); border-top-color: #1565C0; }
+        body.theme-volunteer .lp-loading { color: #4A7FA5; }
+
+        /* Nút chuyển theme */
+        #theme-toggle {
+            position: absolute;
+            top: 0; right: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            display: flex; align-items: center; gap: 5px;
+            white-space: nowrap;
+        }
+        #theme-toggle:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
+
+        /* =============================================
+           CHARACTER DIALOGUE BUBBLE (Mục 16)
+        ============================================= */
+        #char-bubble {
+            position: fixed;
+            bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 500;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(10,20,36,0.97);
+            border: 1px solid var(--gold-dim);
+            border-radius: var(--radius-lg);
+            padding: 12px 18px;
+            max-width: min(440px, 92vw);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #char-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .cb-avatar {
+            font-size: 1.5rem; line-height: 1; flex-shrink: 0;
+            width: 40px; height: 40px;
+            background: var(--gold-glow); border: 1px solid var(--gold-dim);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .cb-name { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 3px; }
+        .cb-text { font-size: 0.9rem; color: var(--text-main); line-height: 1.45; font-style: italic; }
+
+        /* =============================================
+           DECISION LOG TOGGLE + PANEL (Mục 11)
+        ============================================= */
+        #log-toggle {
+            position: absolute; top: 0; left: 0;
+            background: var(--bg-surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 6px 10px;
+            font-size: 0.75rem; font-weight: 600; color: var(--text-sub);
+            cursor: pointer; transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap; display: flex; align-items: center; gap: 5px;
+        }
+        #log-toggle:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
+        .log-count {
+            background: var(--gold-glow); border: 1px solid var(--gold-dim);
+            color: var(--gold); border-radius: 50px; font-size: 0.65rem;
+            padding: 1px 6px; font-weight: 700;
+        }
+        #log-panel-backdrop {
+            position: fixed; inset: 0; z-index: 9490;
+            background: rgba(0,0,0,0.5); display: none;
+        }
+        #log-panel-backdrop.show { display: block; }
+        #decision-log-panel {
+            position: fixed; top: 0; right: 0; bottom: 0;
+            width: min(360px, 92vw);
+            background: rgba(8,16,30,0.99);
+            border-left: 1px solid var(--gold-dim);
+            z-index: 9500; display: flex; flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        #decision-log-panel.open { transform: translateX(0); }
+        .lp-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 20px; border-bottom: 1px solid var(--gold-dim); flex-shrink: 0;
+        }
+        .lp-header-title { font-family:'Playfair Display',serif; font-size:0.9rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:2px; }
+        #log-close-btn {
+            background: none; border: 1px solid var(--border); color: var(--text-sub);
+            border-radius: var(--radius-sm); width: 28px; height: 28px; cursor: pointer;
+            font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        #log-close-btn:hover { border-color: var(--danger); color: var(--danger); }
+        #log-entries { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+        #log-entries::-webkit-scrollbar { width: 4px; }
+        #log-entries::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+        .log-entry {
+            background: var(--bg-surface); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 12px 14px; transition: border-color 0.2s;
+        }
+        .log-entry:hover { border-color: var(--gold-dim); }
+        .log-entry-stage { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 4px; }
+        .log-entry-choice { font-size: 0.87rem; color: var(--text-main); line-height: 1.45; margin-bottom: 7px; }
+        .log-entry-effects { display: flex; flex-wrap: wrap; gap: 5px; }
+        .le-pill { font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 50px; }
+        .le-pos { background: rgba(74,222,128,0.1); color: #86EFAC; border: 1px solid rgba(74,222,128,0.2); }
+        .le-neg { background: rgba(248,113,113,0.1); color: #FCA5A5; border: 1px solid rgba(248,113,113,0.2); }
+        .le-neu { background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid var(--border); }
+        .log-empty { text-align: center; color: var(--text-dim); font-style: italic; font-size: 0.9rem; padding: 40px 20px; }
+
+        /* =============================================
+           LEADERSHIP PROFILE CARD (Mục A - end screen)
+        ============================================= */
+        #leadership-profile-card {
+            width: 100%; max-width: 560px;
+            background: var(--bg-surface);
+            border: 1px solid var(--gold-dim);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px; margin-bottom: 20px;
+            text-align: left;
+            animation: fadeIn 0.5s 0.45s ease both;
+            position: relative; overflow: hidden;
+            display: none;
+        }
+        #leadership-profile-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), transparent);
+        }
+        .lp-card-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 10px; }
+        .lp-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+        #lp-icon {
+            font-size: 2rem; line-height: 1; flex-shrink: 0;
+            width: 50px; height: 50px; background: var(--gold-glow); border: 1px solid var(--gold-dim);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        #lp-style { font-family: 'Playfair Display', serif; font-size: clamp(1rem,3vw,1.3rem); font-weight: 900; color: var(--gold); line-height: 1.2; }
+        #lp-desc { font-size: clamp(0.85rem,2vw,0.95rem); color: var(--text-sub); line-height: 1.7; margin-bottom: 12px; }
+        .lp-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .lp-tag { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+        .lp-tag-strength { background: rgba(74,222,128,0.1); color: #86EFAC; border: 1px solid rgba(74,222,128,0.25); }
+        .lp-tag-blind    { background: rgba(248,113,113,0.1); color: #FCA5A5; border: 1px solid rgba(248,113,113,0.25); }
+        .lp-loading { display: flex; align-items: center; gap: 10px; color: var(--text-dim); font-size: 0.88rem; font-style: italic; }
+        .lp-spinner { width: 16px; height: 16px; border: 2px solid rgba(212,175,55,0.15); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.9s linear infinite; flex-shrink: 0; }
+
+        /* =============================================
+           HOVER EFFECTS — chỉ thiết bị có chuột thật
+           ĐÃ SỬA: Xóa scale() trên story-text vì gây
+           overflow che phủ các nút bên dưới, chuột
+           không tiếp cận được (bug "zoom không được").
+        ============================================= */
+        @media (hover: hover) and (pointer: fine) {
+            #story-text {
+                transition: box-shadow 0.28s cubic-bezier(0.4,0,0.2,1),
+                            border-color 0.28s cubic-bezier(0.4,0,0.2,1);
+            }
+            #story-text:hover {
+                border-color: var(--gold-dim);
+                box-shadow: 0 8px 32px rgba(212,175,55,0.12);
+            }
+            .choice-btn {
+                position: relative;
+            }
+            .choice-btn:hover {
+                transform: translateY(-3px);
+                z-index: 5;
+            }
+        }
+
+        /* =============================================
+           AI MODE INDICATOR BADGE
+        ============================================= */
+        #ai-mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            transition: var(--transition);
+            cursor: default;
+        }
+        #ai-mode-badge.ai-on  { color: var(--success); border: 1px solid rgba(74,222,128,0.3); background: rgba(74,222,128,0.07); }
+        #ai-mode-badge.ai-off { color: var(--text-dim); border: 1px solid var(--border); background: var(--bg-surface); }
+
+        /* =============================================
+           SOUND TOGGLE BUTTON
+        ============================================= */
+        #sound-toggle {
+            position: absolute;
+            top: 0; right: 108px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+        #sound-toggle:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--bg-hover); }
+
+        /* =============================================
+           TOOLTIP FOR PILLS (thuần CSS, data-tip)
+        ============================================= */
+        .pill[data-tip] {
+            position: relative;
+            cursor: help;
+        }
+        .pill[data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 7px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10,20,36,0.97);
+            border: 1px solid var(--gold-dim);
+            color: var(--text-main);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 50;
+        }
+        .pill[data-tip]:hover::after { opacity: 1; }
+
+        /* =============================================
+           DELAYED CONSEQUENCE NOTIFICATION
+        ============================================= */
+        .delayed-notif {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(251,191,36,0.08);
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+            color: var(--warning);
+            line-height: 1.5;
+            animation: fadeIn 0.45s ease both;
+        }
+        .delayed-notif .dn-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+        /* =============================================
+           BONUS OPPORTUNITY OVERLAY
+        ============================================= */
+        #bonus-overlay {
+            position: absolute; inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(8,18,36,0.97);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 18;
+            padding: clamp(20px,4vw,36px);
+            text-align: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow-y: auto;
+        }
+        .bonus-icon-big { font-size: clamp(2.5rem,8vw,4rem); margin-bottom: 10px; line-height: 1; }
+        #bonus-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem,3.5vw,1.7rem);
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        #bonus-desc {
+            font-size: clamp(0.9rem,2vw,1.05rem);
+            color: #E2E8F0;
+            margin-bottom: 8px;
+            max-width: 440px;
+            line-height: 1.75;
+        }
+        .bonus-cost-label {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 22px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 5px 14px;
+        }
+        .bonus-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: 420px; width: 100%; }
+        .bonus-btn {
+            flex: 1; min-width: 140px;
+            padding: 13px 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bonus-btn.accept { background: var(--gold-glow); border: 1px solid var(--gold-dim); color: var(--gold); }
+        .bonus-btn.accept:hover { background: var(--gold); color: #000; box-shadow: 0 0 24px rgba(212,175,55,0.3); }
+        .bonus-btn.skip { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-sub); }
+        .bonus-btn.skip:hover { border-color: rgba(255,255,255,0.2); color: var(--text-main); }
+
+        /* =============================================
+           LEADERBOARD (end screen)
+        ============================================= */
+        #leaderboard-section {
+            width: 100%; max-width: 560px;
+            margin-bottom: 24px;
+            display: none;
+            animation: fadeIn 0.5s 0.75s ease both;
+        }
+        #leaderboard-section h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 5px;
+            font-size: 0.82rem;
+        }
+        .lb-row.lb-new { border-color: var(--gold-dim); background: var(--gold-glow); }
+        .lb-rank { color: var(--gold); font-weight: 700; min-width: 22px; font-family: 'Playfair Display', serif; }
+        .lb-ending { flex: 1; color: var(--text-sub); font-size: 0.78rem; }
+        .lb-score { color: var(--text-main); font-weight: 700; }
+        .lb-diff { font-size: 0.7rem; color: var(--text-dim); }
+        .lb-date { font-size: 0.7rem; color: var(--text-dim); }
+
+        /* =============================================
+           ITEM SELECTION SCREEN (Vật phẩm trước trận)
+        ============================================= */
+        #item-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-deep);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.6) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.5) 0%, transparent 60%);
+            z-index: 9997;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            animation: fadeIn 0.35s ease;
+        }
+        .item-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+        }
+        .item-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .item-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 28px;
+        }
+        .item-cards {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 860px;
+            margin-bottom: 24px;
+        }
+        .item-card {
+            flex: 1;
+            min-width: 200px;
+            max-width: 260px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+        .item-card:hover {
+            transform: translateY(-4px);
+            background: rgba(212,175,55,0.05);
+            border-color: var(--gold-dim);
+            box-shadow: 0 12px 32px rgba(212,175,55,0.12);
+        }
+        .item-card.selected {
+            border-color: var(--gold);
+            background: var(--gold-glow);
+            box-shadow: 0 0 24px rgba(212,175,55,0.25);
+        }
+        .item-card-icon { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+        .item-card-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+        .item-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+        .item-card-stat {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--success);
+            background: rgba(74,222,128,0.08);
+            border: 1px solid rgba(74,222,128,0.2);
+            border-radius: 50px;
+            padding: 3px 10px;
+            display: inline-block;
+        }
+        .item-confirm-btn {
+            font-family: 'Inter', sans-serif;
+            padding: 14px 48px;
+            font-size: 1rem;
+            font-weight: 700;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .item-confirm-btn:hover { background: var(--gold); color: #000; }
+        .item-confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        @media (max-width: 480px) {
+            .item-card { min-width: 100%; max-width: 100%; }
+        }
+
+        /* =============================================
+           SPEED MODE — Countdown trên mỗi nút chọn
+        ============================================= */
+        .speed-timer-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .speed-timer-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--success), var(--warning));
+            transition: width 1s linear, background 0.5s;
+        }
+        .speed-timer-fill.urgent { background: linear-gradient(90deg, var(--danger), #ff6b6b); }
+        #speed-countdown {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        #speed-countdown.urgent { color: var(--danger); animation: pulseValue 0.8s infinite; }
+
+        /* Checkbox speed mode trên diff screen */
+        .speed-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+        .speed-mode-toggle:hover { border-color: var(--gold-dim); background: rgba(212,175,55,0.05); }
+        .speed-mode-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+        .speed-mode-label { font-size: 0.88rem; font-weight: 600; color: var(--text-sub); }
+        .speed-mode-label span { color: var(--warning); font-weight: 700; }
+
+        /* =============================================
+           MEMBER MORALE MINI BARS
+        ============================================= */
+        #member-morale-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .member-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 5px 12px;
+            transition: var(--transition);
+            min-width: 90px;
+        }
+        .member-chip.low { border-color: rgba(248,113,113,0.4); background: var(--danger-bg); }
+        .member-chip.left { border-color: rgba(248,113,113,0.6); background: rgba(248,113,113,0.12); opacity: 0.5; }
+        .member-avatar { font-size: 1rem; line-height: 1; }
+        .member-info { display: flex; flex-direction: column; gap: 2px; }
+        .member-name { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); }
+        .member-bar { width: 48px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+        .member-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.4s; }
+
+        /* =============================================
+           ORACLE HINT (trước story-text)
+        ============================================= */
+        #oracle-hint {
+            display: none;
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            background: rgba(212,175,55,0.04);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.45s ease;
+        }
+        #oracle-hint.visible { display: flex; }
+        .oracle-icon { font-size: 0.95rem; flex-shrink: 0; }
+
+        /* =============================================
+           ALBUM KÝ ỨC (end screen)
+        ============================================= */
+        #memory-album {
+            width: 100%;
+            max-width: 560px;
+            margin-bottom: 24px;
+            display: none;
+            animation: fadeIn 0.5s 0.5s ease both;
+        }
+        #memory-album h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .album-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dim) transparent;
+        }
+        .album-strip::-webkit-scrollbar { height: 3px; }
+        .album-strip::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+        .polaroid {
+            flex-shrink: 0;
+            width: 90px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 6px 10px;
+            text-align: center;
+            cursor: default;
+            transition: var(--transition);
+        }
+        .polaroid:hover { transform: translateY(-3px) rotate(-1deg); border-color: var(--gold-dim); }
+        .polaroid-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+        .polaroid-caption { font-size: 0.6rem; color: var(--text-dim); line-height: 1.4; }
+        .polaroid-stage { font-size: 0.55rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+
+        /* =============================================
+           HỘI ĐỒNG PHÁN XÉT (end screen)
+        ============================================= */
+        #judge-panel {
+            width: 100%;
+            max-width: 560px;
+            margin-bottom: 24px;
+            display: none;
+            animation: fadeIn 0.5s 0.55s ease both;
+        }
+        #judge-panel h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .judge-cards { display: flex; flex-direction: column; gap: 8px; }
+        .judge-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            transition: border-color 0.2s;
+        }
+        .judge-card:hover { border-color: var(--gold-dim); }
+        .judge-avatar {
+            font-size: 1.4rem;
+            width: 38px; height: 38px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .judge-info { flex: 1; }
+        .judge-name { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 3px; }
+        .judge-verdict { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; font-style: italic; }
+        .judge-loading { display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 0.82rem; font-style: italic; }
+
+        /* NEW GAME+ button */
+        #ng-plus-btn {
+            font-family: 'Inter', sans-serif;
+            padding: 14px 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(240,208,96,0.08));
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-tap-highlight-color: transparent;
+            display: none;
+            margin-bottom: 12px;
+            box-shadow: 0 0 30px rgba(212,175,55,0.2);
+        }
+        #ng-plus-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 50px rgba(212,175,55,0.5); transform: scale(1.03); }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <div class="start-logo"><span class="white">DỰ ÁN</span> MÙA HÈ XANH</div>
+    <p class="start-tagline">"Quản lý dự án không chỉ là những con số,<br>mà là nghệ thuật cân bằng giữa Trái Tim và Lý Trí."</p>
+    <div class="start-brief">
+        <div class="brief-chip"><span class="chip-icon">💰</span> Ngân sách: 6.000.000đ</div>
+        <div class="brief-chip"><span class="chip-icon">⏱️</span> Thời hạn: 25 ngày</div>
+        <div class="brief-chip"><span class="chip-icon">🎯</span> 10 Giai đoạn</div>
+    </div>
+    <button class="start-btn" id="start-btn">Bắt Đầu Trải Nghiệm</button>
+</div>
+
+<div id="difficulty-screen">
+    <p class="diff-heading">Chọn Độ Khó</p>
+    <div class="diff-title">Bạn Là Ai Trong Hành Trình Này?</div>
+    <div class="diff-cards">
+
+        <div class="diff-card normal" id="diff-normal">
+            <span class="diff-card-icon">🌱</span>
+            <div class="diff-card-name">Mẫu Giáo</div>
+            <p class="diff-card-desc">Học cách quản lý. Cho phép sai lầm và thử nghiệm.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">6.000.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">25 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">100%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 110 điểm</span></div>
+            </div>
+        </div>
+
+        <div class="diff-card expert" id="diff-expert">
+            <span class="diff-card-icon">⚔️</span>
+            <div class="diff-card-name">Chuyên Gia</div>
+            <p class="diff-card-desc">Mỗi quyết định phải có lý do. Không thể an toàn mãi.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">4.500.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">22 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">80%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 120 điểm</span></div>
+            </div>
+        </div>
+
+        <div class="diff-card asian" id="diff-asian">
+            <span class="diff-card-icon">🔥</span>
+            <div class="diff-card-name">Asian Mode</div>
+            <p class="diff-card-desc">Bạn không thử, bạn non.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">3.000.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">19 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">65%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 140 điểm</span></div>
+            </div>
+        </div>
+
+    </div>
+    <button class="diff-back-btn" id="diff-back-btn">← Quay lại</button>
+    <label class="speed-mode-toggle">
+        <input type="checkbox" id="speed-mode-check">
+        <span class="speed-mode-label">⏱️ <span>Speed Mode</span> — Đếm ngược 20 giây mỗi lượt (hardcore)</span>
+    </label>
+</div>
+
+<!-- ===== ITEM SELECTION SCREEN ===== -->
+<div id="item-screen">
+    <p class="item-heading">✦ Trang Bị Trước Hành Trình ✦</p>
+    <div class="item-title">Chọn Bùa Hộ Mệnh</div>
+    <p class="item-subtitle">Chỉ được chọn một. Suy nghĩ kỹ — nó sẽ theo bạn suốt 10 giai đoạn.</p>
+    <div class="item-cards">
+        <div class="item-card" id="item-budget" onclick="selectItem('budget')">
+            <span class="item-card-icon">💼</span>
+            <div class="item-card-name">Ngân Sách Dự Phòng</div>
+            <p class="item-card-desc">Có thêm 1.500.000đ khởi đầu, đổi lại mất 2 ngày setup tài liệu.</p>
+            <span class="item-card-stat">💰 +1.500k | ⏱️ -2 ngày</span>
+        </div>
+        <div class="item-card" id="item-captain" onclick="selectItem('captain')">
+            <span class="item-card-icon">🛡️</span>
+            <div class="item-card-name">Đội Trưởng Kinh Nghiệm</div>
+            <p class="item-card-desc">Tinh thần nhóm không bao giờ rớt xuống dưới 40% — dù thế nào.</p>
+            <span class="item-card-stat">❤️ Sàn tinh thần: 40%</span>
+        </div>
+        <div class="item-card" id="item-redo" onclick="selectItem('redo')">
+            <span class="item-card-icon">🎴</span>
+            <div class="item-card-name">Thẻ Ân Xá</div>
+            <p class="item-card-desc">Dùng 1 lần duy nhất để vô hiệu hóa hoàn toàn 1 sự cố bất kỳ trong game.</p>
+            <span class="item-card-stat">🎲 Hủy 1 sự cố (x1)</span>
+        </div>
+    </div>
+    <button class="item-confirm-btn" id="item-confirm-btn" disabled onclick="confirmItem()">Mang theo bùa này →</button>
+</div>
+
+<div id="game-container">
+
+    <div class="game-header" style="position:relative;">
+        <button id="log-toggle" title="Nhật ký quyết định">📋 <span class="log-count" id="log-count-badge">0</span></button>
+        <div class="game-title" id="admin-trigger">
+            <span class="white">DỰ ÁN:</span> MÙA HÈ XANH
+        </div>
+        <button id="sound-toggle" title="Bật/tắt âm thanh">🔊 Âm thanh</button>
+        <button id="theme-toggle">🎨 Tình Nguyện</button>
+        <div id="stage-dots">
+            <div class="s-dot" id="dot-1"></div>
+            <div class="s-dot" id="dot-2"></div>
+            <div class="s-dot" id="dot-3"></div>
+            <div class="s-dot" id="dot-4"></div>
+            <div class="s-dot" id="dot-5"></div>
+            <div class="s-dot" id="dot-6"></div>
+            <div class="s-dot" id="dot-7"></div>
+            <div class="s-dot" id="dot-8"></div>
+            <div class="s-dot" id="dot-9"></div>
+            <div class="s-dot" id="dot-10"></div>
+        </div>
+        <span id="ai-mode-badge" class="ai-on">⚡ AI Mode</span>
+    </div>
+
+    <div class="status-bar">
+        <div class="stat-card" id="money-container">
+            <div class="stat-label">Tài Chính</div>
+            <div class="stat-row">
+                <span class="stat-icon">💰</span>
+                <span class="stat-value" id="money">6.000.000</span>
+                <span class="stat-unit">đ</span>
+            </div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="money-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card" id="time-container">
+            <div class="stat-label">Thời Gian</div>
+            <div class="stat-row">
+                <span class="stat-icon">⏱️</span>
+                <span class="stat-value" id="time">25</span>
+                <span class="stat-unit">ngày</span>
+            </div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="time-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card" id="morale-container">
+            <div class="stat-label">Tinh Thần</div>
+            <div class="stat-row">
+                <span class="stat-icon">❤️</span>
+                <span class="stat-value" id="morale">100</span>
+                <span class="stat-unit">%</span>
+            </div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="morale-fill" style="width:100%"></div></div>
+        </div>
+    </div>
+
+    <!-- Member morale mini bars -->
+    <div id="member-morale-bar">
+        <div class="member-chip" id="member-tung">
+            <span class="member-avatar">😤</span>
+            <div class="member-info">
+                <span class="member-name">Tùng</span>
+                <div class="member-bar"><div class="member-bar-fill" id="mbar-tung" style="width:100%;background:var(--success)"></div></div>
+            </div>
+        </div>
+        <div class="member-chip" id="member-mai">
+            <span class="member-avatar">🌸</span>
+            <div class="member-info">
+                <span class="member-name">Mai</span>
+                <div class="member-bar"><div class="member-bar-fill" id="mbar-mai" style="width:100%;background:var(--success)"></div></div>
+            </div>
+        </div>
+        <div class="member-chip" id="member-khoa">
+            <span class="member-avatar">🤔</span>
+            <div class="member-info">
+                <span class="member-name">Khoa</span>
+                <div class="member-bar"><div class="member-bar-fill" id="mbar-khoa" style="width:100%;background:var(--success)"></div></div>
+            </div>
+        </div>
+        <div class="member-chip" id="member-linh">
+            <span class="member-avatar">💙</span>
+            <div class="member-info">
+                <span class="member-name">Linh</span>
+                <div class="member-bar"><div class="member-bar-fill" id="mbar-linh" style="width:100%;background:var(--success)"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="image-container"><img id="scene-image" src="" alt="Scene"></div>
+    <div id="oracle-hint"><span class="oracle-icon">🔮</span><span id="oracle-text"></span></div>
+    <div id="story-text"></div>
+    <div id="speed-countdown" style="display:none"></div>
+    <div class="btn-container" id="choices"></div>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">HỆ THỐNG ĐANG PHÂN TÍCH...</div>
+        <p class="loading-sub">"Sóng gió có thể ập đến ở bất cứ giai đoạn nào."</p>
+    </div>
+
+    <div id="event-overlay">
+        <div class="event-icon-big" id="event-icon">🚨</div>
+        <h2 id="event-title">BIẾN CỐ!</h2>
+        <p id="event-desc"></p>
+        <div class="win-rate-badge" id="win-rate-label" style="display:none"></div>
+        <div id="gamble-result">
+            <span class="gr-icon" id="gr-icon"></span>
+            <span class="gr-text" id="gr-text"></span>
+        </div>
+        <div class="gamble-btns" id="event-buttons"></div>
+    </div>
+
+    <div id="admin-login-overlay">
+        <div class="admin-box">
+            <h3>🔐 Quyền Truy Cập Giám Đốc</h3>
+            <input type="password" id="admin-key-input" placeholder="Nhập mã bí mật...">
+            <div class="admin-btn-row">
+                <button class="admin-btn danger" id="admin-cancel-btn">Hủy</button>
+                <button class="admin-btn" id="admin-confirm-btn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel-overlay">
+        <div class="admin-box">
+            <h3>⚙️ God Mode Panel</h3>
+            <div class="admin-group">
+                <label>💰 Tài chính:</label>
+                <input type="number" id="admin-money">
+            </div>
+            <div class="admin-group">
+                <label>⏱️ Thời gian:</label>
+                <input type="number" id="admin-time">
+            </div>
+            <div class="admin-group">
+                <label>❤️ Tinh thần:</label>
+                <input type="number" id="admin-morale">
+            </div>
+            <div class="admin-group">
+                <label>⭐ Chất lượng:</label>
+                <input type="number" id="admin-quality">
+            </div>
+            <div class="admin-group">
+                <label>🤖 Bật/Tắt AI:</label>
+                <input type="checkbox" id="admin-ai-toggle" style="width:20px;height:20px;">
+            </div>
+            <div class="admin-group">
+                <label>🎲 Sự Cược AI:</label>
+                <div style="display:flex;align-items:center;gap:4px;width:58%;">
+                    <input type="number" id="admin-rate-ai" min="0" max="100" step="5" style="width:100%;text-align:right;">
+                    <span style="color:var(--text-dim);font-size:0.8rem;flex-shrink:0;">%</span>
+                </div>
+            </div>
+            <div class="admin-group">
+                <label>⚡ Sự Cố/May:</label>
+                <div style="display:flex;align-items:center;gap:4px;width:58%;">
+                    <input type="number" id="admin-rate-static" min="0" max="100" step="5" style="width:100%;text-align:right;">
+                    <span style="color:var(--text-dim);font-size:0.8rem;flex-shrink:0;">%</span>
+                </div>
+            </div>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:10px;font-style:italic;">🎰 Tỉ lệ thắng cược: tự động 40–60% ngẫu nhiên mỗi lần</p>
+            <button class="admin-btn action" id="admin-force-event-btn">⚡ Ép Sự Kiện (100%)</button>
+            <div class="admin-group" style="margin-top:14px;flex-direction:column;align-items:flex-start;">
+                <label style="margin-bottom:8px;">🚀 Nhảy Cóc:</label>
+                <div style="display:flex;width:100%;gap:10px;">
+                    <select id="admin-stage-select" style="flex:1;text-align:left;">
+                        <option value="stage_2">GĐ 2</option>
+                        <option value="stage_4">GĐ 4</option>
+                        <option value="stage_7">GĐ 7</option>
+                        <option value="stage_10">GĐ 10</option>
+                        <option value="calc_ending">Tổng kết</option>
+                    </select>
+                    <button class="admin-btn danger" style="padding:8px 16px;width:auto;" id="admin-jump-btn">GO</button>
+                </div>
+            </div>
+            <div class="admin-btn-row" style="margin-top:16px;">
+                <button class="admin-btn danger" id="admin-close-btn">Đóng</button>
+                <button class="admin-btn" id="admin-save-btn">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bonus-overlay">
+        <div id="bonus-title">CƠ HỘI ĐẶC BIỆT!</div>
+        <p id="bonus-desc"></p>
+        <span class="bonus-cost-label" id="bonus-cost"></span>
+        <div class="bonus-btns">
+            <button class="bonus-btn accept" id="bonus-accept-btn"></button>
+            <button class="bonus-btn skip" id="bonus-skip-btn"></button>
+        </div>
+    </div>
+
+    <div id="halftime-overlay">
+        <div class="halftime-label">✦ CHECKPOINT ✦</div>
+        <h2>Nửa Chặng Đường</h2>
+        <p class="halftime-subtitle">"Khó khăn thật sự bắt đầu từ đây. Kiểm tra lại lực lượng trước khi tiếp tục."</p>
+        <div class="halftime-stats">
+            <div class="ht-stat-box"><div class="hs-icon">💰</div><div class="hs-label">Tài chính còn</div><div class="hs-value" id="ht-money"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">⏱️</div><div class="hs-label">Thời gian còn</div><div class="hs-value" id="ht-time"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">❤️</div><div class="hs-label">Tinh thần</div><div class="hs-value" id="ht-morale"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">⭐</div><div class="hs-label">Chất lượng</div><div class="hs-value" id="ht-quality"></div></div>
+        </div>
+        <p class="halftime-quote" id="ht-quote"></p>
+        <button id="halftime-continue">⚔️ Tiếp Tục Hành Trình</button>
+    </div>
+
+</div>
+
+<!-- ===== DECISION LOG PANEL (bên ngoài game-container, fixed) ===== -->
+<div id="log-panel-backdrop"></div>
+<div id="decision-log-panel">
+    <div class="lp-header">
+        <span class="lp-header-title">📋 Nhật Ký Quyết Định</span>
+        <button id="log-close-btn">✕</button>
+    </div>
+    <div id="log-entries">
+        <p class="log-empty">Chưa có quyết định nào được ghi lại.</p>
+    </div>
+</div>
+
+<!-- ===== CHARACTER DIALOGUE BUBBLE (fixed, toàn màn hình) ===== -->
+<div id="char-bubble">
+    <div class="cb-avatar" id="cb-avatar"></div>
+    <div>
+        <div class="cb-name" id="cb-name"></div>
+        <div class="cb-text" id="cb-text"></div>
+    </div>
+</div>
+
+<div id="end-screen">
+    <div class="end-badge-wrap" id="end-badge"></div>
+    <h2 id="end-title"></h2>
+    <p class="end-subtitle" id="end-subtitle"></p>
+
+    <!-- Leadership Profile Card (Mục A) -->
+    <div id="leadership-profile-card">
+        <div class="lp-card-label">✦ HỒ SƠ LÃNH ĐẠO CỦA BẠN</div>
+        <div id="lp-card-body">
+            <div class="lp-loading">
+                <div class="lp-spinner"></div>
+                <span>AI đang phân tích phong cách lãnh đạo của bạn...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hội Đồng Phán Xét -->
+    <div id="judge-panel">
+        <h3>⚖️ Hội Đồng Phán Xét</h3>
+        <div class="judge-cards" id="judge-cards">
+            <div class="judge-loading"><div class="lp-spinner"></div><span>Hội đồng đang xem xét hồ sơ...</span></div>
+        </div>
+    </div>
+
+    <!-- Album Ký Ức -->
+    <div id="memory-album">
+        <h3>📸 Album Ký Ức Hành Trình</h3>
+        <div class="album-strip" id="album-strip"></div>
+    </div>
+
+    <div id="end-image-container">
+        <img id="end-image" src="" alt="Ending Scene">
+    </div>
+
+    <div class="end-stats-grid">
+        <div class="end-stat-card"><div class="esk-label">💰 Tài chính còn</div><div class="esk-value" id="end-money"></div></div>
+        <div class="end-stat-card"><div class="esk-label">⏱️ Ngày dư</div><div class="esk-value" id="end-time"></div></div>
+        <div class="end-stat-card"><div class="esk-label">❤️ Tinh thần</div><div class="esk-value" id="end-morale"></div></div>
+        <div class="end-stat-card"><div class="esk-label">⭐ Chất lượng</div><div class="esk-value" id="end-quality"></div></div>
+        <div class="end-stat-card"><div class="esk-label">🎲 Biến cố gặp</div><div class="esk-value" id="end-events"></div></div>
+    </div>
+    
+    <div id="leaderboard-section">
+        <h3>🏅 Bảng Thành Tích Của Bạn</h3>
+        <div id="lb-body"></div>
+    </div>
+
+    <p class="secret-hint" id="secret-hint">"Đây là true ending, liệu bạn có thể thành công lấy được Secret Ending - một ảnh ending không nên tồn tại"</p>
+
+    <button id="ng-plus-btn">🌟 New Game+ — Di Sản Truyền Lại</button>
+    <button class="replay-btn" id="replay-btn">🔄 Chơi Lại</button>
+</div>
+
+<script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+    // 1. KHO API KEY
+    const apiBunker = [
+        "AIzaSy" + "BvqhsQ7v6" + "7xwAwiNxS3klNwmcKhP6DT8o",
+        "AIzaSy" + "CkCH6xCK_WsnuXyy" + "64EIIIDKJJdNF0z5g",
+        "AIzaSy" + "C4Nz1G1zFNA2z8MG" + "pDLedbwGAZn_Zuy2U",
+        "AIzaSy" + "CME3gv9x_JjpcUDe" + "rxw-_YfOVqu6Fxblo",
+        "AIzaSy" + "BYi9Rpdpld2pfbKx" + "CvFhKWMYvf1m91rKY",
+        "AIzaSy" + "BVPHAJysryTusPA3" + "fx4y6-H8B_jwp2ab4",
+        "AIzaSy" + "BENpIYLfoUQaNEl2" + "Tl_T9kQq5Z9ubVLT8",
+        "AIzaSy" + "BY1wIY1S_oHE_XpD" + "tQsh4cv32ux3OSxk0",
+        "AIzaSy" + "DoWZJaVeaQsyZbkj" + "aAS9X5UUPU1YwJf1g",
+        "AIzaSy" + "A87JwrpGdumJkHJp" + "u13G0AN6BRGq6RIKk",
+        "AIzaSy" + "AT0pz0eO2JKEQdS3" + "R9P4qoyl__cG71zXk",
+        "AIzaSy" + "A02QkWlyP0ym-W-G" + "y8GRkMXenRUwR5rJw",
+        "AIzaSy" + "AGITriYKn2mEgDYl" + "bMigSu-lFkPzTJBwU",
+        "AIzaSy" + "B7VDjPrtIWV6RBzS" + "HWrqWmh9PgoU3Y0Fg",
+        "AIzaSy" + "CMUz-AZXXPHNJ51h" + "9JDVF065HT_D2PNzg",
+        "AIzaSy" + "DsmRPTWH89WW_vGb" + "VOnrGJx4398JvkQX8",
+        "AIzaSy" + "D2pHt3kYaZ9oXlOV" + "1ysoJH2OMcvlBWH6E",
+        "AIzaSy" + "CqmUB2qwYL-yRt3b" + "6SwioqI6lRIYItYbk",
+        "AIzaSy" + "DeD59rq1PyHccy_w" + "g6UkgeUvkcQiaGcKA",
+        "AIzaSy" + "AKZLcQkV_iG5qo4n" + "7w0G6RbGmbfRmn0yM",
+        "AIzaSy" + "DtuqR0XvVUM15W7x" + "MpY381b6X7uRMojnU",
+        "AIzaSy" + "Chv-SNFYgtvAA-dq" + "0Lw5ncRSBH52jXIgU",
+        "AIzaSy" + "DffoYIf1V2uTbBra" + "XWlCLbRe8GYI7joVk",
+        "AIzaSy" + "BG-VpzIEZ" + "dY_9L-aTAi2S6jLLRhoRfzbk",
+        "AIzaSy" + "ClbEJ9z45" + "jBw4RwA0k8Z-uDtSWpNBByxc",
+        "AIzaSy" + "CufjIA8oY" + "vSR5ugxt9iHMSl_nwIZIYqzs",
+        "AIzaSy" + "CeUtH22q4" + "N-ntma7m-kAW1Ctie5ViOzgw"
+    ];
+    let currentKeyIndex = 0;
+
+    let USE_AI = true;
+    let forceNextEvent = false;
+    let RATE_AI_EVENT     = 0.15;
+    let RATE_STATIC_EVENT = 0.20;
+    let GUARANTEE_AT      = 6;
+
+    // ===== CẤU HÌNH ĐỘ KHÓ =====
+    const DIFFICULTIES = {
+        normal: {
+            money: 6000000, time: 25, morale: 100,
+            moraleFloor: 20,
+            qualityBad: 60, qualityGood: 110,
+            rateAI: 0.15, rateStatic: 0.20, guaranteeAt: 6,
+            penaltyMult: 1.0,
+            winMin: 40, winMax: 60
+        },
+        expert: {
+            money: 4500000, time: 22, morale: 80,
+            moraleFloor: 25,
+            qualityBad: 70, qualityGood: 120,
+            rateAI: 0.22, rateStatic: 0.30, guaranteeAt: 4,
+            penaltyMult: 1.3,
+            winMin: 37, winMax: 55
+        },
+        asian: {
+            money: 3000000, time: 19, morale: 65,
+            moraleFloor: 30,
+            qualityBad: 80, qualityGood: 140,
+            rateAI: 0.22, rateStatic: 0.35, guaranteeAt: 3,
+            penaltyMult: 1.6,
+            winMin: 30, winMax: 50
+        }
+    };
+    let currentDiff    = DIFFICULTIES.normal;
+    let currentDiffKey = 'normal'; // MỚI: theo dõi key cho cache
+
+    // ===== BIẾN GAME STATE MỚI =====
+    let bgReputation         = 0;   // Uy tín với BGH: -3 → +3 (ẩn với người chơi)
+    let pendingDelayedEffects = []; // Hậu quả muộn chưa kích hoạt
+    let usedBonusIds         = []; // Bonus opportunity đã hiện
+    let soundEnabled         = true;
+    let audioCtx             = null;
+
+    // Batch 2: Decision log + Character dialogue
+    let decisionLog   = [];   // [{stageNum, stageTitle, choiceText, effect}]
+    let charBubbleTimer = null;
+
+    // ===== BIẾN TÍNH NĂNG MỚI =====
+    let speedModeEnabled  = false;   // Speed Mode: đếm ngược 20s mỗi lượt
+    let speedCountdown    = null;    // interval ref
+    let selectedItem      = null;    // 'budget' | 'captain' | 'redo'
+    let redoCardUsed      = false;   // Thẻ ân xá đã dùng chưa
+    let memberMorale      = { tung: 100, mai: 100, khoa: 100, linh: 100 };
+    let memoryAlbum       = [];      // [{icon, stageLabel, caption}]
+    let ngPlusActive      = false;   // New Game+ mode
+    let currentStageIndex = 0;       // track cho oracle hint
+
+    // Bộ nhân vật phụ — phân công theo thứ tự stage (0-indexed rotate)
+    const CHARACTER_ROSTER = [
+        { name: "Tùng",  icon: "😤", trait: "thực dụng, hay than vãn nhưng làm được việc" },
+        { name: "Mai",   icon: "🌸", trait: "nhiệt tình, hay khen ngợi, nhìn nhận tích cực" },
+        { name: "Khoa",  icon: "🤔", trait: "cẩn thận, lo xa, hay phân tích chi phí rủi ro" },
+        { name: "Linh",  icon: "💙", trait: "nhạy cảm, quan tâm tinh thần đồng đội" }
+    ];
+
+    let stagesSinceStaticEvent = 0;
+    let pendingStaticEvent = null;
+    let halftimeSeen = false;
+    let eventsEncountered = 0;
+
+    const stageOrder = ['start','stage_2','stage_3','stage_4','stage_5','stage_6','stage_7','stage_8','stage_9','stage_10'];
+
+    // 2. ADMIN & START LOGIC
+    let adminClickCount = 0;
+    let adminClickTimer = null;
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('difficulty-screen').style.display = 'flex';
+    });
+
+    document.getElementById('diff-back-btn').addEventListener('click', () => {
+        document.getElementById('difficulty-screen').style.display = 'none';
+        document.getElementById('start-screen').style.display = 'flex';
+    });
+
+    function pickDifficulty(diffKey) {
+        currentDiff    = DIFFICULTIES[diffKey];
+        currentDiffKey = diffKey;
+        speedModeEnabled = document.getElementById('speed-mode-check').checked;
+        // Hiện item screen thay vì vào game luôn
+        document.getElementById('difficulty-screen').style.display = 'none';
+        selectedItem = null;
+        redoCardUsed = false;
+        document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('item-confirm-btn').disabled = true;
+        document.getElementById('item-screen').style.display = 'flex';
+    }
+
+    // Item selection helpers — dùng window để onclick inline gọi được từ module
+    window.selectItem = function(itemId) {
+        selectedItem = itemId;
+        document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('item-' + itemId).classList.add('selected');
+        document.getElementById('item-confirm-btn').disabled = false;
+        playSound('click');
+    };
+    window.confirmItem = function() {
+        if (!selectedItem) return;
+        playSound('click');
+        document.getElementById('item-screen').style.display = 'none';
+        document.getElementById('game-container').style.display = 'block';
+        initGame();
+    };
+
+    document.getElementById('diff-normal').addEventListener('click', () => pickDifficulty('normal'));
+    document.getElementById('diff-expert').addEventListener('click', () => pickDifficulty('expert'));
+    document.getElementById('diff-asian').addEventListener('click',  () => pickDifficulty('asian'));
+
+    document.getElementById('replay-btn').addEventListener('click', () => location.reload());
+
+    let isVolunteerTheme = false;
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        isVolunteerTheme = !isVolunteerTheme;
+        document.body.classList.toggle('theme-volunteer', isVolunteerTheme);
+        document.getElementById('theme-toggle').textContent = isVolunteerTheme ? '🌙 Tối' : '🎨 Tình Nguyện';
+    });
+
+    document.getElementById('sound-toggle').addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('sound-toggle').textContent = soundEnabled ? '🔊 Âm thanh' : '🔇 Tắt tiếng';
+        document.getElementById('sound-toggle').style.color = soundEnabled ? '' : 'var(--text-dim)';
+    });
+
+    // Mục 11: Decision Log panel toggle
+    function openDecisionLog() {
+        renderDecisionLogPanel();
+        document.getElementById('decision-log-panel').classList.add('open');
+        document.getElementById('log-panel-backdrop').classList.add('show');
+    }
+    function closeDecisionLog() {
+        document.getElementById('decision-log-panel').classList.remove('open');
+        document.getElementById('log-panel-backdrop').classList.remove('show');
+    }
+    document.getElementById('log-toggle').addEventListener('click', openDecisionLog);
+    document.getElementById('log-close-btn').addEventListener('click', closeDecisionLog);
+    document.getElementById('log-panel-backdrop').addEventListener('click', closeDecisionLog);
+
+    document.getElementById('admin-trigger').addEventListener('click', () => {
+        adminClickCount++;
+        clearTimeout(adminClickTimer);
+        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 1000);
+        if (adminClickCount >= 3) {
+            document.getElementById('admin-login-overlay').style.display = 'flex';
+            adminClickCount = 0;
+        }
+    });
+
+    document.getElementById('admin-cancel-btn').addEventListener('click', () => {
+        document.getElementById('admin-login-overlay').style.display = 'none';
+    });
+
+    document.getElementById('admin-confirm-btn').addEventListener('click', () => {
+        const key = document.getElementById('admin-key-input').value;
+        document.getElementById('admin-key-input').value = "";
+        if (key === "181008") {
+            document.getElementById('admin-login-overlay').style.display = 'none';
+            document.getElementById('admin-money').value   = state.money;
+            document.getElementById('admin-time').value    = state.time;
+            document.getElementById('admin-morale').value  = state.morale;
+            document.getElementById('admin-quality').value = state.quality;
+            document.getElementById('admin-ai-toggle').checked = USE_AI;
+            document.getElementById('admin-rate-ai').value     = Math.round(RATE_AI_EVENT * 100);
+            document.getElementById('admin-rate-static').value = Math.round(RATE_STATIC_EVENT * 100);
+            document.getElementById('admin-panel-overlay').style.display = 'flex';
+        } else {
+            alert("Sai mã!");
+            document.getElementById('admin-login-overlay').style.display = 'none';
+        }
+    });
+
+    document.getElementById('admin-close-btn').addEventListener('click', () => {
+        document.getElementById('admin-panel-overlay').style.display = 'none';
+    });
+
+    document.getElementById('admin-save-btn').addEventListener('click', () => {
+        state.money   = parseInt(document.getElementById('admin-money').value)   || 0;
+        state.time    = parseInt(document.getElementById('admin-time').value)    || 0;
+        state.morale  = parseInt(document.getElementById('admin-morale').value)  || 0;
+        state.quality = parseInt(document.getElementById('admin-quality').value) || 0;
+        USE_AI = document.getElementById('admin-ai-toggle').checked;
+        const rAI     = parseInt(document.getElementById('admin-rate-ai').value);
+        const rStatic = parseInt(document.getElementById('admin-rate-static').value);
+        if (!isNaN(rAI))     RATE_AI_EVENT     = Math.min(100, Math.max(0, rAI))     / 100;
+        if (!isNaN(rStatic)) RATE_STATIC_EVENT = Math.min(100, Math.max(0, rStatic)) / 100;
+        updateUI();
+        updateAIBadge();
+        document.getElementById('admin-panel-overlay').style.display = 'none';
+    });
+
+    document.getElementById('admin-force-event-btn').addEventListener('click', () => {
+        forceNextEvent = true;
+        alert("Đã kích hoạt sự kiện cho vòng kế!");
+    });
+
+    document.getElementById('admin-jump-btn').addEventListener('click', () => {
+        const targetStage = document.getElementById('admin-stage-select').value;
+        document.getElementById('admin-panel-overlay').style.display = 'none';
+        renderScene(targetStage);
+    });
+
+    // 3. STATE & DATA
+    let state = { money: 6000000, time: 25, morale: 100, quality: 0 };
+    let dynamicStory = {};
+    let usedThemes = [];
+
+    const story = {
+        start: {
+            theme: "Lập kế hoạch và chuẩn bị cơ sở vật chất (kệ sách, sơn tường, dọn dẹp phòng trống).",
+            text: "<b>GIAI ĐOẠN 1: KẾ HOẠCH CƠ SỞ VẬT CHẤT</b><br>Dự án Thư viện Ước mơ khởi động! Căn phòng đang trống rỗng. Quyết định của Trưởng dự án về hạng mục Kệ sách?",
+            image: "https://image2url.com/r2/default/images/1772112309351-aa0d854c-c899-409f-81c4-1ee44033ac9c.jpg",
+            choices: [
+                { text: "Mua kệ nhôm kính lắp ráp (Nhanh nhưng tốn).", impact: "💰 -3.000k | ⏱️ -2 ngày", next: "stage_2", effect: { money: -3000000, time: -2, quality: 25 } },
+                { text: "Tự mua gỗ pallet về cưa xẻ đóng tay (Cực kỳ tốn sức).", impact: "💰 -500k | ⏱️ -5 ngày", next: "stage_2", effect: { money: -500000, time: -5, morale: -15, quality: 10 } },
+                { text: "Xin lại kệ cũ của các lớp 12 ra trường.", impact: "💰 -200k | ⏱️ -4 ngày", next: "stage_2", effect: { money: -200000, time: -4, morale: -5, quality: 15 } }
+            ]
+        },
+        stage_2: {
+            theme: "Tìm kiếm nguồn sách, phân loại tài liệu cho thư viện.",
+            text: "<b>GIAI ĐOẠN 2: TÌM KIẾM NGUỒN SÁCH</b><br>Đã có kệ. Giờ cần sách để lấp đầy. Bạn sẽ xây dựng kho tri thức này như thế nào?",
+            image: "https://image2url.com/r2/default/images/1772112368557-2f824ca9-d62c-4b7b-b6d5-cf75107ed5db.jpg",
+            choices: [
+                { text: "Trích quỹ ra tiệm sách cũ mua sỉ theo lô.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_3", effect: { money: -1500000, time: -1, quality: 15 } },
+                { text: "Phát động quyên góp từng lớp học.", impact: "💰 0đ | ⏱️ -4 ngày", next: "stage_3", effect: { time: -4, morale: -10, quality: 10 } },
+                { text: "Kêu gọi tài trợ từ các nhà xuất bản trên Facebook.", impact: "💰 -100k | ⏱️ -3 ngày", next: "stage_3", effect: { money: -100000, time: -3, morale: -5, quality: 20 } }
+            ]
+        },
+        stage_3: {
+            theme: "Logistics, vận chuyển đồ đạc vật liệu nặng nề về điểm tập kết.",
+            text: "<b>GIAI ĐOẠN 3: VẬN CHUYỂN</b><br>Vật liệu đang ở khắp nơi. Bạn cần gom tất cả về điểm trường dưới trời nắng gắt.",
+            image: "https://image2url.com/r2/default/images/1772112478729-87df9703-9ad9-4841-b28d-d5aa14deb860.jpg",
+            choices: [
+                { text: "Thuê luôn xe ba gác máy chở 1 chuyến là xong.", impact: "💰 -600k | ⏱️ -1 ngày", next: "stage_4", effect: { money: -600000, time: -1 } },
+                { text: "Chia cả nhóm thành xe máy, chở thành 5-6 chuyến.", impact: "💰 -100k | ⏱️ -2 ngày", next: "stage_4", effect: { money: -100000, time: -2, morale: -15 } },
+                { text: "Mượn xe đạp lôi của bác bảo vệ, tự đạp tự chở.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_4", effect: { time: -3, morale: -20 } }
+            ]
+        },
+        stage_4: {
+            theme: "Khủng hoảng nhân sự, thành viên ốm đau, thiếu hụt người làm việc nặng.",
+            text: "<b>GIAI ĐOẠN 4: KHỦNG HOẢNG NHÂN SỰ</b><br>Làm việc quá mệt. 2 bạn nam gánh vác việc nặng nhất xin phép nghỉ ốm 3 ngày.",
+            image: "https://image2url.com/r2/default/images/1772112521057-70e3b489-cfb6-4272-8ae6-faea8e282d01.jpg",
+            choices: [
+                { text: "Trích quỹ thuê thợ ngoài làm tiếp phần việc nặng.", impact: "💰 -1.500k | ⏱️ -1 ngày", next: "stage_5", effect: { money: -1500000, time: -1, morale: 10, quality: 10 } },
+                { text: "Bắt ép các bạn nữ OT (Làm thêm giờ) để gánh team.", impact: "💰 0đ | ⏱️ -2 ngày", next: "stage_5", effect: { time: -2, morale: -30 } },
+                { text: "Bỏ bớt các hạng mục treo tường phức tạp để dễ làm hơn.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_5", effect: { time: -1, morale: 5, quality: -15 } }
+            ]
+        },
+        stage_5: {
+            theme: "Giải quyết mâu thuẫn nội bộ, đối phó với thành viên lười biếng hoặc vô kỷ luật.",
+            text: "<b>GIAI ĐOẠN 5: ĐIỀU PHỐI THÀNH VIÊN</b><br>Bạn phát hiện bạn Tùng đang chui vào góc bấm điện thoại chơi game khi mọi người đang đổ mồ hôi.",
+            image: "https://image2url.com/r2/default/images/1772112558986-3662e854-5f1e-465c-a343-7ffae1569ffb.jpg",
+            choices: [
+                { text: "Quát thẳng mặt Tùng trước cả nhóm để lập lại kỷ luật.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_6", effect: { morale: -20, quality: -5 } },
+                { text: "Kéo Tùng ra riêng hỏi thăm, đổi cho Tùng làm việc nhẹ.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: 15, quality: 10 } },
+                { text: "Lẳng lặng làm bù phần việc của Tùng để tránh cãi vã.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_6", effect: { time: -1, morale: -15, quality: 5 } }
+            ]
+        },
+        stage_6: {
+            theme: "Kiểm tra chất lượng đầu vào, lọc đồ cũ/hỏng có nguy cơ gây hại.",
+            text: "<b>GIAI ĐOẠN 6: KIỂM SOÁT CHẤT LƯỢNG</b><br>Tá hỏa phát hiện sách quyên góp có lẫn lộn truyện bạo lực, ngôn tình 18+ không hợp với trẻ em.",
+            image: "https://image2url.com/r2/default/images/1772112657879-d997f6ed-2c44-42a0-8468-2565dab08eac.jpg",
+            choices: [
+                { text: "Đình chỉ việc trang trí, huy động toàn bộ thức đêm lọc sách.", impact: "💰 0đ | ⏱️ -3 ngày", next: "stage_7", effect: { time: -3, morale: -25, quality: 25 }, bgRep: 1 },
+                { text: "Mua bánh kẹo dụ dỗ học sinh lớp bên cạnh sang ngồi lọc phụ.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_7", effect: { money: -300000, time: -1, morale: 5, quality: 15 } },
+                { text: "Nhắm mắt làm ngơ. Sắp xếp hết lên kệ cao.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_7", effect: { quality: -35 }, bgRep: -2,
+                  delayed: { triggerStage: "stage_9", effect: { quality: -20, morale: -15 }, message: "🔍 Hậu quả muộn: BGH Thanh tra phát hiện sách không phù hợp trong kệ thư viện. Uy tín dự án bị ảnh hưởng nghiêm trọng!" }
+                }
+            ]
+        },
+        stage_7: {
+            theme: "Xử lý sự cố bất khả kháng từ môi trường (Mưa, bão, cúp điện, dột nước).",
+            text: "<b>GIAI ĐOẠN 7: SỰ CỐ THỰC ĐỊA</b><br>Bão về! Mái tôn cũ bị dột một lỗ lớn, nước chảy lênh láng ngay giữa phòng thư viện.",
+            image: "https://image2url.com/r2/default/images/1772112692249-dd7fa80a-fcb4-4a09-aae7-17d6ef35048d.jpg",
+            choices: [
+                { text: "Gọi ngay thợ chống thấm đến trám mái nhà triệt để.", impact: "💰 -1.200k | ⏱️ -1 ngày", next: "stage_8", effect: { money: -1200000, time: -1 } },
+                { text: "Tự mua keo silicon và bạt ni-lông leo thang dán tạm.", impact: "💰 -200k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -200000, time: -2, quality: -15 } },
+                { text: "Dời kệ đi chỗ khác, đặt chậu cây để 'Hứng nước tự nhiên'.", impact: "💰 -400k | ⏱️ -2 ngày", next: "stage_8", effect: { money: -400000, time: -2, morale: -10, quality: 20 } }
+            ]
+        },
+        stage_8: {
+            theme: "Kiểm soát rác thải, dọn dẹp mặt bằng phát sinh chi phí dọn dẹp.",
+            text: "<b>GIAI ĐOẠN 8: KIỂM SOÁT MÔI TRƯỜNG</b><br>Đống rác thải công trình chất cao như núi. Bác lao công trường từ chối dọn.",
+            image: "https://image2url.com/r2/default/images/1772112738404-3fe56192-30bd-4eb0-85ec-c737c8ec7c31.jpg",
+            choices: [
+                { text: "Trả tiền cho đội xe rác chuyên nghiệp dọn sạch sẽ.", impact: "💰 -600k | ⏱️ 0 ngày", next: "stage_9", effect: { money: -600000, quality: 10 }, bgRep: 1 },
+                { text: "Mượn xe còng, tự è cổ đẩy rác ra bãi tập kết xa 2km.", impact: "💰 0đ | ⏱️ -2 ngày", next: "stage_9", effect: { time: -2, morale: -20 } },
+                { text: "Lén lút dồn rác vào góc kho trống và lấy bạt phủ lên.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_9", effect: { morale: -5, quality: -25 }, bgRep: -1,
+                  delayed: { triggerStage: "stage_10", effect: { morale: -10, quality: -10 }, message: "🗑️ Hậu quả muộn: Mùi hôi từ góc kho rác bốc lên đúng ngày Lễ Khai Giảng, khách mời phàn nàn!" }
+                }
+            ]
+        },
+        stage_9: {
+            theme: "Đối phó với sự kiểm tra bất ngờ của Ban giám hiệu/Thanh tra.",
+            text: "<b>GIAI ĐOẠN 9: ĐỐI NGOẠI</b><br>BGH nhà trường bất ngờ cử Đoàn Thanh Tra xuống xem tiến độ. Phòng ốc vẫn còn lộn xộn.",
+            image: "https://image2url.com/r2/default/images/1772112781121-03b3048b-3263-49cd-a8b2-12f647a1de9e.jpg",
+            choices: [
+                { text: "Mua trái cây, nước ngọt mời Đoàn ra phòng khách, hứa hẹn mai xong.", impact: "💰 -300k | ⏱️ -1 ngày", next: "stage_10", effect: { money: -300000, time: -1, morale: 5, quality: 10 } },
+                { text: "Mặc kệ Đoàn thanh tra, cả nhóm vẫn cắm đầu làm.", impact: "💰 0đ | ⏱️ 0 ngày", next: "stage_10", effect: { morale: -10, quality: -15 } },
+                { text: "Mặc áo Đoàn, dõng dạc thuyết trình về 'Không gian sáng tạo' để đánh lạc hướng.", impact: "💰 0đ | ⏱️ -1 ngày", next: "stage_10", effect: { time: -1, quality: 15 } }
+            ]
+        },
+        stage_10: {
+            theme: "Chạy nước rút, liên hoan và chuẩn bị lễ khánh thành bàn giao.",
+            text: "<b>GIAI ĐOẠN 10: BÀN GIAO</b><br>Ngày mai là Lễ Khai Giảng! Bạn chỉ còn đúng một ngày và những nguồn lực cuối cùng.",
+            image: "https://image2url.com/r2/default/images/1772113158873-ce999844-b304-476d-93ed-72c1a7d420db.jpg",
+            choices: [
+                { text: "Khao cả nhóm một bữa lẩu hoành tráng vì những cực khổ đã qua.", impact: "💰 -800k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -800000, morale: 60 } },
+                { text: "Ép mọi người ở lại đến 11h đêm lau chùi từng hạt bụi.", impact: "💰 0đ | ⏱️ -1 ngày", next: "calc_ending", effect: { time: -1, morale: -20, quality: 30 } },
+                { text: "Mua những phần quà nhỏ (kẹo, ruy băng) để phát cho học sinh.", impact: "💰 -300k | ⏱️ 0 ngày", next: "calc_ending", effect: { money: -300000, morale: 10, quality: 20 } }
+            ]
+        },
+
+        gameover_money:  { text: "GAME OVER: VỠ NỢ TÀI CHÍNH 💸", isEnd: true, color: "var(--danger)" },
+        gameover_time:   { text: "GAME OVER: TRỄ DEADLINE ⏱️",    isEnd: true, color: "var(--danger)" },
+        gameover_morale: { text: "GAME OVER: NHÓM TAN RÃ 😡",      isEnd: true, color: "var(--danger)" },
+        end_bad:    { text: "KẾT THÚC: DỰ ÁN TỒI TỆ 🏚️<br>Đúng hạn, đúng tiền nhưng thư viện rách nát.", isEnd: true, color: "var(--danger)" },
+        end_normal: { text: "KẾT THÚC: ĐẠT YÊU CẦU 👍<br>Hoàn thành an toàn. Đủ để ghi nhận nỗ lực.", isEnd: true, color: "var(--warning)" },
+        end_perfect:{ text: "KẾT THÚC: HUYỀN THOẠI MÙA HÈ XANH 🏆<br>Tài chính minh bạch, đúng tiến độ, thư viện tuyệt đẹp!", isEnd: true, color: "var(--gold)" }
+    };
+
+    const staticEvents = [
+        // EARLY phase (stage 1-4)
+        { title: "⛈️ MƯA BÃO!", desc: "Mưa lớn làm gián đoạn công việc ngoài trời. Nhóm buộc nghỉ 1 ngày.", type: "bad", phase: "early", effect: { time: -1, morale: -5 } },
+        { title: "💸 MẤT VÍ TIỀN!", desc: "Một thành viên làm rớt ví tiền quỹ. Phải trích bổ sung cho họ.", type: "bad", phase: "early", effect: { money: -300000, morale: -10 } },
+        { title: "🌡️ NẮNG KINH HOÀNG", desc: "Trời 40°C, cả nhóm bải hoải, năng suất giảm rõ rệt. Buộc nghỉ sớm.", type: "bad", phase: "early", effect: { time: -1, morale: -8 } },
+        { title: "🧋 TÀI TRỢ NƯỚC UỐNG!", desc: "Phụ huynh học sinh mang trà sữa đến tiếp sức. Cả nhóm hừng hực khí thế!", type: "good", phase: "early", effect: { morale: 25, quality: 5 } },
+        { title: "🍀 KHO ĐỒ BẤT NGỜ", desc: "Phát hiện kho sách cũ còn rất mới trong kho nhà trường — họ tặng không!", type: "good", phase: "early", effect: { quality: 20, money: 200000 } },
+        { title: "🎁 ALUMNI ĐÓNG GÓP", desc: "Cựu học sinh tình cờ đi ngang, hào phóng ủng hộ dự án một khoản tiền mặt!", type: "good", phase: "early", effect: { money: 500000, morale: 10 } },
+        // MID phase (stage 5-7)
+        { title: "⚡ CÚP ĐIỆN ĐỘT XUẤT", desc: "Điện cúp cả buổi chiều. Máy khoan, máy cưa đều ngừng hoạt động.", type: "bad", phase: "mid", effect: { time: -1, morale: -10 } },
+        { title: "🔧 DỤNG CỤ HỎNG", desc: "Máy khoan duy nhất của nhóm chập mạch. Phải thuê máy thay thế gấp.", type: "bad", phase: "mid", effect: { money: -200000, time: -1 } },
+        { title: "🤧 THÀNH VIÊN ỐM DÂY CHUYỀN", desc: "Hai bạn bị say nắng phải nghỉ bệnh, khối lượng công việc dồn vào phần còn lại.", type: "bad", phase: "mid", effect: { time: -1, morale: -12 } },
+        { title: "📢 TRUYỀN THÔNG ỦNG HỘ", desc: "Fanpage địa phương đăng bài về dự án. Nhiều người hỏi thăm và muốn tặng sách!", type: "good", phase: "mid", effect: { quality: 15, morale: 20 } },
+        { title: "🏫 PHÒNG MỞ RỘNG", desc: "BGH đồng ý cho mượn thêm phòng kề bên để trưng bày sách thiếu nhi. Không gian rộng hơn nhiều!", type: "good", phase: "mid", effect: { quality: 25, time: -1 } },
+        // LATE phase (stage 8-10)
+        { title: "🐀 SỰ CỐ KHÔNG MONG ĐỢI", desc: "Phát hiện dấu vết chuột trong góc kho. Phải dọn sạch toàn bộ và mua bẫy.", type: "bad", phase: "late", effect: { money: -150000, morale: -8, quality: -5 } },
+        { title: "🚧 KIỂM TRA AN TOÀN PCCC", desc: "Đội phòng cháy chữa cháy kiểm tra đột xuất, yêu cầu khắc phục một số lỗi nhỏ.", type: "bad", phase: "late", effect: { time: -1, money: -100000, quality: 5 } },
+        { title: "🎨 HOẠ SĨ TÌNH NGUYỆN", desc: "Một sinh viên mỹ thuật xin phép vẽ mural miễn phí lên tường thư viện. Đẹp kinh ngạc!", type: "good", phase: "late", effect: { quality: 30, morale: 15 } },
+        { title: "📱 VIRAL MẠNG XÃ HỘI", desc: "Video thi công được chia sẻ rộng rãi. Nhiều mạnh thường quân liên hệ ủng hộ vật chất.", type: "good", phase: "late", effect: { money: 400000, morale: 20 } }
+    ];
+
+    // Chọn sự kiện phù hợp với giai đoạn hiện tại
+    function pickStaticEvent(nextStageId) {
+        const idx = stageOrder.indexOf(nextStageId);
+        let phase = 'early';
+        if (idx >= 4 && idx <= 6) phase = 'mid';
+        else if (idx >= 7) phase = 'late';
+        const pool = staticEvents.filter(e => e.phase === phase);
+        const src  = pool.length > 0 ? pool : staticEvents;
+        return src[Math.floor(Math.random() * src.length)];
+    }
+
+    // ===== BONUS OPPORTUNITY STAGES =====
+    const bonusOpportunities = [
+        {
+            id: 'bonus_tech',
+            triggerBeforeStage: 'stage_5',
+            icon: '💻',
+            title: 'CƠ HỘI ĐẶC BIỆT!',
+            desc: 'Một công ty công nghệ địa phương muốn tài trợ thiết bị số cho thư viện. Đổi lại, nhóm phải tổ chức 1 buổi workshop kỹ năng số cho học sinh — cần thêm 2 ngày và sức lực.',
+            costLabel: '⏱️ -2 ngày  |  ❤️ -10% tinh thần',
+            accept: { time: -2, morale: -10, quality: 30, money: 500000 },
+            labelAccept: '🤝 Nhận lời',
+            labelSkip: '⏭️ Bỏ qua lần này'
+        },
+        {
+            id: 'bonus_media',
+            triggerBeforeStage: 'stage_8',
+            icon: '📸',
+            title: 'TRUYỀN THÔNG TÌM ĐẾN!',
+            desc: 'Một tạp chí thanh niên muốn đến phỏng vấn và chụp phóng sự về dự án. Phòng cần được chỉnh chu thêm một chút trước khi quay.',
+            costLabel: '⏱️ -1 ngày  |  💰 -200k chi phí dọn dẹp',
+            accept: { time: -1, money: -200000, quality: 20, morale: 15 },
+            labelAccept: '📷 Chào đón họ',
+            labelSkip: '🚫 Từ chối'
+        }
+    ];
+
+    // =============================================
+    // SOUND SYSTEM (Web Audio API — không file ngoài)
+    // =============================================
+    function getAudioCtx() {
+        if (!audioCtx) {
+            try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+        }
+        return audioCtx;
+    }
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            const ctx = getAudioCtx();
+            if (!ctx) return;
+            if (ctx.state === 'suspended') ctx.resume();
+            const now = ctx.currentTime;
+            if (type === 'click') {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = 880; o.type = 'sine';
+                g.gain.setValueAtTime(0.22, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+                o.start(now); o.stop(now + 0.1);
+            } else if (type === 'good') {
+                [523, 659, 784].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.1;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.18, t + 0.04);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+                    o.start(t); o.stop(t + 0.36);
+                });
+            } else if (type === 'bad') {
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.type = 'sawtooth';
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.setValueAtTime(240, now);
+                o.frequency.exponentialRampToValueAtTime(70, now + 0.45);
+                g.gain.setValueAtTime(0.26, now);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                o.start(now); o.stop(now + 0.52);
+            } else if (type === 'gameover') {
+                [400, 320, 240, 160].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.2;
+                    g.gain.setValueAtTime(0.28, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+                    o.start(t); o.stop(t + 0.32);
+                });
+            } else if (type === 'victory') {
+                [523, 659, 784, 1047].forEach((freq, i) => {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = freq;
+                    const t = now + i * 0.13;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.22, t + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+                    o.start(t); o.stop(t + 0.6);
+                });
+            } else if (type === 'gamble') {
+                let t = now;
+                for (let i = 0; i < 8; i++) {
+                    const o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'triangle';
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = 180 + i * 35;
+                    g.gain.setValueAtTime(0.14, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+                    o.start(t); o.stop(t + 0.06);
+                    t += 0.065 + i * 0.006;
+                }
+            }
+        } catch(e) {}
+    }
+
+    // =============================================
+    // AI MODE BADGE
+    // =============================================
+    function updateAIBadge() {
+        const badge = document.getElementById('ai-mode-badge');
+        if (!badge) return;
+        badge.className = USE_AI ? 'ai-on' : 'ai-off';
+        badge.textContent = USE_AI ? '⚡ AI Mode' : '📋 Classic Mode';
+    }
+
+    // =============================================
+    // SESSION STORAGE CACHE (Mục 8)
+    // =============================================
+    function getCached(stageId) {
+        try {
+            const v = sessionStorage.getItem(`mhx_${currentDiffKey}_${stageId}`);
+            return v ? JSON.parse(v) : null;
+        } catch(e) { return null; }
+    }
+    function setCached(stageId, data) {
+        try { sessionStorage.setItem(`mhx_${currentDiffKey}_${stageId}`, JSON.stringify(data)); } catch(e) {}
+    }
+
+    // =============================================
+    // LEADERBOARD — localStorage (Mục 13)
+    // =============================================
+    const LB_KEY = 'mhx_lb_v2';
+    const ENDING_LABELS = {
+        gameover_money:'💸 Vỡ nợ', gameover_time:'⏱️ Trễ deadline',
+        gameover_morale:'😡 Tan rã', end_bad:'🏚️ Tồi tệ',
+        end_normal:'👍 Đạt yêu cầu', end_perfect:'🏆 Huyền thoại'
+    };
+    const DIFF_LABELS = { normal:'🌱', expert:'⚔️', asian:'🔥' };
+
+    function saveToLeaderboard(sceneId) {
+        try {
+            const entry = {
+                date: new Date().toLocaleDateString('vi-VN'),
+                ending: sceneId,
+                label: ENDING_LABELS[sceneId] || sceneId,
+                quality: state.quality,
+                diff: currentDiffKey,
+                icon: DIFF_LABELS[currentDiffKey] || ''
+            };
+            const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+            all.push(entry);
+            all.sort((a, b) => b.quality - a.quality);
+            localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 15)));
+            return entry;
+        } catch(e) { return null; }
+    }
+
+    function renderLeaderboard(newEntry) {
+        const section = document.getElementById('leaderboard-section');
+        const body    = document.getElementById('lb-body');
+        if (!section || !body) return;
+        try {
+            const all  = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+            const top  = all.slice(0, 7);
+            if (top.length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            const ranks = ['🥇','🥈','🥉'];
+            body.innerHTML = top.map((e, i) => {
+                const isNew = newEntry && e.date === newEntry.date
+                           && e.ending === newEntry.ending
+                           && e.quality === newEntry.quality
+                           && e.diff === newEntry.diff;
+                return `<div class="lb-row${isNew ? ' lb-new' : ''}">
+                    <span class="lb-rank">${ranks[i] || '#'+(i+1)}</span>
+                    <span class="lb-ending">${e.label}</span>
+                    <span class="lb-score">⭐ ${e.quality}đ</span>
+                    <span class="lb-diff">${e.icon}</span>
+                    <span class="lb-date">${e.date}</span>
+                </div>`;
+            }).join('');
+        } catch(e) { if (section) section.style.display = 'none'; }
+    }
+
+    // =============================================
+    // MEMBER MORALE — mini bars cho từng thành viên
+    // =============================================
+    const MEMBER_IDS = ['tung', 'mai', 'khoa', 'linh'];
+    function updateMemberMorale(moraleChange) {
+        // Mỗi thành viên bị ảnh hưởng ngẫu nhiên ± 30% so với thay đổi chung
+        MEMBER_IDS.forEach(id => {
+            const scatter = moraleChange !== 0
+                ? moraleChange + (Math.random() - 0.5) * Math.abs(moraleChange) * 0.6
+                : (Math.random() - 0.5) * 4;
+            memberMorale[id] = Math.max(0, Math.min(100, memberMorale[id] + scatter));
+        });
+        renderMemberMorale();
+    }
+    function renderMemberMorale() {
+        MEMBER_IDS.forEach(id => {
+            const val  = memberMorale[id];
+            const fill = document.getElementById('mbar-' + id);
+            const chip = document.getElementById('member-' + id);
+            if (!fill || !chip) return;
+            fill.style.width = val + '%';
+            fill.style.background = val > 60 ? 'var(--success)' : val > 30 ? 'var(--warning)' : 'var(--danger)';
+            chip.className = 'member-chip' + (val <= 0 ? ' left' : val < 30 ? ' low' : '');
+        });
+    }
+    function resetMemberMorale() {
+        const base = currentDiff.morale;
+        MEMBER_IDS.forEach(id => { memberMorale[id] = base; });
+        renderMemberMorale();
+    }
+
+    // =============================================
+    // ORACLE HINT — gợi ý mơ hồ trước mỗi stage
+    // =============================================
+    const ORACLE_POOL = [
+        { icon: '🌤️', text: 'Trời hôm nay trông không ổn lắm...' },
+        { icon: '😶', text: 'Tùng lại nhìn điện thoại từ sáng.' },
+        { icon: '💭', text: 'Có gì đó sắp thay đổi trong nhóm.' },
+        { icon: '🌊', text: 'Mùa mưa đến sớm hơn mọi năm.' },
+        { icon: '🔍', text: 'Ai đó đang chú ý đến cách làm việc của nhóm.' },
+        { icon: '💸', text: 'Khoa lo lắng về con số trong sổ quỹ.' },
+        { icon: '🌸', text: 'Mai nói hôm nay cô ấy "cảm thấy vận may đang đến".' },
+        { icon: '⚡', text: 'Buổi chiều hôm qua có sét đánh gần đây.' },
+        { icon: '📦', text: 'Có người giao một kiện hàng không ai đặt.' },
+        { icon: '🎲', text: 'Linh bảo: "Liều một cái xem sao!"' },
+    ];
+    function showOracleHint(stageIdx) {
+        const el = document.getElementById('oracle-hint');
+        const textEl = document.getElementById('oracle-text');
+        if (!el || !textEl) return;
+        // 60% chance hiện hint
+        if (Math.random() > 0.6) { el.style.display = 'none'; return; }
+        const hint = ORACLE_POOL[(stageIdx + Math.floor(Math.random() * 3)) % ORACLE_POOL.length];
+        document.querySelector('#oracle-hint .oracle-icon').textContent = hint.icon;
+        textEl.textContent = hint.text;
+        el.style.display = 'flex';
+    }
+
+    // =============================================
+    // MEMORY ALBUM — thêm polaroid sau mỗi quyết định
+    // =============================================
+    const STAGE_ICONS = ['🏗️','📚','🚛','🤒','😤','🔍','🌧️','🗑️','📋','🎉'];
+    function pushToAlbum(stageIdx, choiceText, effect) {
+        const icons = ['💰','⏱️','❤️','⭐'];
+        // Chọn icon đại diện cho effect lớn nhất
+        let bigKey = 'quality', bigVal = 0;
+        ['money','time','morale','quality'].forEach(k => {
+            if (Math.abs(effect[k] || 0) > Math.abs(bigVal)) { bigKey = k; bigVal = effect[k]; }
+        });
+        const emojiMap = { money: bigVal < 0 ? '💸' : '💰', time: '⏱️', morale: bigVal < 0 ? '💔' : '❤️', quality: bigVal < 0 ? '📉' : '⭐' };
+        memoryAlbum.push({
+            icon: STAGE_ICONS[stageIdx % STAGE_ICONS.length],
+            stageLabel: `GĐ ${stageIdx + 1}`,
+            caption: choiceText.substring(0, 28).replace(/^[A-Za-z]\.\s*/, '') + (choiceText.length > 28 ? '...' : '')
+        });
+    }
+    function renderMemoryAlbum() {
+        const section = document.getElementById('memory-album');
+        const strip   = document.getElementById('album-strip');
+        if (!section || !strip || memoryAlbum.length === 0) { if (section) section.style.display = 'none'; return; }
+        section.style.display = 'block';
+        strip.innerHTML = memoryAlbum.map(p => `
+            <div class="polaroid">
+                <span class="polaroid-icon">${p.icon}</span>
+                <div class="polaroid-stage">${p.stageLabel}</div>
+                <div class="polaroid-caption">${p.caption}</div>
+            </div>`).join('');
+    }
+
+    // =============================================
+    // HỘI ĐỒNG PHÁN XÉT (AI Judges)
+    // =============================================
+    const JUDGES = [
+        { name: 'Phụ Huynh Học Sinh', icon: '👨‍👩‍👧', focus: 'chất lượng thư viện và an toàn cho học sinh', metric: 'quality' },
+        { name: 'Kế Toán Trường',      icon: '📊',       focus: 'quản lý tài chính và hiệu quả chi tiêu',  metric: 'money'   },
+        { name: 'Cô Giáo Chủ Nhiệm',   icon: '👩‍🏫',       focus: 'tinh thần và sự đoàn kết của nhóm tình nguyện', metric: 'morale' }
+    ];
+    async function fetchJudgeVerdicts(sceneId) {
+        if (!USE_AI) return null;
+        const summary = `Kết quả: ${sceneId}. Tiền còn: ${state.money}đ. Ngày dư: ${state.time}. Tinh thần: ${state.morale}%. Chất lượng: ${state.quality}đ. Quyết định nổi bật: ${decisionLog.slice(0,5).map(e=>e.choiceText.substring(0,40)).join(' | ')}`;
+        const prompt = `Bạn là 3 thành viên hội đồng đánh giá dự án tình nguyện. Tóm tắt: ${summary}. Mỗi người cho 1 nhận xét ngắn (1 câu, tối đa 20 từ, giọng đặc trưng của họ). TRẢ VỀ JSON: { "phu_huynh": "...", "ke_toan": "...", "co_giao": "..." }`;
+        try { return await callGemini(prompt); } catch(e) { return null; }
+    }
+    function renderJudgePanel(data) {
+        const panel = document.getElementById('judge-panel');
+        const cards = document.getElementById('judge-cards');
+        if (!panel || !cards) return;
+        panel.style.display = 'block';
+        if (!data) { cards.innerHTML = `<div style="font-size:0.82rem;color:var(--text-dim);font-style:italic;text-align:center;padding:12px">Hội đồng không đưa ra ý kiến lần này.</div>`; return; }
+        const verdicts = [data.phu_huynh, data.ke_toan, data.co_giao];
+        cards.innerHTML = JUDGES.map((j, i) => `
+            <div class="judge-card">
+                <div class="judge-avatar">${j.icon}</div>
+                <div class="judge-info">
+                    <div class="judge-name">${j.name}</div>
+                    <div class="judge-verdict">"${verdicts[i] || '...'}"</div>
+                </div>
+            </div>`).join('');
+    }
+
+    // =============================================
+    // SPEED MODE — countdown timer
+    // =============================================
+    function startSpeedCountdown(choices, labels) {
+        if (!speedModeEnabled) return;
+        let secondsLeft = 20;
+        const cdEl   = document.getElementById('speed-countdown');
+        const allBtns = document.querySelectorAll('.choice-btn');
+        // Thêm speed-timer-bar vào mỗi nút
+        allBtns.forEach(btn => {
+            const bar = document.createElement('div');
+            bar.className = 'speed-timer-bar';
+            bar.innerHTML = '<div class="speed-timer-fill" style="width:100%"></div>';
+            btn.querySelector('.choice-body').appendChild(bar);
+        });
+        cdEl.style.display = 'block';
+        cdEl.textContent = `⏱️ Còn ${secondsLeft}s để quyết định...`;
+        cdEl.className = '';
+
+        speedCountdown = setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft <= 0) {
+                clearInterval(speedCountdown);
+                speedCountdown = null;
+                cdEl.style.display = 'none';
+                // Tự chọn phương án tệ nhất (morale thấp nhất hoặc random)
+                const worstChoice = [...choices].sort((a,b) =>
+                    ((a.effect.morale||0) + (a.effect.quality||0)) - ((b.effect.morale||0) + (b.effect.quality||0))
+                )[0];
+                // Disable tất cả buttons trước
+                allBtns.forEach(b => b.disabled = true);
+                handleTransition(worstChoice, worstChoice.next);
+                return;
+            }
+            const pct = (secondsLeft / 20) * 100;
+            document.querySelectorAll('.speed-timer-fill').forEach(f => {
+                f.style.width = pct + '%';
+                if (secondsLeft <= 7) f.classList.add('urgent'); else f.classList.remove('urgent');
+            });
+            cdEl.textContent = `⏱️ Còn ${secondsLeft}s để quyết định...`;
+            if (secondsLeft <= 7) cdEl.className = 'urgent'; else cdEl.className = '';
+        }, 1000);
+    }
+    function stopSpeedCountdown() {
+        if (speedCountdown) { clearInterval(speedCountdown); speedCountdown = null; }
+        const cdEl = document.getElementById('speed-countdown');
+        if (cdEl) cdEl.style.display = 'none';
+    }
+
+    // =============================================
+    // NEW GAME+ — unlock sau end_perfect
+    // =============================================
+    const NG_KEY = 'mhx_ng_unlocked';
+    function checkNGPlusUnlock(sceneId) {
+        if (sceneId === 'end_perfect') {
+            try { localStorage.setItem(NG_KEY, '1'); } catch(e) {}
+        }
+        const unlocked = localStorage.getItem(NG_KEY) === '1';
+        const btn = document.getElementById('ng-plus-btn');
+        if (btn) btn.style.display = unlocked ? 'block' : 'none';
+    }
+    document.getElementById('ng-plus-btn').addEventListener('click', () => {
+        ngPlusActive = true;
+        location.reload(); // reload → initGame sẽ check flag (tạm thời: restart với legacy mode)
+    });
+
+    // =============================================
+    // DECISION LOG (Mục 11)
+    // =============================================
+    function updateLogBadge() {
+        const badge = document.getElementById('log-count-badge');
+        if (badge) badge.textContent = decisionLog.length;
+    }
+
+    function renderDecisionLogPanel() {
+        const container = document.getElementById('log-entries');
+        if (!container) return;
+        if (decisionLog.length === 0) {
+            container.innerHTML = '<p class="log-empty">Chưa có quyết định nào được ghi lại.</p>';
+            return;
+        }
+        container.innerHTML = decisionLog.map((entry, i) => {
+            // Build effect pills
+            const pillsHtml = Object.entries(entry.effect || {}).map(([k, v]) => {
+                if (v === 0) return '';
+                const icons = { money: '💰', time: '⏱️', morale: '❤️', quality: '⭐' };
+                const labels = { money: `${v > 0 ? '+' : ''}${(v/1000).toFixed(0)}k`, time: `${v > 0 ? '+' : ''}${v}ng`, morale: `${v > 0 ? '+' : ''}${v}%`, quality: `${v > 0 ? '+' : ''}${v}đ` };
+                const cls = v > 0 ? 'le-pill le-pos' : 'le-pill le-neg';
+                return `<span class="${cls}">${icons[k] || ''} ${labels[k] || v}</span>`;
+            }).filter(Boolean).join('');
+
+            return `<div class="log-entry">
+                <div class="log-entry-stage">Giai đoạn ${i + 1} · ${entry.stageTitle}</div>
+                <div class="log-entry-choice">${entry.choiceText}</div>
+                ${pillsHtml ? `<div class="log-entry-effects">${pillsHtml}</div>` : ''}
+            </div>`;
+        }).join('');
+        // Scroll xuống entry mới nhất
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // =============================================
+    // CHARACTER DIALOGUE (Mục 16)
+    // =============================================
+    function showCharBubble(charName, charIcon, text) {
+        const bubble = document.getElementById('char-bubble');
+        const nameEl = document.getElementById('cb-name');
+        const textEl = document.getElementById('cb-text');
+        const avatarEl = document.getElementById('cb-avatar');
+        if (!bubble || !nameEl || !textEl || !avatarEl) return;
+
+        // Clear timer cũ nếu đang hiện
+        clearTimeout(charBubbleTimer);
+        bubble.classList.remove('show');
+
+        // Set nội dung rồi show sau 1 frame
+        requestAnimationFrame(() => {
+            avatarEl.textContent = charIcon;
+            nameEl.textContent   = charName;
+            textEl.textContent   = text;
+            requestAnimationFrame(() => bubble.classList.add('show'));
+        });
+
+        // Tự ẩn sau 4.5 giây
+        charBubbleTimer = setTimeout(() => {
+            bubble.classList.remove('show');
+        }, 4500);
+    }
+
+    async function fetchCharReaction(stageIdx, choiceText, effect) {
+        if (!USE_AI) return null;
+        const char = CHARACTER_ROSTER[stageIdx % CHARACTER_ROSTER.length];
+
+        // Tóm tắt effect ngắn cho context
+        const effectSummary = Object.entries(effect || {})
+            .filter(([, v]) => v !== 0)
+            .map(([k, v]) => `${k}: ${v > 0 ? '+' : ''}${v}`)
+            .join(', ') || 'không đổi';
+
+        const prompt = `Bạn đang đóng vai ${char.name}, một thành viên nhóm tình nguyện. Tính cách: ${char.trait}. Trưởng nhóm vừa quyết định: "${choiceText}" (kết quả: ${effectSummary}). Phản ứng tự nhiên của bạn bằng 1 câu ngắn (tối đa 18 từ), giọng khẩu ngữ tuổi teen. Trả về JSON: {"reaction": "..."}`;
+
+        try {
+            const res = await callGemini(prompt);
+            return res && res.reaction ? { name: char.name, icon: char.icon, text: res.reaction } : null;
+        } catch(e) { return null; }
+    }
+
+    // =============================================
+    // LEADERSHIP PROFILE (Mục A)
+    // =============================================
+    async function fetchLeadershipProfile(log) {
+        if (!USE_AI || log.length < 3) return null;
+
+        // Tóm gọn log thành chuỗi (tránh prompt quá dài)
+        const summary = log.slice(0, 10).map((e, i) =>
+            `GĐ${i+1} [${e.stageTitle}]: "${e.choiceText.substring(0, 60)}" → tiền:${e.effect.money||0} tg:${e.effect.time||0} ts:${e.effect.morale||0} cl:${e.effect.quality||0}`
+        ).join('\n');
+
+        const prompt = `Phân tích phong cách lãnh đạo dựa trên các quyết định sau trong dự án tình nguyện:\n${summary}\n\nTrả về JSON: { "style": "Tên phong cách (3-5 từ, tiếng Việt)", "icon": "1 emoji đặc trưng", "description": "Nhận xét 2-3 câu về phong cách, ưu/nhược điểm, bằng tiếng Việt", "strength_tag": "Điểm mạnh (2-3 từ)", "blind_tag": "Điểm mù (2-3 từ)" }`;
+
+        try {
+            return await callGemini(prompt);
+        } catch(e) { return null; }
+    }
+
+    function renderLeadershipProfile(data) {
+        const card = document.getElementById('leadership-profile-card');
+        const body = document.getElementById('lp-card-body');
+        if (!card || !body) return;
+        card.style.display = 'block';
+        if (!data) {
+            body.innerHTML = `<div style="font-size:0.88rem;color:var(--text-dim);font-style:italic;">Không đủ dữ liệu để phân tích (cần ≥ 3 quyết định).</div>`;
+            return;
+        }
+        body.innerHTML = `
+            <div class="lp-card-top">
+                <div id="lp-icon">${data.icon || '🎯'}</div>
+                <div id="lp-style">${data.style || 'Lãnh đạo độc đáo'}</div>
+            </div>
+            <div id="lp-desc">${data.description || ''}</div>
+            <div class="lp-tags">
+                ${data.strength_tag ? `<span class="lp-tag lp-tag-strength">✅ ${data.strength_tag}</span>` : ''}
+                ${data.blind_tag    ? `<span class="lp-tag lp-tag-blind">⚠️ ${data.blind_tag}</span>`    : ''}
+            </div>`;
+    }
+
+    // 4. API ENGINE
+    async function callGemini(promptText, retryCount = 0) {
+        if (!USE_AI || apiBunker.length === 0) return null;
+        if (retryCount >= apiBunker.length) { console.error("❌ API Error."); updateAIBadge(); return null; }
+        const activeKey = apiBunker[currentKeyIndex];
+        try {
+            const genAI = new GoogleGenerativeAI(activeKey);
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
+            const result = await model.generateContent(promptText);
+            return JSON.parse(result.response.text());
+        } catch (error) {
+            currentKeyIndex = (currentKeyIndex + 1) % apiBunker.length;
+            return callGemini(promptText, retryCount + 1);
+        }
+    }
+
+    // 5. AI GENERATORS
+    async function fetchAIEvent() {
+        const range = currentDiff.winMax - currentDiff.winMin;
+        const winRate = Math.floor(Math.random() * (range + 1)) + currentDiff.winMin;
+        const prompt = `Tạo 1 sự kiện ĐÁNH CƯỢC kịch tính cho nhóm học sinh thực hiện dự án tình nguyện. KHÔNG nhắc số tiền hay ngày cụ thể trong mô tả. TRẢ VỀ JSON: { "event_title": "...", "event_description": "...", "gamble_choice": { "text": "...", "win_rate": ${winRate}, "win_effect": {"money": 800000, "time": 0, "morale": 20}, "lose_effect": {"money": -400000, "time": -1, "morale": -20} }, "safe_choice": { "text": "...", "effect": {"morale": -5} } }`;
+        return await callGemini(prompt);
+    }
+
+    async function fetchDynamicStage(stageId) {
+        const base = story[stageId];
+        if (!base || !base.theme) return null;
+
+        // Mục 8: Kiểm tra session cache trước
+        const cached = getCached(stageId);
+        if (cached) return cached;
+
+        const stageTitle = (base.text.match(/<b>(.*?)<\/b>/) || [])[1] || "TÌNH HUỐNG MỚI";
+        const historyText = usedThemes.length > 0 ? usedThemes.join(", ") : "Chưa có";
+
+        // Mục 3: Ràng buộc động time/morale dựa trên state hiện tại
+        const maxTimeReduce   = Math.max(-Math.floor(state.time  * 0.55), -3);
+        const maxMoraleReduce = Math.max(-Math.floor(state.morale * 0.45), -25);
+
+        const prompt = `Viết kịch bản game: "${stageTitle}". Chủ đề: ${base.theme}. LUẬT: KHÔNG lặp lại: ${historyText}. Mỗi lựa chọn có hướng tiếp cận khác nhau (ví dụ: tốn tiền, tốn sức, sáng tạo, ngoại giao...) nhưng thứ tự KHÔNG theo công thức cố định — AI tự quyết định. QUY TẮC BẮT BUỘC: (1) effect.time phải là số nguyên âm đơn vị NGÀY (ví dụ -1, -2, -3), TUYỆT ĐỐI không dùng tuần hay tháng, KHÔNG nhỏ hơn ${maxTimeReduce}. (2) effect.morale KHÔNG được nhỏ hơn ${maxMoraleReduce}. (3) Trong phần "text" mô tả tình huống KHÔNG được nhắc đến bất kỳ con số trạng thái nào (tiền còn, ngày còn, v.v.) - chỉ mô tả tình huống xảy ra. (4) KHÔNG đưa trường "impact" vào JSON. (5) Mỗi "text" lựa chọn bắt đầu bằng động từ hành động, KHÔNG có tiền tố A./B./C. TRẢ VỀ JSON: { "text": "<b>${stageTitle}</b><br>[Mô tả tình huống ngắn gọn, không nhắc số liệu trạng thái]", "choices": [ { "text": "[Lựa chọn 1 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -2000000, "time": -1, "morale": 10, "quality": 15} }, { "text": "[Lựa chọn 2 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": 0, "time": -3, "morale": -20, "quality": 5} }, { "text": "[Lựa chọn 3 - hướng tự do]", "next": "${base.choices[0].next}", "effect": {"money": -100000, "time": -2, "morale": -5, "quality": 20} } ] }`;
+        const aiResponse = await callGemini(prompt);
+        if (aiResponse) {
+            aiResponse.image = base.image;
+            // Mục 3: Clamp time/morale sau khi nhận - phòng trường hợp AI không tuân lệnh
+            if (aiResponse.choices) {
+                aiResponse.choices.forEach(c => {
+                    if (!c.effect) c.effect = {};
+                    c.next = base.choices[0].next; // Luôn đúng next
+                    if ((c.effect.time   || 0) < maxTimeReduce)   c.effect.time   = maxTimeReduce;
+                    if ((c.effect.morale || 0) < maxMoraleReduce) c.effect.morale = maxMoraleReduce;
+                });
+            }
+            usedThemes.push(aiResponse.text.substring(0, 50).replace(/<[^>]*>?/gm, ''));
+            // Mục 8: Lưu vào session cache
+            setCached(stageId, aiResponse);
+        }
+        return aiResponse;
+    }
+
+    // 6. CORE LOGIC
+    function updateUI() {
+        document.getElementById("money").innerText = state.money.toLocaleString('vi-VN');
+        document.getElementById("time").innerText = state.time;
+        document.getElementById("morale").innerText = state.morale;
+
+        document.getElementById("money-container").className = state.money < 1000000 ? "stat-card danger" : "stat-card";
+        document.getElementById("time-container").className  = state.time <= 3       ? "stat-card danger" : "stat-card";
+        document.getElementById("morale-container").className = state.morale <= 30   ? "stat-card danger" : "stat-card";
+
+        const moneyPct  = Math.max(0, Math.min(100, (state.money / 6000000) * 100));
+        const timePct   = Math.max(0, Math.min(100, (state.time  / 25) * 100));
+        const moralePct = Math.max(0, Math.min(100, state.morale));
+        document.getElementById("money-fill").style.width  = moneyPct  + "%";
+        document.getElementById("time-fill").style.width   = timePct   + "%";
+        document.getElementById("morale-fill").style.width = moralePct + "%";
+    }
+
+    function updateStageDots(currentStageId) {
+        const idx = stageOrder.indexOf(currentStageId);
+        for (let i = 1; i <= 10; i++) {
+            const dot = document.getElementById("dot-" + i);
+            if (!dot) continue;
+            const dotIdx = i - 1;
+            dot.className = "s-dot";
+            if (idx < 0) return;
+            if (dotIdx < idx)  dot.classList.add("done");
+            else if (dotIdx === idx) dot.classList.add("active");
+        }
+    }
+
+    function checkGameOver() {
+        if (state.money < 0)  return "gameover_money";
+        if (state.time  < 0)  return "gameover_time";
+        if (state.morale < currentDiff.moraleFloor) return "gameover_morale";
+        return null;
+    }
+
+    async function handleTransition(choice, nextStageId) {
+        stopSpeedCountdown(); // Dừng đếm ngược khi player đã chọn
+        playSound('click');
+        state.money  += choice.effect.money  || 0;
+        state.time   += choice.effect.time   || 0;
+        state.morale += choice.effect.morale || 0;
+        state.quality+= choice.effect.quality|| 0;
+
+        // Item: captain — sàn morale 40%
+        if (selectedItem === 'captain') state.morale = Math.max(40, state.morale);
+
+        // Mục 5: Theo dõi uy tín BGH (ẩn với người chơi)
+        if (choice.bgRep) bgReputation = Math.max(-3, Math.min(3, bgReputation + choice.bgRep));
+
+        // Mục 6: Đăng ký hậu quả muộn nếu lựa chọn có
+        if (choice.delayed) {
+            pendingDelayedEffects.push({
+                triggerStage: choice.delayed.triggerStage,
+                effect:       choice.delayed.effect,
+                message:      choice.delayed.message
+            });
+        }
+
+        // Mục 11: Ghi vào Decision Log
+        const currentScene = dynamicStory[stageOrder[decisionLog.length]] || story[stageOrder[decisionLog.length]];
+        const rawTitle = currentScene
+            ? (currentScene.text.match(/<b>(.*?)<\/b>/) || [])[1] || 'Giai đoạn'
+            : 'Giai đoạn';
+        decisionLog.push({
+            stageTitle: rawTitle.replace('GIAI ĐOẠN ', 'GĐ'),
+            choiceText: choice.text.replace(/^[A-Za-z]\.\s*/, ''),
+            effect:     { ...choice.effect }
+        });
+        updateLogBadge();
+
+        // Cập nhật member morale riêng lẻ
+        updateMemberMorale(choice.effect.morale || 0);
+
+        // Thêm vào album ký ức
+        pushToAlbum(currentStageIndex, choice.text, choice.effect);
+        currentStageIndex++;
+
+        updateUI();
+
+        if (dynamicStory[nextStageId]) rescalePreloadedMoney(nextStageId);
+
+        const failScene = checkGameOver();
+        if (failScene) { renderScene(failScene); return; }
+        if (nextStageId === "calc_ending" || nextStageId.includes("gameover") || nextStageId.includes("end_")) { renderScene(nextStageId); return; }
+
+        document.getElementById("loading-overlay").style.display = "flex";
+
+        const triggerAiEvent = forceNextEvent || (USE_AI && Math.random() <= RATE_AI_EVENT);
+        if (forceNextEvent) forceNextEvent = false;
+
+        const triggerStaticEvent = (stagesSinceStaticEvent >= GUARANTEE_AT) || (Math.random() < RATE_STATIC_EVENT);
+        if (triggerStaticEvent) {
+            stagesSinceStaticEvent = 0;
+            pendingStaticEvent = pickStaticEvent(nextStageId);
+        } else {
+            stagesSinceStaticEvent++;
+            pendingStaticEvent = null;
+        }
+
+        const stageIdx = decisionLog.length - 1; // index của quyết định vừa ghi
+
+        const eventPromise = triggerAiEvent ? fetchAIEvent() : Promise.resolve(null);
+        const stagePromise = dynamicStory[nextStageId]
+            ? Promise.resolve(null)
+            : fetchDynamicStage(nextStageId);
+        // Mục 16: Fetch char reaction song song (fire-and-forget về mặt UX)
+        const charPromise = fetchCharReaction(stageIdx, choice.text.replace(/^[A-Za-z]\.\s*/, ''), choice.effect);
+
+        const [aiEventData, dynamicStageData, charData] = await Promise.all([eventPromise, stagePromise, charPromise]);
+
+        if (dynamicStageData) dynamicStory[nextStageId] = dynamicStageData;
+        document.getElementById("loading-overlay").style.display = "none";
+
+        // Hiện bubble nhân vật sau khi loading xong
+        if (charData) showCharBubble(charData.name, charData.icon, charData.text);
+
+        if (triggerAiEvent && aiEventData) {
+            showEventPopup(aiEventData, nextStageId, true);
+        } else if (pendingStaticEvent) {
+            const ev = pendingStaticEvent;
+            pendingStaticEvent = null;
+            showEventPopup(ev, nextStageId, false);
+        } else {
+            maybeShowBonus(nextStageId);
+        }
+    }
+
+    function buildPillsFromEffect(effect) {
+        if (!effect) return '';
+        const pills = [];
+        const money = effect.money || 0;
+        const time  = effect.time  || 0;
+
+        // Giá trị dự kiến sau khi chọn — hiển thị trong tooltip
+        const projMoney = state.money + money;
+        const projTime  = state.time  + time;
+
+        if (money !== 0) {
+            const label = money < 0
+                ? `💰 -${Math.abs(money / 1000).toLocaleString('vi-VN')}k`
+                : `💰 +${(money / 1000).toLocaleString('vi-VN')}k`;
+            const cls = money < 0 ? 'pill pill-money-neg' : 'pill pill-money-pos';
+            const tip = `Còn lại: ${Math.max(0, projMoney).toLocaleString('vi-VN')}đ`;
+            pills.push(`<span class="${cls}" data-tip="${tip}">${label}</span>`);
+        } else {
+            pills.push(`<span class="pill pill-free">💰 Miễn phí</span>`);
+        }
+
+        if (time !== 0) {
+            const tip = `Còn lại: ${Math.max(0, projTime)} ngày`;
+            pills.push(`<span class="pill pill-time" data-tip="${tip}">⏱️ ${time} ngày</span>`);
+        } else {
+            pills.push(`<span class="pill pill-free">⏱️ 0 ngày</span>`);
+        }
+
+        return pills.join('');
+    }
+
+    function rescalePreloadedMoney(stageId) {
+        const scene = dynamicStory[stageId];
+        if (!scene || !scene.choices) return;
+        const maxCost = Math.min(...scene.choices.map(c => c.effect.money || 0));
+        if (maxCost >= 0) return;
+        const budget = state.money * 0.75;
+        if (Math.abs(maxCost) <= budget) return;
+        const ratio = budget / Math.abs(maxCost);
+        scene.choices.forEach(c => {
+            if ((c.effect.money || 0) < 0)
+                c.effect.money = Math.round(c.effect.money * ratio);
+        });
+    }
+
+    function scaleBadEffect(effect) {
+        const m = currentDiff.penaltyMult;
+        if (m === 1.0) return effect;
+        const scaled = {};
+        for (const key in effect) {
+            const val = effect[key];
+            scaled[key] = (val < 0) ? Math.round(val * m) : val;
+        }
+        return scaled;
+    }
+
+    function showEventPopup(data, nextStageId, isAi) {
+        eventsEncountered++;
+        const overlay  = document.getElementById("event-overlay");
+        const titleTag = document.getElementById("event-title");
+        const descTag  = document.getElementById("event-desc");
+        const btnBox   = document.getElementById("event-buttons");
+        const winRateEl= document.getElementById("win-rate-label");
+        const iconEl   = document.getElementById("event-icon");
+        const resultEl = document.getElementById("gamble-result");
+
+        btnBox.innerHTML = "";
+        resultEl.style.display = "none";
+        resultEl.className = "";
+        winRateEl.style.display = "none";
+
+        overlay.className = "";
+
+        if (isAi) {
+            overlay.classList.add("tint-gamble");
+            iconEl.innerText = "🎲";
+            titleTag.innerText = data.event_title;
+            titleTag.style.color = "var(--warning)";
+            descTag.innerHTML = `<i>${data.event_description}</i>`;
+            winRateEl.style.display = "inline-block";
+            winRateEl.innerText = `🎯 Tỉ lệ thắng: ${data.gamble_choice.win_rate}%`;
+
+            const btnLieu = document.createElement("button");
+            btnLieu.className = "event-btn gamble-fire";
+            btnLieu.innerHTML = `🔥 ${data.gamble_choice.text}`;
+            btnLieu.onclick = () => {
+                btnLieu.disabled = true;
+                btnLieu.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+                playSound('gamble');
+                const roll = Math.floor(Math.random() * 100) + 1;
+                const win  = roll <= data.gamble_choice.win_rate;
+                resultEl.style.display = "block";
+                resultEl.className = win ? "win" : "lose";
+                document.getElementById("gr-icon").innerText = win ? "🎉" : "💀";
+                document.getElementById("gr-text").innerText  = win ? "ĐẠI THẮNG! Vận may đứng về phía bạn!" : "THUA SẠCH! Vận rủi đã ập đến...";
+                setTimeout(() => {
+                    playSound(win ? 'good' : 'bad');
+                    applyEffectAndNext(win ? data.gamble_choice.win_effect : data.gamble_choice.lose_effect, nextStageId);
+                }, 1800);
+            };
+
+            const btnSafe = document.createElement("button");
+            btnSafe.className = "event-btn gamble-safe";
+            btnSafe.innerHTML = `🛡️ ${data.safe_choice.text}`;
+            btnSafe.onclick = () => { playSound('click'); applyEffectAndNext(data.safe_choice.effect, nextStageId); };
+
+            btnBox.appendChild(btnLieu);
+            btnBox.appendChild(btnSafe);
+
+        } else {
+            const isBad = data.type === "bad";
+            overlay.classList.add(isBad ? "tint-bad" : "tint-good");
+            iconEl.innerText = isBad ? "⚠️" : "✨";
+            titleTag.innerText = data.title;
+            titleTag.style.color = isBad ? "var(--danger)" : "var(--success)";
+            descTag.innerText = data.desc;
+
+            if (isBad) {
+                playSound('bad');
+                document.getElementById("game-container").classList.add("shake");
+                setTimeout(() => document.getElementById("game-container").classList.remove("shake"), 500);
+            } else {
+                playSound('good');
+            }
+
+            const scaledEffect = isBad ? scaleBadEffect(data.effect) : data.effect;
+
+            const btnOk = document.createElement("button");
+            btnOk.className = "event-btn event-btn-full";
+            btnOk.style.borderColor = isBad ? "rgba(248,113,113,0.4)" : "rgba(74,222,128,0.4)";
+            btnOk.style.color = isBad ? "var(--danger)" : "var(--success)";
+            btnOk.innerHTML = isBad ? "😤 Chấp nhận và tiếp tục" : "🙌 Tuyệt vời! Tiếp tục thôi";
+            btnOk.onclick = () => { playSound('click'); applyEffectAndNext(scaledEffect, nextStageId); };
+            btnBox.appendChild(btnOk);
+
+            // Thẻ Ân Xá: chỉ hiện khi bad event + item redo + chưa dùng
+            if (isBad && selectedItem === 'redo' && !redoCardUsed) {
+                const btnRedo = document.createElement("button");
+                btnRedo.className = "event-btn event-btn-full";
+                btnRedo.style.marginTop = '8px';
+                btnRedo.style.borderColor = "rgba(212,175,55,0.5)";
+                btnRedo.style.color = "var(--gold)";
+                btnRedo.innerHTML = "🎴 Dùng Thẻ Ân Xá — Vô Hiệu Hóa Sự Cố (còn 1 lần)";
+                btnRedo.onclick = () => {
+                    redoCardUsed = true;
+                    playSound('good');
+                    document.getElementById("event-overlay").style.display = "none";
+                    maybeShowBonus(nextStageId);
+                };
+                btnBox.appendChild(btnRedo);
+            }
+        }
+
+        overlay.style.display = "flex";
+    }
+
+    function applyEffectAndNext(effect, nextStageId) {
+        state.money  += effect.money  || 0;
+        state.time   += effect.time   || 0;
+        state.morale += effect.morale || 0;
+        state.quality+= effect.quality|| 0;
+        updateUI();
+        document.getElementById("event-overlay").style.display = "none";
+
+        const fail = checkGameOver();
+        if (fail) { renderScene(fail); return; }
+
+        if (pendingStaticEvent) {
+            const ev = pendingStaticEvent;
+            pendingStaticEvent = null;
+            showEventPopup(ev, nextStageId, false);
+        } else {
+            maybeShowBonus(nextStageId);
+        }
+    }
+
+    // =============================================
+    // BONUS OPPORTUNITY (Mục 17)
+    // =============================================
+    function maybeShowBonus(nextStageId) {
+        const bonus = bonusOpportunities.find(
+            b => b.triggerBeforeStage === nextStageId && !usedBonusIds.includes(b.id)
+        );
+        if (bonus) {
+            usedBonusIds.push(bonus.id);
+            showBonusOverlay(bonus, nextStageId);
+        } else {
+            maybeShowHalftime(nextStageId);
+        }
+    }
+
+    function showBonusOverlay(bonus, nextStageId) {
+        document.getElementById('bonus-icon').textContent  = bonus.icon;
+        document.getElementById('bonus-title').textContent = bonus.title;
+        document.getElementById('bonus-desc').textContent  = bonus.desc;
+        document.getElementById('bonus-cost').textContent  = bonus.costLabel;
+        const acceptBtn = document.getElementById('bonus-accept-btn');
+        const skipBtn   = document.getElementById('bonus-skip-btn');
+        acceptBtn.textContent = bonus.labelAccept;
+        skipBtn.textContent   = bonus.labelSkip;
+        acceptBtn.onclick = () => {
+            playSound('good');
+            state.money  += bonus.accept.money  || 0;
+            state.time   += bonus.accept.time   || 0;
+            state.morale += bonus.accept.morale || 0;
+            state.quality+= bonus.accept.quality|| 0;
+            updateUI();
+            document.getElementById('bonus-overlay').style.display = 'none';
+            const fail = checkGameOver();
+            if (fail) { renderScene(fail); return; }
+            maybeShowHalftime(nextStageId);
+        };
+        skipBtn.onclick = () => {
+            playSound('click');
+            document.getElementById('bonus-overlay').style.display = 'none';
+            maybeShowHalftime(nextStageId);
+        };
+        document.getElementById('bonus-overlay').style.display = 'flex';
+    }
+
+    function maybeShowHalftime(nextStageId) {
+        if (nextStageId === "stage_6" && !halftimeSeen) {
+            halftimeSeen = true;
+            showHalftime(nextStageId);
+        } else {
+            renderScene(nextStageId);
+        }
+    }
+
+    function showHalftime(nextStageId) {
+        const quotes = [
+            "\"Người quản lý giỏi không phải người không bao giờ sai, mà là người học được từ sai lầm.\"",
+            "\"Nguồn lực hữu hạn, nhưng sự sáng tạo thì vô hạn.\"",
+            "\"Một tập thể đoàn kết có thể vượt qua bất kỳ khó khăn nào.\"",
+            "\"Khi áp lực tăng, bản lĩnh của người lãnh đạo mới thực sự được thể hiện.\""
+        ];
+        document.getElementById("ht-money").innerText  = state.money.toLocaleString('vi-VN') + "đ";
+        document.getElementById("ht-time").innerText   = state.time + " ngày";
+        document.getElementById("ht-morale").innerText = state.morale + "%";
+        document.getElementById("ht-quality").innerText= state.quality + " điểm";
+        document.getElementById("ht-quote").innerText  = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById("halftime-overlay").style.display = "flex";
+        document.getElementById("halftime-continue").onclick = () => {
+            document.getElementById("halftime-overlay").style.display = "none";
+            renderScene(nextStageId);
+        };
+    }
+
+    function renderScene(sceneId) {
+        if (sceneId === "calc_ending") {
+            // Mục 5: BGH reputation bonus tác động nhỏ vào quality cuối
+            state.quality += bgReputation * 3;
+            const fail = checkGameOver();
+            if (fail) sceneId = fail;
+            else {
+                if      (state.quality < currentDiff.qualityBad)  sceneId = "end_bad";
+                else if (state.quality < currentDiff.qualityGood) sceneId = "end_normal";
+                else                                               sceneId = "end_perfect";
+            }
+        }
+
+        updateStageDots(sceneId);
+
+        const scene = dynamicStory[sceneId] || story[sceneId];
+        const storyEl = document.getElementById("story-text");
+
+        // Mục 6: Kiểm tra và apply delayed effects cho stage này
+        const dueEffects = pendingDelayedEffects.filter(e => e.triggerStage === sceneId);
+        pendingDelayedEffects = pendingDelayedEffects.filter(e => e.triggerStage !== sceneId);
+        let delayedHtml = '';
+        if (dueEffects.length > 0) {
+            dueEffects.forEach(de => {
+                state.money  += de.effect.money  || 0;
+                state.time   += de.effect.time   || 0;
+                state.morale += de.effect.morale || 0;
+                state.quality+= de.effect.quality|| 0;
+                delayedHtml += `<div class="delayed-notif"><span class="dn-icon">⏳</span><span>${de.message}</span></div>`;
+            });
+            updateUI();
+            playSound('bad');
+            // Kiểm tra game over sau khi apply delayed
+            const failAfterDelayed = checkGameOver();
+            if (failAfterDelayed) { renderScene(failAfterDelayed); return; }
+        }
+
+        storyEl.innerHTML = delayedHtml + scene.text;
+        storyEl.classList.remove("fade-in");
+        void storyEl.offsetWidth;
+        storyEl.classList.add("fade-in");
+
+        const choicesDiv = document.getElementById("choices");
+        choicesDiv.innerHTML = "";
+
+        const imgContainer = document.getElementById("image-container");
+        if (scene.image) {
+            document.getElementById("scene-image").src = scene.image;
+            imgContainer.style.display = "block";
+        } else {
+            imgContainer.style.display = "none";
+        }
+
+        if (scene.isEnd || (story[sceneId] && story[sceneId].isEnd)) {
+            showEndScreen(sceneId);
+        } else {
+            // Oracle Hint trước story
+            const stageIdx = stageOrder.indexOf(sceneId);
+            showOracleHint(stageIdx >= 0 ? stageIdx : currentStageIndex);
+
+            const labels = ['A', 'B', 'C', 'D'];
+            const shuffledChoices = [...scene.choices].sort(() => Math.random() - 0.5);
+            shuffledChoices.forEach((choice, i) => {
+                const btn = document.createElement("button");
+                btn.className = "choice-btn fade-in";
+                btn.style.animationDelay = (i * 0.07) + "s";
+                const pillsHtml = buildPillsFromEffect(choice.effect);
+                const displayText = choice.text.replace(/^[A-Za-z]\.\s*/, '');
+                btn.innerHTML = `
+                    <div class="choice-badge">${labels[i] || (i+1)}</div>
+                    <div class="choice-body">
+                        <div class="choice-text">${displayText}</div>
+                        <div class="choice-pills">${pillsHtml}</div>
+                    </div>`;
+                btn.onclick = () => handleTransition(choice, choice.next);
+                choicesDiv.appendChild(btn);
+            });
+
+            document.getElementById("game-container").scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Speed mode: bắt đầu đếm ngược sau khi render xong
+            if (speedModeEnabled) startSpeedCountdown(shuffledChoices, labels);
+
+            // Mục 9: Preload tất cả unique next IDs song song
+            const uniqueNextIds = [...new Set(scene.choices.map(c => c.next))]
+                .filter(id => id && story[id] && story[id].theme && !dynamicStory[id]);
+            uniqueNextIds.forEach(nextId => {
+                fetchDynamicStage(nextId).then(data => {
+                    if (data && !dynamicStory[nextId]) dynamicStory[nextId] = data;
+                });
+            });
+        }
+    }
+
+    async function showEndScreen(sceneId) {
+        const configs = {
+            gameover_money:  { badge: "💸", title: "VỠ NỢ TÀI CHÍNH",         subtitle: "Quỹ dự án về 0. Tất cả mọi thứ dừng lại.", color: "var(--danger)", image: "" },
+            gameover_time:   { badge: "⏱️", title: "TRỄ DEADLINE",             subtitle: "Không kịp Lễ Khai Giảng. Dự án bị hủy bỏ.", color: "var(--danger)", image: "" },
+            gameover_morale: { badge: "😡", title: "NHÓM TAN RÃ",               subtitle: "Tinh thần kiệt sức. Các thành viên tự rời đi.", color: "var(--danger)", image: "" },
+            end_bad:         { badge: "🏚️", title: "DỰ ÁN TỒI TỆ",            subtitle: "Đúng hạn, đúng tiền, nhưng thư viện rách nát. Các lối tắt đều phải trả giá.", color: "var(--danger)", image: "" },
+            end_normal:      { badge: "👍", title: "HOÀN THÀNH ĐẠT YÊU CẦU",   subtitle: "An toàn. Đủ để ghi nhận nỗ lực chân thành của tập thể.", color: "var(--warning)", image: "" },
+            end_perfect:     { badge: "🏆", title: "HUYỀN THOẠI MÙA HÈ XANH", subtitle: "Tài chính minh bạch, đúng tiến độ, thư viện tuyệt đẹp. Tên bạn sẽ được nhớ mãi!", color: "var(--gold)", image: "https://image2url.com/r2/default/images/1772112817266-5f9fc691-f09e-4873-abc7-9442385c9f6b.jpg" }
+        };
+        const cfg = configs[sceneId] || { badge: "🎯", title: "KẾT THÚC", subtitle: "", color: "var(--gold)", image: "" };
+
+        if (sceneId === 'end_perfect') playSound('victory');
+        else if (sceneId.startsWith('gameover')) playSound('gameover');
+
+        document.getElementById("end-badge").innerText = cfg.badge;
+        const titleEl = document.getElementById("end-title");
+        titleEl.innerText = cfg.title;
+        titleEl.style.color = cfg.color;
+        document.getElementById("end-subtitle").innerText = cfg.subtitle;
+
+        const endImgContainer = document.getElementById("end-image-container");
+        const endImg = document.getElementById("end-image");
+        const finalImage = cfg.image || (story[sceneId] && story[sceneId].image) || "";
+        if (finalImage) { endImg.src = finalImage; endImgContainer.style.display = "block"; }
+        else { endImgContainer.style.display = "none"; }
+
+        document.getElementById("end-money").innerText   = Math.max(0, state.money).toLocaleString('vi-VN') + "đ";
+        document.getElementById("end-time").innerText    = Math.max(0, state.time) + " ngày";
+        document.getElementById("end-morale").innerText  = state.morale + "%";
+        document.getElementById("end-quality").innerText = state.quality + " điểm";
+        document.getElementById("end-events").innerText  = eventsEncountered + " lần";
+
+        const moraleEl = document.getElementById("end-morale");
+        moraleEl.style.color = state.morale <= 30 ? "var(--danger)" : state.morale >= 80 ? "var(--success)" : "var(--warning)";
+
+        document.getElementById("secret-hint").style.display = (sceneId === "end_perfect") ? "block" : "none";
+
+        // Album ký ức
+        renderMemoryAlbum();
+
+        // Leaderboard
+        const newEntry = saveToLeaderboard(sceneId);
+        renderLeaderboard(newEntry);
+
+        // NG+ unlock check
+        checkNGPlusUnlock(sceneId);
+
+        // Hội đồng phán xét — show spinner ngay, fetch async
+        const judgePanel = document.getElementById('judge-panel');
+        const judgeCards = document.getElementById('judge-cards');
+        if (judgePanel && judgeCards) {
+            judgePanel.style.display = 'block';
+            judgeCards.innerHTML = `<div class="judge-loading"><div class="lp-spinner"></div><span>Hội đồng đang xem xét hồ sơ...</span></div>`;
+        }
+
+        // Leadership profile card — show spinner ngay, fetch async
+        const lpCard = document.getElementById('leadership-profile-card');
+        const lpBody = document.getElementById('lp-card-body');
+        if (lpCard && lpBody && decisionLog.length >= 3) {
+            lpCard.style.display = 'block';
+            lpBody.innerHTML = `<div class="lp-loading"><div class="lp-spinner"></div><span>AI đang phân tích phong cách lãnh đạo...</span></div>`;
+        }
+
+        document.getElementById("end-screen").style.display = "flex";
+
+        // Fetch song song: leadership profile + judge verdicts (không block UI)
+        const [profileData, judgeData] = await Promise.all([
+            decisionLog.length >= 3 ? fetchLeadershipProfile(decisionLog) : Promise.resolve(null),
+            fetchJudgeVerdicts(sceneId)
+        ]);
+        renderLeadershipProfile(profileData);
+        renderJudgePanel(judgeData);
+    }
+
+    async function initGame() {
+        state.money   = currentDiff.money;
+        state.time    = currentDiff.time;
+        state.morale  = currentDiff.morale;
+        state.quality = 0;
+        RATE_AI_EVENT     = currentDiff.rateAI;
+        RATE_STATIC_EVENT = currentDiff.rateStatic;
+        GUARANTEE_AT      = currentDiff.guaranteeAt;
+
+        // Reset tất cả biến game
+        bgReputation          = 0;
+        pendingDelayedEffects = [];
+        usedBonusIds          = [];
+        dynamicStory          = {};
+        usedThemes            = [];
+        stagesSinceStaticEvent= 0;
+        pendingStaticEvent    = null;
+        halftimeSeen          = false;
+        eventsEncountered     = 0;
+        decisionLog           = [];
+        currentStageIndex     = 0;
+        memoryAlbum           = [];
+        stopSpeedCountdown();
+        clearTimeout(charBubbleTimer);
+        const bubble = document.getElementById('char-bubble');
+        if (bubble) bubble.classList.remove('show');
+
+        // Apply item effect trước khi bắt đầu
+        if (selectedItem === 'budget') {
+            state.money += 1500000;
+            state.time  -= 2;
+        }
+        // captain: moraleFloor được override trong handleTransition
+        // redo: redoCardUsed đã reset trước khi vào đây
+
+        // Reset member morale theo độ khó
+        resetMemberMorale();
+
+        updateLogBadge();
+        const lpCard = document.getElementById('leadership-profile-card');
+        if (lpCard) lpCard.style.display = 'none';
+        const judgePanel = document.getElementById('judge-panel');
+        if (judgePanel) judgePanel.style.display = 'none';
+        const memAlbum = document.getElementById('memory-album');
+        if (memAlbum) memAlbum.style.display = 'none';
+        const ngBtn = document.getElementById('ng-plus-btn');
+        if (ngBtn) ngBtn.style.display = 'none';
+        closeDecisionLog();
+
+        updateUI();
+        updateAIBadge();
+        updateStageDots('start');
+
+        const loading = document.getElementById("loading-overlay");
+        document.getElementById("loading-text").innerText = "KHỞI TẠO VŨ TRỤ...";
+        loading.style.display = "flex";
+
+        const dynamicData = await fetchDynamicStage("start");
+        if (dynamicData) dynamicStory["start"] = dynamicData;
+
+        loading.style.display = "none";
+        renderScene("start");
+    }
+
+</script>
+</body>
+</html>
