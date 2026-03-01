@@ -74,14 +74,17 @@ export async function fetchDynamicStage(stageId) {
     if (aiResponse) {
         aiResponse.image = base.image;
         if (aiResponse.choices) {
-            aiResponse.choices.forEach(c => {
-                if (!c.effect) c.effect = {};
-                c.next = base.choices[0].next;
-                if ((c.effect.time   || 0) < maxTimeReduce)   c.effect.time   = maxTimeReduce;
-                if ((c.effect.morale || 0) < maxMoraleReduce) c.effect.morale = maxMoraleReduce;
-                // Giữ bgRep và delayed từ static data nếu có
-                const staticChoice = base.choices.find((_, i) => i === aiResponse.choices.indexOf(c));
-                // (không map chính xác → OK, delayed/bgRep chỉ có ở static)
+            aiResponse.choices.forEach((choice, i) => {
+                if (!choice.effect) choice.effect = {};
+                choice.next = base.choices[0].next;
+                if ((choice.effect.time   || 0) < maxTimeReduce)   choice.effect.time   = maxTimeReduce;
+                if ((choice.effect.morale || 0) < maxMoraleReduce) choice.effect.morale = maxMoraleReduce;
+
+                const staticChoice = base.choices[i];
+                choice.bgRep ??= staticChoice?.bgRep;
+                choice.delayed ??= staticChoice?.delayed;
+                choice.flag ??= staticChoice?.flag;
+                choice.trustDelta ??= staticChoice?.trustDelta;
             });
         }
         usedThemes.push(aiResponse.text.substring(0, 50).replace(/<[^>]*>?/gm, ''));
