@@ -65,6 +65,15 @@ function resolveNextStageId(rawNextStageId, stageIdx) {
     return STAGE_ORDER[stageIdx + 1] || 'calc_ending';
 }
 
+
+function shuffleInPlace(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 function applyEffect(effect) {
     state.money   += effect.money   || 0;
     state.time    += effect.time    || 0;
@@ -488,6 +497,12 @@ function applyEffectAndNext(effect, nextStageId) {
     const fail = checkGameOver();
     if (fail) { renderScene(fail); return; }
 
+    // Stage 5 branch sentinel: event xong phải đi vào flow branch, không render scene giả
+    if (nextStageId === '__branch__') {
+        maybeShowHalftime('stage_6');
+        return;
+    }
+
     if (pendingStaticEvent) {
         const ev = pendingStaticEvent;
         setPendingStaticEvent(null);
@@ -770,7 +785,11 @@ export function renderScene(sceneId) {
     const labels = ['A', 'B', 'C', 'D'];
     const timeLimit = speedModeEnabled ? (stageIdx < 3 ? 20 : stageIdx < 7 ? 15 : 10) : 0;
 
-    scene.choices.forEach((choice, i) => {
+    const shuffledChoices = shuffleInPlace(
+        scene.choices.map((choice, idx) => ({ choice, originalIdx: idx }))
+    );
+
+    shuffledChoices.forEach(({ choice, originalIdx }, i) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn fade-in';
         btn.style.animationDelay = (i * 0.07) + 's';
@@ -780,7 +799,7 @@ export function renderScene(sceneId) {
 
         // ── Flag preview badge ──
         const stageKey = STAGE_ORDER[stageIdx];
-        const meta = CHOICE_META[stageKey]?.[i];
+        const meta = CHOICE_META[stageKey]?.[originalIdx];
         const flagBadge = meta?.flag
             ? `<span class="choice-flag-badge" title="Phong cách: ${meta.flag}">🏷 ${meta.flag}</span>`
             : '';
@@ -795,7 +814,7 @@ export function renderScene(sceneId) {
         btn.onclick = () => {
             clearSpeedTimer();
             const resolvedNext = resolveNextStageId(choice.next, stageIdx);
-            handleTransition(choice, resolvedNext, stageIdx, i);
+            handleTransition(choice, resolvedNext, stageIdx, originalIdx);
         };
 
         choicesDiv.appendChild(btn);
@@ -803,10 +822,10 @@ export function renderScene(sceneId) {
 
     if (speedModeEnabled && timeLimit > 0) {
         startSpeedCountdown(timeLimit, () => {
-            const randomIdx    = Math.floor(Math.random() * scene.choices.length);
-            const randomChoice = scene.choices[randomIdx];
-            const resolvedNext = resolveNextStageId(randomChoice.next, stageIdx);
-            handleTransition(randomChoice, resolvedNext, stageIdx, randomIdx);
+            const randomIdx = Math.floor(Math.random() * shuffledChoices.length);
+            const randomPick = shuffledChoices[randomIdx];
+            const resolvedNext = resolveNextStageId(randomPick.choice.next, stageIdx);
+            handleTransition(randomPick.choice, resolvedNext, stageIdx, randomPick.originalIdx);
         });
     }
 
