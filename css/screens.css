@@ -172,8 +172,8 @@
         radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.5) 0%, transparent 60%),
         radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.4) 0%, transparent 60%);
     z-index: 9999; display: none; flex-direction: column;
-    justify-content: flex-start; align-items: center; text-align: center;
-    padding: 24px; overflow-y: auto; scroll-padding: 24px;
+    justify-content: center; align-items: center; text-align: center;
+    padding: 24px; overflow-y: auto;
 }
 .end-badge-wrap { font-size: clamp(3rem,10vw,5rem); margin-bottom: 10px; animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
 #end-screen h2 {
