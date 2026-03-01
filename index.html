@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dự Án Mùa Hè Xanh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/screens.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/overlays.css">
+    <link rel="stylesheet" href="css/panels.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="start-screen">
+    <div class="start-logo"><span class="white">DỰ ÁN</span> MÙA HÈ XANH</div>
+    <p class="start-tagline">"Quản lý dự án không chỉ là những con số,<br>mà là nghệ thuật cân bằng giữa Trái Tim và Lý Trí."</p>
+    <div class="start-brief">
+        <div class="brief-chip"><span class="chip-icon">💰</span> Ngân sách: 6.000.000đ</div>
+        <div class="brief-chip"><span class="chip-icon">⏱️</span> Thời hạn: 25 ngày</div>
+        <div class="brief-chip"><span class="chip-icon">🎯</span> 10 Giai đoạn</div>
+    </div>
+    <button class="start-btn" id="start-btn">Bắt Đầu Trải Nghiệm</button>
+</div>
+
+<!-- DIFFICULTY SCREEN -->
+<div id="difficulty-screen">
+    <p class="diff-heading">Chọn Độ Khó</p>
+    <div class="diff-title">Bạn Là Ai Trong Hành Trình Này?</div>
+    <div class="diff-cards">
+        <div class="diff-card normal" id="diff-normal">
+            <span class="diff-card-icon">🌱</span>
+            <div class="diff-card-name">Bình Thường</div>
+            <p class="diff-card-desc">Học cách quản lý. Cho phép sai lầm và thử nghiệm.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">6.000.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">25 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">100%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 110 điểm</span></div>
+            </div>
+        </div>
+        <div class="diff-card expert" id="diff-expert">
+            <span class="diff-card-icon">⚔️</span>
+            <div class="diff-card-name">Chuyên Gia</div>
+            <p class="diff-card-desc">Mỗi quyết định phải có lý do. Không thể an toàn mãi.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">4.500.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">22 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">80%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 120 điểm</span></div>
+            </div>
+        </div>
+        <div class="diff-card asian" id="diff-asian">
+            <span class="diff-card-icon">🔥</span>
+            <div class="diff-card-name">Asian Mode</div>
+            <p class="diff-card-desc">Bạn không thử, bạn non.</p>
+            <div class="diff-stats">
+                <div class="diff-stat-row"><span class="ds-label">💰 Ngân sách</span><span class="ds-val">3.000.000đ</span></div>
+                <div class="diff-stat-row"><span class="ds-label">⏱️ Thời hạn</span><span class="ds-val">19 ngày</span></div>
+                <div class="diff-stat-row"><span class="ds-label">❤️ Tinh thần</span><span class="ds-val">65%</span></div>
+                <div class="diff-stat-row"><span class="ds-label">🎯 Hoàn hảo</span><span class="ds-val">≥ 140 điểm</span></div>
+            </div>
+        </div>
+    </div>
+    <label class="speed-mode-toggle">
+        <input type="checkbox" id="speed-mode-check">
+        <span class="speed-mode-label">⚡ <strong>Speed Mode</strong> — Bộ đếm ngược tự chọn ngẫu nhiên</span>
+    </label>
+    <br>
+    <button class="diff-back-btn" id="diff-back-btn">← Quay lại</button>
+</div>
+
+<!-- ITEM SCREEN (New Game+) -->
+<div id="item-screen">
+    <p class="item-heading">⭐ New Game+</p>
+    <div class="item-title">Chọn Vật Phẩm Khởi Đầu</div>
+    <p class="item-subtitle">Phần thưởng từ lần chơi trước. Chọn 1 vật phẩm để mang theo.</p>
+    <div class="item-cards">
+        <div class="item-card" data-item="budget">
+            <span class="item-card-icon">💼</span>
+            <div class="item-card-name">Túi Ngân Sách Dự Phòng</div>
+            <p class="item-card-desc">Thêm 1.500.000đ vào quỹ ban đầu. Đổi lại điểm chất lượng khởi đầu thấp hơn.</p>
+            <span class="item-card-stat">+1.500.000đ / -10 chất lượng</span>
+        </div>
+        <div class="item-card" data-item="captain">
+            <span class="item-card-icon">🎖️</span>
+            <div class="item-card-name">Huy Hiệu Đội Trưởng</div>
+            <p class="item-card-desc">Tinh thần nhóm bắt đầu cao hơn 20%. Niềm tin được tích lũy từ lần trước.</p>
+            <span class="item-card-stat">+20% tinh thần khởi đầu</span>
+        </div>
+        <div class="item-card" data-item="redo">
+            <span class="item-card-icon">🔄</span>
+            <div class="item-card-name">Thẻ Redo</div>
+            <p class="item-card-desc">Một lần duy nhất trong game, được phép chọn lại quyết định vừa đưa ra.</p>
+            <span class="item-card-stat">1 lần chọn lại</span>
+        </div>
+    </div>
+    <button class="item-confirm-btn" id="item-confirm-btn" disabled>✅ Xác Nhận & Bắt Đầu</button>
+</div>
+
+<!-- GAME CONTAINER -->
+<div id="game-container">
+
+    <div class="game-header">
+        <button id="log-toggle">📋 Nhật Ký <span class="log-count" id="log-count-badge">0</span></button>
+        <div class="game-title" id="admin-trigger"><span class="white">DỰ ÁN:</span> MÙA HÈ XANH</div>
+        <div class="header-right-btns">
+            <button id="sound-toggle">🔊 <span>Âm Thanh</span></button>
+            <button id="theme-toggle">🎨 Tình Nguyện</button>
+        </div>
+        <div id="stage-dots">
+            <div class="s-dot" id="dot-1"></div><div class="s-dot" id="dot-2"></div>
+            <div class="s-dot" id="dot-3"></div><div class="s-dot" id="dot-4"></div>
+            <div class="s-dot" id="dot-5"></div><div class="s-dot" id="dot-6"></div>
+            <div class="s-dot" id="dot-7"></div><div class="s-dot" id="dot-8"></div>
+            <div class="s-dot" id="dot-9"></div><div class="s-dot" id="dot-10"></div>
+        </div>
+        <div id="ai-mode-badge" class="ai-on">⚡ AI Mode</div>
+    </div>
+
+    <div class="status-bar">
+        <div class="stat-card" id="money-container">
+            <div class="stat-label">Tài Chính</div>
+            <div class="stat-row"><span class="stat-icon">💰</span><span class="stat-value" id="money">6.000.000</span><span class="stat-unit">đ</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="money-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card" id="time-container">
+            <div class="stat-label">Thời Gian</div>
+            <div class="stat-row"><span class="stat-icon">⏱️</span><span class="stat-value" id="time">25</span><span class="stat-unit">ngày</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="time-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card" id="morale-container">
+            <div class="stat-label">Tinh Thần</div>
+            <div class="stat-row"><span class="stat-icon">❤️</span><span class="stat-value" id="morale">100</span><span class="stat-unit">%</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" id="morale-fill" style="width:100%"></div></div>
+        </div>
+    </div>
+
+    <div id="member-morale-bar">
+        <div class="member-chip" id="member-tung">
+            <span class="member-avatar">😤</span>
+            <div class="member-info"><div class="member-name">Tùng</div><div class="member-bar"><div class="member-bar-fill" id="mbar-tung" style="width:100%;background:var(--success)"></div></div></div>
+        </div>
+        <div class="member-chip" id="member-mai">
+            <span class="member-avatar">🌸</span>
+            <div class="member-info"><div class="member-name">Mai</div><div class="member-bar"><div class="member-bar-fill" id="mbar-mai" style="width:100%;background:var(--success)"></div></div></div>
+        </div>
+        <div class="member-chip" id="member-khoa">
+            <span class="member-avatar">🤔</span>
+            <div class="member-info"><div class="member-name">Khoa</div><div class="member-bar"><div class="member-bar-fill" id="mbar-khoa" style="width:100%;background:var(--success)"></div></div></div>
+        </div>
+        <div class="member-chip" id="member-linh">
+            <span class="member-avatar">💙</span>
+            <div class="member-info"><div class="member-name">Linh</div><div class="member-bar"><div class="member-bar-fill" id="mbar-linh" style="width:100%;background:var(--success)"></div></div></div>
+        </div>
+    </div>
+
+    <div id="image-container"><img id="scene-image" src="" alt="Scene"></div>
+
+    <div id="oracle-hint" style="display:none">
+        <span class="oracle-icon">🔮</span><span id="oracle-text"></span>
+    </div>
+
+    <div id="story-text"></div>
+
+    <div id="speed-countdown" style="display:none">⚡ Sẵn sàng…</div>
+    <div class="speed-timer-bar" id="speed-timer-bar" style="display:none">
+        <div class="speed-timer-fill" id="speed-timer-fill"></div>
+    </div>
+
+    <div class="btn-container" id="choices"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">HỆ THỐNG ĐANG PHÂN TÍCH...</div>
+        <p class="loading-sub">"Sóng gió có thể ập đến ở bất cứ giai đoạn nào."</p>
+    </div>
+
+    <!-- Event Overlay -->
+    <div id="event-overlay">
+        <div class="event-icon-big" id="event-icon">🚨</div>
+        <h2 id="event-title">BIẾN CỐ!</h2>
+        <p id="event-desc"></p>
+        <div class="win-rate-badge" id="win-rate-label" style="display:none"></div>
+        <div id="gamble-result"><span class="gr-icon" id="gr-icon"></span><span class="gr-text" id="gr-text"></span></div>
+        <div class="gamble-btns" id="event-buttons"></div>
+    </div>
+
+    <!-- Bonus Overlay -->
+    <div id="bonus-overlay">
+        <div class="bonus-icon-big" id="bonus-icon">🎁</div>
+        <div id="bonus-title">CƠ HỘI!</div>
+        <p id="bonus-desc"></p>
+        <div class="bonus-cost-label" id="bonus-cost-label"></div>
+        <div class="bonus-btns" id="bonus-btns"></div>
+    </div>
+
+    <!-- Halftime Overlay -->
+    <div id="halftime-overlay">
+        <div class="halftime-label">✦ CHECKPOINT ✦</div>
+        <h2>Nửa Chặng Đường</h2>
+        <p class="halftime-subtitle">"Khó khăn thật sự bắt đầu từ đây. Kiểm tra lại lực lượng trước khi tiếp tục."</p>
+        <div class="halftime-stats">
+            <div class="ht-stat-box"><div class="hs-icon">💰</div><div class="hs-label">Tài chính còn</div><div class="hs-value" id="ht-money"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">⏱️</div><div class="hs-label">Thời gian còn</div><div class="hs-value" id="ht-time"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">❤️</div><div class="hs-label">Tinh thần</div><div class="hs-value" id="ht-morale"></div></div>
+            <div class="ht-stat-box"><div class="hs-icon">⭐</div><div class="hs-label">Chất lượng</div><div class="hs-value" id="ht-quality"></div></div>
+        </div>
+        <p class="halftime-quote" id="ht-quote"></p>
+        <button id="halftime-continue">⚔️ Tiếp Tục Hành Trình</button>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="admin-login-overlay">
+        <div class="admin-box">
+            <h3>🔐 Quyền Truy Cập Giám Đốc</h3>
+            <input type="password" id="admin-key-input" placeholder="Nhập mã bí mật...">
+            <div class="admin-btn-row">
+                <button class="admin-btn danger" id="admin-cancel-btn">Hủy</button>
+                <button class="admin-btn" id="admin-confirm-btn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel-overlay">
+        <div class="admin-box">
+            <h3>⚙️ God Mode Panel</h3>
+            <div class="admin-group"><label>💰 Tài chính:</label><input type="number" id="admin-money"></div>
+            <div class="admin-group"><label>⏱️ Thời gian:</label><input type="number" id="admin-time"></div>
+            <div class="admin-group"><label>❤️ Tinh thần:</label><input type="number" id="admin-morale"></div>
+            <div class="admin-group"><label>⭐ Chất lượng:</label><input type="number" id="admin-quality"></div>
+            <div class="admin-group"><label>🤖 Bật/Tắt AI:</label><input type="checkbox" id="admin-ai-toggle" style="width:20px;height:20px;"></div>
+            <div class="admin-group">
+                <label>🎲 Sự Cược AI:</label>
+                <div style="display:flex;align-items:center;gap:4px;width:58%;">
+                    <input type="number" id="admin-rate-ai" min="0" max="100" step="5" style="width:100%;text-align:right;">
+                    <span style="color:var(--text-dim);font-size:0.8rem;flex-shrink:0;">%</span>
+                </div>
+            </div>
+            <div class="admin-group">
+                <label>⚡ Sự Cố/May:</label>
+                <div style="display:flex;align-items:center;gap:4px;width:58%;">
+                    <input type="number" id="admin-rate-static" min="0" max="100" step="5" style="width:100%;text-align:right;">
+                    <span style="color:var(--text-dim);font-size:0.8rem;flex-shrink:0;">%</span>
+                </div>
+            </div>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:10px;font-style:italic;">🎰 Tỉ lệ thắng cược: tự động theo độ khó</p>
+            <button class="admin-btn action" id="admin-force-event-btn">⚡ Ép Sự Kiện (100%)</button>
+            <div class="admin-group" style="margin-top:14px;flex-direction:column;align-items:flex-start;">
+                <label style="margin-bottom:8px;">🚀 Nhảy Cóc:</label>
+                <div style="display:flex;width:100%;gap:10px;">
+                    <select id="admin-stage-select" style="flex:1;text-align:left;">
+                        <option value="stage_2">GĐ 2</option>
+                        <option value="stage_4">GĐ 4</option>
+                        <option value="stage_7">GĐ 7</option>
+                        <option value="stage_10">GĐ 10</option>
+                        <option value="calc_ending">Tổng kết</option>
+                    </select>
+                    <button class="admin-btn danger" style="padding:8px 16px;width:auto;" id="admin-jump-btn">GO</button>
+                </div>
+            </div>
+            <div class="admin-btn-row" style="margin-top:16px;">
+                <button class="admin-btn danger" id="admin-close-btn">Đóng</button>
+                <button class="admin-btn" id="admin-save-btn">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end #game-container -->
+
+<!-- Decision Log Panel -->
+<div id="log-panel-backdrop"></div>
+<div id="decision-log-panel">
+    <div class="lp-header">
+        <div class="lp-header-title">📋 Nhật Ký Quyết Định</div>
+        <button id="log-close-btn">✕</button>
+    </div>
+    <div id="log-entries"></div>
+</div>
+
+<!-- Character Bubble -->
+<div id="char-bubble">
+    <div class="cb-avatar" id="cb-avatar">😤</div>
+    <div><div class="cb-name" id="cb-name">Tùng</div><div class="cb-text" id="cb-text"></div></div>
+</div>
+
+<!-- END SCREEN -->
+<div id="end-screen">
+    <div class="end-badge-wrap" id="end-badge"></div>
+    <h2 id="end-title"></h2>
+    <div id="end-track-label" style="display:none"></div>
+    <p class="end-subtitle" id="end-subtitle"></p>
+
+    <div id="end-image-container" style="display:none">
+        <img id="end-image" src="" alt="Ending Scene">
+    </div>
+
+    <div id="leadership-profile-card" style="display:none">
+        <div class="lp-card-label">🎯 PHONG CÁCH LÃNH ĐẠO CỦA BẠN</div>
+        <div id="lp-card-body">
+            <div class="lp-loading"><div class="lp-spinner"></div> AI đang phân tích phong cách lãnh đạo…</div>
+        </div>
+    </div>
+
+    <div id="memory-album" style="display:none">
+        <h3>📸 Ký Ức Hành Trình</h3>
+        <div class="album-strip" id="album-strip"></div>
+    </div>
+
+    <div id="end-trust-summary" style="display:none"></div>
+
+    <div class="end-stats-grid">
+        <div class="end-stat-card"><div class="esk-label">💰 Tài chính còn</div><div class="esk-value" id="end-money"></div></div>
+        <div class="end-stat-card"><div class="esk-label">⏱️ Ngày dư</div><div class="esk-value" id="end-time"></div></div>
+        <div class="end-stat-card"><div class="esk-label">❤️ Tinh thần</div><div class="esk-value" id="end-morale"></div></div>
+        <div class="end-stat-card"><div class="esk-label">⭐ Chất lượng</div><div class="esk-value" id="end-quality"></div></div>
+        <div class="end-stat-card"><div class="esk-label">🎲 Biến cố gặp</div><div class="esk-value" id="end-events"></div></div>
+    </div>
+
+    <div id="judge-panel" style="display:none">
+        <h3>⚖️ Hội Đồng Phán Xét</h3>
+        <div class="judge-cards" id="judge-cards">
+            <div class="judge-loading"><div class="lp-spinner"></div> AI đang tổng hợp nhận xét…</div>
+        </div>
+    </div>
+
+    <div id="leaderboard-section" style="display:none">
+        <h3>🏆 Bảng Xếp Hạng Cá Nhân</h3>
+        <div id="lb-body"></div>
+    </div>
+
+    <p class="secret-hint" id="secret-hint" style="display:none">
+        "Đây là true ending — liệu bạn có thể thành công lấy được Secret Ending, một ảnh ending không nên tồn tại?"
+    </p>
+
+    <button id="ng-plus-btn" style="display:none">⭐ New Game+ — Mang Phần Thưởng Sang Lần Sau</button>
+    <button class="replay-btn" id="replay-btn">🔄 Chơi Lại</button>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
