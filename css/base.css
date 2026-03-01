@@ -1,0 +1,73 @@
+/* ─── BASE.CSS — Design Tokens + Reset + Animations ─── */
+
+:root {
+    --gold:        #D4AF37;
+    --gold-light:  #F0D060;
+    --gold-dim:    rgba(212,175,55,0.25);
+    --gold-glow:   rgba(212,175,55,0.15);
+    --bg-deep:     #0d1b2a;
+    --bg-card:     rgba(18,28,42,0.92);
+    --bg-surface:  rgba(255,255,255,0.04);
+    --bg-hover:    rgba(255,255,255,0.07);
+    --text-main:   #EDF2F7;
+    --text-sub:    #94A3B8;
+    --text-dim:    #64748B;
+    --danger:      #F87171;
+    --danger-bg:   rgba(248,113,113,0.08);
+    --success:     #4ADE80;
+    --success-bg:  rgba(74,222,128,0.08);
+    --warning:     #FBBF24;
+    --warning-bg:  rgba(251,191,36,0.08);
+    --border:      rgba(255,255,255,0.08);
+    --radius-sm:   8px;
+    --radius-md:   12px;
+    --radius-lg:   18px;
+    --radius-xl:   24px;
+    --shadow-card: 0 24px 60px rgba(0,0,0,0.6);
+    --transition:  all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-deep);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(30,60,100,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(10,40,80,0.4) 0%, transparent 60%);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+}
+
+/* ─── ANIMATIONS ─── */
+.fade-in { animation: fadeIn 0.45s ease forwards; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shake {
+    10%, 90% { transform: translate3d(-2px,0,0); }
+    20%, 80% { transform: translate3d(4px,0,0); }
+    30%, 50%, 70% { transform: translate3d(-5px,0,0); }
+    40%, 60% { transform: translate3d(5px,0,0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes badgePop {
+    from { transform: scale(0.3); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.55; }
+}
+@keyframes pulseValue {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.6; }
+}
+.shake { animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both; }

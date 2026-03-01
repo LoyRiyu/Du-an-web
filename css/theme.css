@@ -1,0 +1,77 @@
+/* ─── THEME.CSS — Volunteer Theme (Xanh Biển & Trắng) ─── */
+
+body.theme-volunteer {
+    --gold:        #1565C0;
+    --gold-light:  #42A5F5;
+    --gold-dim:    rgba(21,101,192,0.25);
+    --gold-glow:   rgba(21,101,192,0.12);
+    --bg-deep:     #EFF6FF;
+    --bg-card:     rgba(255,255,255,0.95);
+    --bg-surface:  rgba(21,101,192,0.05);
+    --bg-hover:    rgba(21,101,192,0.09);
+    --text-main:   #1E3A5F;
+    --text-sub:    #4A7FA5;
+    --text-dim:    #7EB3D4;
+    --border:      rgba(21,101,192,0.15);
+    --shadow-card: 0 24px 60px rgba(21,101,192,0.12);
+}
+body.theme-volunteer {
+    background: #EFF6FF;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(144,202,249,0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(21,101,192,0.12) 0%, transparent 60%);
+}
+body.theme-volunteer #start-screen,
+body.theme-volunteer #difficulty-screen,
+body.theme-volunteer #item-screen,
+body.theme-volunteer #end-screen {
+    background: #EFF6FF;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(144,202,249,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(21,101,192,0.15) 0%, transparent 60%);
+}
+
+/* Status bar fills */
+body.theme-volunteer #money-fill  { background: linear-gradient(90deg, #1565C0, #0288D1); }
+body.theme-volunteer #time-fill   { background: linear-gradient(90deg, #0288D1, #0097A7); }
+body.theme-volunteer #morale-fill { background: linear-gradient(90deg, #E53935, #AD1457); }
+
+/* Component overrides */
+body.theme-volunteer .choice-badge { background: rgba(21,101,192,0.08); border-right-color: rgba(21,101,192,0.2); }
+body.theme-volunteer #story-text::before { background: linear-gradient(180deg, #1565C0, transparent); }
+body.theme-volunteer .spinner { border-color: rgba(21,101,192,0.15); border-top-color: #1565C0; }
+body.theme-volunteer .lp-spinner { border-color: rgba(21,101,192,0.15); border-top-color: #1565C0; }
+
+/* Pills */
+body.theme-volunteer .pill-money-neg { background: rgba(229,57,53,0.1);  color: #C62828; border-color: rgba(229,57,53,0.25); }
+body.theme-volunteer .pill-money-pos { background: rgba(46,125,50,0.1);  color: #2E7D32; border-color: rgba(46,125,50,0.25); }
+body.theme-volunteer .pill-time      { background: rgba(2,136,209,0.12); color: #01579B; border-color: rgba(2,136,209,0.3); }
+body.theme-volunteer .pill-free      { background: rgba(21,101,192,0.06); color: #4A7FA5; border-color: rgba(21,101,192,0.15); }
+
+/* Stage dots */
+body.theme-volunteer .s-dot       { background: rgba(21,101,192,0.15); border-color: rgba(21,101,192,0.2); }
+body.theme-volunteer .s-dot.done  { background: #1565C0; border-color: #1565C0; box-shadow: 0 0 6px rgba(21,101,192,0.4); }
+body.theme-volunteer .s-dot.active { background: #42A5F5; border-color: #42A5F5; box-shadow: 0 0 10px rgba(66,165,245,0.6); }
+
+/* Admin */
+body.theme-volunteer .admin-box { background: rgba(255,255,255,0.97); }
+body.theme-volunteer .admin-group input,
+body.theme-volunteer .admin-group select { background: rgba(21,101,192,0.06); color: #1E3A5F; border-color: rgba(21,101,192,0.2); }
+
+/* Char bubble — giữ nền tối để đọc được trên bg sáng */
+body.theme-volunteer #char-bubble { background: rgba(15,30,60,0.97); border-color: rgba(21,101,192,0.4); }
+body.theme-volunteer .cb-text     { color: #EDF2F7; }
+
+/* Decision log */
+body.theme-volunteer #decision-log-panel { background: rgba(15,30,60,0.99); border-left-color: rgba(21,101,192,0.35); }
+body.theme-volunteer .lp-header-title    { color: #42A5F5; }
+body.theme-volunteer .log-entry          { background: rgba(21,101,192,0.07); border-color: rgba(21,101,192,0.18); }
+body.theme-volunteer .log-entry-stage    { color: #42A5F5; }
+body.theme-volunteer .log-entry-choice   { color: #CBD5E1; }
+
+/* Leadership card */
+body.theme-volunteer #leadership-profile-card { background: rgba(21,101,192,0.07); border-color: rgba(21,101,192,0.25); }
+body.theme-volunteer #leadership-profile-card::before { background: linear-gradient(90deg, #1565C0, #42A5F5, transparent); }
+body.theme-volunteer #lp-style { color: #1565C0; }
+body.theme-volunteer #lp-desc  { color: #4A7FA5; }
+body.theme-volunteer .lp-loading { color: #4A7FA5; }
