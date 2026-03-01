@@ -31,7 +31,7 @@ import {
 
 import {
     fetchAIEvent, fetchDynamicStage, fetchCharReaction,
-    fetchLeadershipProfile, fetchJudgeVerdicts
+    fetchLeadershipProfile, fetchJudgeVerdicts, postScore
 } from './api.js';
 
 import {
@@ -802,6 +802,7 @@ export function renderScene(sceneId) {
         playSound(soundKey);
 
         const entry = saveToLeaderboardV2(sceneId);
+        syncScoreToServer(entry);
         renderMemoryAlbum();
         renderLeaderboard(entry);
         showEndScreenV2(sceneId);
@@ -979,10 +980,25 @@ function saveToLeaderboardV2(sceneId) {
             if (legacy.length > 0) all.push(...legacy);
         }
         all.push(entry);
-        all.sort((a, b) => b.quality - a.quality);
+        all.sort((a, b) => (b.quality - a.quality) || (b.morale - a.morale));
         localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
         return entry;
     } catch(e) { return null; }
+}
+
+async function syncScoreToServer(entry) {
+    if (!entry) return;
+    try {
+        await postScore({
+            difficulty: entry.diff,
+            quality: entry.quality,
+            morale: entry.morale,
+            ending: entry.ending,
+            branch: entry.branch
+        });
+    } catch (error) {
+        console.warn('Score sync failed, using local fallback:', error?.message || error);
+    }
 }
 
 

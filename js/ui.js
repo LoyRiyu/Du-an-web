@@ -8,6 +8,7 @@ import {
     state, memberMorale, currentDiff, currentDiffKey, decisionLog, memoryAlbum,
     eventsEncountered, charBubbleTimer, setCharBubbleTimer, USE_AI, decisionFlags
 } from './state.js';
+import { getLeaderboardAll } from './api.js';
 
 // ══ STATUS BAR ══
 export function updateUI() {
@@ -244,7 +245,33 @@ export function renderLeaderboard(newEntry) {
     const section = document.getElementById('leaderboard-section');
     const body    = document.getElementById('lb-body');
     if (!section || !body) return;
-    try {
+
+    const order = ['normal', 'expert', 'asian'];
+    const names = { normal: '🌱 Normal', expert: '⚔️ Expert', asian: '🔥 Asian' };
+
+    const toDate = (value) => {
+        const t = new Date(value).getTime();
+        return Number.isNaN(t) ? Number.MAX_SAFE_INTEGER : t;
+    };
+
+    const normalizeEntry = (entry = {}) => ({
+        date: entry.date || (entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('vi-VN') : ''),
+        ending: entry.ending,
+        label: entry.label || ENDING_LABELS[entry.ending] || entry.ending,
+        quality: Number(entry.quality || 0),
+        morale: Number(entry.morale || 0),
+        diff: entry.diff || entry.difficulty || 'normal',
+        icon: entry.icon || DIFF_LABELS[entry.diff || entry.difficulty || 'normal'] || '',
+        createdAt: entry.createdAt || entry.created_at || null
+    });
+
+    const sortRows = (rows) => rows.sort((a, b) =>
+        (b.quality - a.quality)
+        || (b.morale - a.morale)
+        || (toDate(a.createdAt) - toDate(b.createdAt))
+    );
+
+    const readLocalFallback = () => {
         const all = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
         if (all.length === 0) {
             all.push(
@@ -252,26 +279,23 @@ export function renderLeaderboard(newEntry) {
                 ...(JSON.parse(localStorage.getItem('mhx_lb_v2') || '[]'))
             );
             if (all.length > 0) {
-                all.sort((a, b) => (b.quality - a.quality) || (b.morale - a.morale));
+                sortRows(all);
                 localStorage.setItem(LB_KEY, JSON.stringify(all.slice(0, 10)));
             }
         }
-        if (all.length === 0) { section.style.display = 'none'; return; }
+        return all.map(normalizeEntry);
+    };
 
-        const order = ['normal', 'expert', 'asian'];
-        const names = { normal: '🌱 Normal', expert: '⚔️ Expert', asian: '🔥 Asian' };
-
+    const renderRows = (rows) => {
         const groupedHtml = order.map(diffKey => {
-            const rows = all
+            const diffRows = sortRows(rows
                 .filter(e => (e.diff || 'normal') === diffKey)
-                .sort((a, b) => (b.quality - a.quality) || (b.morale - a.morale))
-                .slice(0, 10);
+            ).slice(0, 10);
 
-            if (rows.length === 0) return '';
+            if (diffRows.length === 0) return '';
 
-            const rowsHtml = rows.map((e, i) => {
+            const rowsHtml = diffRows.map((e, i) => {
                 const isNew = newEntry
-                    && e.date === newEntry.date
                     && e.quality === newEntry.quality
                     && e.ending === newEntry.ending
                     && (e.diff || 'normal') === (newEntry.diff || 'normal');
@@ -280,7 +304,7 @@ export function renderLeaderboard(newEntry) {
                     <span class="lb-ending">${e.icon || ''} ${e.label}</span>
                     <span class="lb-score">⭐ ${e.quality}</span>
                     <span class="lb-diff">${e.diff || ''}</span>
-                    <span class="lb-date">${e.date}</span>
+                    <span class="lb-date">${e.date || ''}</span>
                 </div>`;
             }).join('');
 
@@ -290,11 +314,40 @@ export function renderLeaderboard(newEntry) {
             </div>`;
         }).join('');
 
-        if (!groupedHtml) { section.style.display = 'none'; return; }
+        if (!groupedHtml) {
+            section.style.display = 'none';
+            return;
+        }
 
         section.style.display = 'block';
         body.innerHTML = groupedHtml;
-    } catch(e) { section.style.display = 'none'; }
+    };
+
+    try {
+        const localRows = readLocalFallback();
+        if (localRows.length > 0) {
+            renderRows(localRows);
+        }
+
+        getLeaderboardAll(10)
+            .then((leaderboards) => {
+                const apiRows = order.flatMap((key) =>
+                    (leaderboards[key] || []).map((entry) => normalizeEntry(entry))
+                );
+
+                if (apiRows.length === 0) {
+                    if (localRows.length === 0) section.style.display = 'none';
+                    return;
+                }
+
+                renderRows(apiRows);
+            })
+            .catch(() => {
+                if (localRows.length === 0) section.style.display = 'none';
+            });
+    } catch(e) {
+        section.style.display = 'none';
+    }
 }
 
 // ══ HALFTIME ══
@@ -445,4 +498,3 @@ export function showBranchIndicator({ isTrackA, titleA, subtitleA, titleB, subti
         onContinue();
     };
 }
-

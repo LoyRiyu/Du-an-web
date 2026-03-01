@@ -8,6 +8,9 @@ import {
     decisionLog
 } from './state.js';
 
+const AUTH_API_BASE = window.AUTH_API_BASE || 'http://localhost:4000';
+const ACCESS_TOKEN_KEY = 'access_token';
+
 let currentKeyIndex = 0;
 
 // ══ GEMINI CORE ══
@@ -34,6 +37,41 @@ function updateAIBadge() {
     if (!badge) return;
     badge.className = USE_AI ? 'ai-on' : 'ai-off';
     badge.textContent = USE_AI ? '⚡ AI Mode' : '📋 Classic Mode';
+}
+
+async function fetchBackend(path, options = {}) {
+    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+    if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return fetch(`${AUTH_API_BASE}${path}`, {
+        ...options,
+        headers,
+        credentials: 'include'
+    });
+}
+
+export async function postScore(payload) {
+    const res = await fetchBackend('/scores', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        throw new Error(data.message || 'Không thể lưu điểm');
+    }
+    return data.score;
+}
+
+export async function getLeaderboardAll(limit = 10) {
+    const res = await fetchBackend(`/leaderboard/all?limit=${encodeURIComponent(limit)}`);
+    const data = await res.json();
+    if (!res.ok) {
+        throw new Error(data.message || 'Không thể tải leaderboard');
+    }
+    return data.leaderboards || {};
 }
 
 // ══ SESSION CACHE ══
